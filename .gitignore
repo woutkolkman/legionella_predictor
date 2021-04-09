@@ -1,3 +1,7 @@
+# Toegevoegd voor legionella predictor
+obj/
+*.uvguix*
+
 # Prerequisites
 *.d
 
