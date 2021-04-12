@@ -9,8 +9,7 @@ void Green_led_off(void);
 float difference(float a, float b);
 
 // setup the green led
-void Green_led_init(void)
-{
+void Green_led_init(void) {
 	// ----- init the green led
 	// green led on gpio port PC9
 	// GPIOC Periph clock enable
@@ -29,50 +28,42 @@ void Green_led_init(void)
 }
 
 // turn green led on
-void Green_led_on(void)
-{
+void Green_led_on(void) {
 	// set green led high
 	GPIOC->BSRR = GPIO_BSRR_BS_9;
 }
 
 // turn green led off
-void Green_led_off(void)
-{
+void Green_led_off(void) {
 	// set green led low
 	GPIOC->BSRR = GPIO_BSRR_BR_9;
 }
 
 
 // calcualte te difference of two numbers
-float difference(float a, float b)
-{
-	if(a < b)
-	{
+float difference(float a, float b) {
+	if(a < b) {
 		return b-a;
 	}
-	else
-	{
+	else {
 		return a-b;
 	}
 }
 
 // set green led on when temprature drops, else set green led off
-void Green_led_update(void)
-{
+void Green_led_update(void) {
  static float previous_temp;
  float temp;
 	// vraag tempratuur op
 	temp = test_read_tempture();
 	
 	// determine when a whassing happens
-	if( difference(previous_temp, temp) > TEMP_TRESHOLD )
-	{
+	if( difference(previous_temp, temp) > TEMP_TRESHOLD ) {
 		// when wassing happens, turn green led on
 		Green_led_on();
 		USART_putstr("Green led on.\n");
 	}
-	else
-	{
+	else {
 		// else, turn green led off
 		Green_led_off();
 		USART_putstr("Green led off.\n");
