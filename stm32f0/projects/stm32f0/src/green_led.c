@@ -1,6 +1,7 @@
 #include "green_led.h"
 #include "stm32f0xx_gpio.h"
 #include "test_code.c"
+#include "usart.h"
 
 // private defines
 void Green_led_on(void);
@@ -68,11 +69,13 @@ void Green_led_update(void)
 	{
 		// when wassing happens, turn green led on
 		Green_led_on();
+		USART_putstr("Green led on.\n");
 	}
 	else
 	{
 		// else, turn green led off
 		Green_led_off();
+		USART_putstr("Green led off.\n");
 	}
 
   // update previous_temp
