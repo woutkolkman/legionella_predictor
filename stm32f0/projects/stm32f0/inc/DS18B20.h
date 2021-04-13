@@ -1,22 +1,19 @@
-/*
- * DS18B20.h
- *
- *  Created on: 13 oct. 2017
- *      Author: Farouk Majdoub
- */
-
 #ifndef DS18B20_H_
 #define DS18B20_H_
 
-void				 		DelayDS(uint32_t);
-static void					PingDS(void);
-static void					InitDS(void);
-static void					SendInit(void);
-static void					SendDS(uint8_t  val);
-static uint8_t  			ReadDS(void);
-static void					ReportScratchpad(void);
-static void					StartConversion(void);
-static void					ReportTemperature(void);
-static void					ReportROM(void);
+#include "stdint.h"
 
-#endif /* DS18B20_H_ */
+// function prototypes
+void 				   delay_DS(const int d);
+static void    ping_DS(void);
+void           init_sensor(void);
+static void	   send_init(void);
+static void	   send_DS(uint8_t value);
+static uint8_t read_DS(void);
+static void		 report_scratchpad(void);
+static void		 start_conversion(void);
+static void		 report_temperature(void);
+static void		 report_ROM(void);
+float          check_DS(void);
+
+#endif 

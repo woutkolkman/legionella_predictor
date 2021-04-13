@@ -1,21 +1,15 @@
-/*
- * DS18B20.c
- *
- *  Created on: 13 oct. 2017
- *      Author: Farouk madjoub
- */
 #include "stm32f0_discovery.h"
+#include "stm32f0xx_gpio.h"
+#include "DS18B20.h"
 
-extern int TEMPVALUE;
+// defines
+#define ONEWIRE_OUT  GPIO_Pin_5
+#define ONEWIRE_IN   GPIO_Pin_4
+#define ONEWIRE_PORT GPIOA
 
-#define  ONEWIRE_OUT        GPIO_PIN_9
-#define  ONEWIRE_IN         GPIO_PIN_8
-#define  ONEWIRE_PORT  			GPIOB
-
-#define  ONEWIRE_INPUT_READ				HAL_GPIO_ReadPin(ONEWIRE_PORT,ONEWIRE_IN)
-#define  ONEWIRE_OUTPUT_HIGH			HAL_GPIO_WritePin(ONEWIRE_PORT,ONEWIRE_OUT,GPIO_PIN_SET)   // 5v
-#define  ONEWIRE_OUTPUT_LOW				HAL_GPIO_WritePin(ONEWIRE_PORT,ONEWIRE_OUT,GPIO_PIN_RESET) // 0v
-
+#define ONEWIRE_INPUT_READ  GPIO_ReadInputDataBit(ONEWIRE_PORT, ONEWIRE_IN)
+#define ONEWIRE_OUTPUT_HIGH GPIO_WriteBit(GPIOA, ONEWIRE_OUT, Bit_SET)   // 5 V
+#define ONEWIRE_OUTPUT_LOW  GPIO_WriteBit(GPIOA, ONEWIRE_OUT, Bit_RESET) // 0 V
 
 #define  READ_ROM					0x33
 #define  SKIP_ROM					0xCC
@@ -23,198 +17,174 @@ extern int TEMPVALUE;
 #define  CONVERT_TEMP			0x44
 #define  WRITE_SCRATCHPAD	0x4E
 
-uint8_t						pad[9];
-uint8_t						rom[8];
-uint8_t						res[2];
+// global variables
+float temperature_DS = 0;
+uint8_t	pad[9];
+uint8_t	rom[8];
+uint8_t	res[2];
 
-float tempDS;
-
-void InitDS(void) {
+void init_sensor(void) { // sensor on PA4
 	
 	GPIO_InitTypeDef GPIO_InitStruct;
-
-	__HAL_RCC_GPIOB_CLK_ENABLE();	// route the clocks
-
-    GPIO_InitStruct.Pin = ONEWIRE_OUT;
-    GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_OD;
-    GPIO_InitStruct.Pull = GPIO_NOPULL;
-    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
-    HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
-
-    GPIO_InitStruct.Pin = ONEWIRE_IN;
-    GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-    GPIO_InitStruct.Pull = GPIO_PULLUP;
-    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
-    HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
-}
-
-
-/*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
-
-void  delayDS(uint32_t  usecs) {
 	
-	uint32_t			n;
-	n = usecs;
-
-	while (n) {
-		n--;
-		asm("nop");
-	}
-}
-
-
-
-
-float checkDS(void) {
-
-	InitDS();
-    PingDS();
-	ReportROM();
-    ReportScratchpad();
-    StartConversion();
-	delayDS(270000);
-	ReportTemperature();
-
-	return tempDS;
-}
-
-static void  PingDS(void) {
+	RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOA, ENABLE); 
 	
-	uint8_t				response;
+	GPIO_InitStruct.GPIO_Pin = GPIO_Pin_5;
+  GPIO_InitStruct.GPIO_Mode = GPIO_Mode_OUT;
+  GPIO_InitStruct.GPIO_PuPd = GPIO_PuPd_NOPULL;
+  GPIO_InitStruct.GPIO_Speed = GPIO_Speed_Level_3;
+	
+	GPIO_InitStruct.GPIO_Pin = GPIO_Pin_4;
+	GPIO_InitStruct.GPIO_Mode = GPIO_Mode_IN;
+	GPIO_InitStruct.GPIO_PuPd = GPIO_PuPd_UP;
+	GPIO_InitStruct.GPIO_Speed = GPIO_Speed_Level_3;
+	GPIO_Init(GPIOA, &GPIO_InitStruct);
+}
 
-	response = 1;
+
+float check_DS(void) {
+	
+	init_sensor();
+  ping_DS();	
+  report_ROM();
+  report_scratchpad();
+  start_conversion();
+	delay_DS(270000);
+	report_temperature();
+
+	return temperature_DS;
+}
+
+static void ping_DS(void) {
+	
+	uint8_t	response = 1;
 	ONEWIRE_OUTPUT_LOW;
-	delayDS(335);
+	delay_DS(335);
 
 	while (1) {
-		SendInit();
-		response = HAL_GPIO_ReadPin(ONEWIRE_PORT,ONEWIRE_IN);		// device pulls line low in response
-		delayDS(1512);
-        if (response == 0)  break;
+		send_init(); // device pulls line low in response
+		response = GPIO_ReadInputDataBit(ONEWIRE_PORT, ONEWIRE_IN);
+		delay_DS(1512);
+		if (response == 0)  
+			break;
 	}
 }
 
+static void start_conversion(void) {
 
+	send_init();
+	delay_DS(335);
 
-static void  StartConversion(void) {
-
-	SendInit();
-	delayDS(335);
-
-	SendDS(SKIP_ROM);
-	SendDS(CONVERT_TEMP);
+	send_DS(SKIP_ROM);
+	send_DS(CONVERT_TEMP);
 }
 
 
-static void  ReportTemperature(void) {
+static void report_temperature(void) {
 	
-	uint32_t			val;
-    uint8_t				n;
+	uint32_t value = 0;
+  int i;
 
-	SendInit();
-	delayDS(360);
+	send_init();
+	delay_DS(360);
 
-	SendDS(SKIP_ROM);
-	SendDS(READ_SCRATCHPAD);
+	send_DS(SKIP_ROM);
+	send_DS(READ_SCRATCHPAD);
+	
+	for (i = 0; i < 9; i++) {
+		pad[i] = read_DS();
+	}
+	value = (pad[1] * 256 + pad[0]);			
+	temperature_DS = value * (0.0625);  // 12-bit resolution
+}
+
+static void report_ROM(void) {
+	
+	int i;
+
+	send_init();
+	delay_DS(335); // 100
+
+	send_DS(READ_ROM);
+	for (i = 0; i < 8; i++) {
+		rom[i] = read_DS();
+	}
+}
+
+static void report_scratchpad(void) {
+	
+	uint8_t	n;
+
+	send_init();
+	delay_DS(335); // 100
+
+	send_DS(SKIP_ROM);
+	send_DS(READ_SCRATCHPAD);
 	
 	for (n = 0; n < 9; n++) {
-		pad[n] = ReadDS();
-	}
-	val = (pad[1] * 256 + pad[0]);			
-	tempDS = val * (0.0625);  // 12bit resolution
-}
-
-
-
-static void  ReportROM(void) {
-	
-	uint8_t					n;
-
-	SendInit();
-	delayDS(335);//100
-
-	SendDS(READ_ROM);
-	for (n = 0; n < 8; n++) {
-		rom[n] = ReadDS();
+		pad[n] = read_DS();
 	}
 }
 
-
-
-static void  ReportScratchpad(void) {
+static void send_init(void) {
 	
-	uint8_t					n;
+	ONEWIRE_OUTPUT_HIGH;
+	delay_DS(1700); // 500
 
-	SendInit();
-	delayDS(335); //100
+  ONEWIRE_OUTPUT_LOW;
+	delay_DS(1700); // 500
 
-	SendDS(SKIP_ROM);
-	SendDS(READ_SCRATCHPAD);
-	
-	for (n=0; n<9; n++) {
-		pad[n] = ReadDS();
-	}
+	ONEWIRE_OUTPUT_HIGH;
+	delay_DS(165); // 50
 }
 
-
-
-static void  SendInit(void)
-{
-		ONEWIRE_OUTPUT_HIGH;
+static void send_DS(uint8_t value) {
 	
-	    delayDS(1700);//500
+	int	i;
 
-	    ONEWIRE_OUTPUT_LOW;
-	    delayDS(1700);//500
-
-	    ONEWIRE_OUTPUT_HIGH;
-
-	    delayDS(165);//50
-
-}
-
-
-static void  SendDS(uint8_t  val)
-{
-	uint8_t				n;
-
-	for (n=0; n<8; n++)
-	{
+	for (i = 0; i < 8; i++) {
 		ONEWIRE_OUTPUT_LOW;
-		delayDS(10);//5
-
-
-		if (val & 1) { ONEWIRE_OUTPUT_HIGH;}
-		delayDS(315);//95
-
+		delay_DS(10); // 5
+		
+		if (value & 1) { 
+			ONEWIRE_OUTPUT_HIGH;
+		}
+		delay_DS(315); // 95
 
 		ONEWIRE_OUTPUT_HIGH;
-		delayDS(0);//2
-
-
-		val = val >> 1;
+		delay_DS(0); //2
+		
+		value = value >> 1;
 	}
 }
 
+static uint8_t read_DS(void) {
+	
+	int	i;
+	uint8_t	value = 0;
 
-
-static uint8_t  ReadDS(void)
-{
-	uint8_t				n;
-	uint8_t				val;
-
-	val = 0;
-	for (n=0; n<8; n++)
-	{
-		val = val >> 1;
+	for (i = 0; i < 8; i++) {
+		value = value >> 1;
 		ONEWIRE_OUTPUT_LOW;
 
-		delayDS(45);//15
-        ONEWIRE_OUTPUT_HIGH;
-        delayDS(20); //10
+		delay_DS(45);// 15
+    ONEWIRE_OUTPUT_HIGH;
+    delay_DS(20); // 10
 
-		if (ONEWIRE_INPUT_READ)  {val = val | 0x80;}
-		delayDS(198);//65
+		if (ONEWIRE_INPUT_READ) {
+			value = value | 0x80;
+		}
+		delay_DS(198); // 65
 	}
-	return  val;
+	return value;
+}
+
+void delay_DS(const int d) {
+	
+	volatile int i;
+
+	for (i = d; i > 0; i--) { 
+		; 
+	}
+	return;
 }

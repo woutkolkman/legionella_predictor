@@ -16,5 +16,6 @@ void USART_putstr(char *str);
 void USART_putint(int16_t v);
 void USART_getstr(char *str);
 void USART_clearscreen(void);
+char *USART_itoa(int16_t i, char *p);
 
 #endif // _USART_H_

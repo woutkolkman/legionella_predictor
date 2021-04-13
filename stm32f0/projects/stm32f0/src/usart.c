@@ -9,7 +9,7 @@
 // ----------------------------------------------------------------------------
 volatile char rx_buffer;
 
-//comment the following line to test on the laptop instead of on the STM32
+// comment the following line to test on the laptop instead of on the STM32
 #define ONTARGET 1
 
 #ifndef ONTARGET
@@ -148,6 +148,38 @@ void USART_clearscreen(void)
   
   USART_putstr(cmd1);
   USART_putstr(cmd2);
+}
+
+char *USART_itoa(int16_t i, char *p)
+{
+  int16_t t1, t2;
+  char h[10];
+
+  t1 = t2 = 0;
+
+  if (i < 0)
+  {
+    p[t2] = '-';
+    t2++;
+    i = -i;
+  }
+  
+  do
+  {
+    h[t1] = i % 10 + 48;
+    t1++;
+    i = i / 10;
+
+  }while (i > 0);
+
+  while (t1 > 0)
+  {
+    p[t2++] = h[--t1];
+  }
+
+  p[t2] = '\0';
+
+  return(p);
 }
 
 #endif
