@@ -65,7 +65,7 @@ void Green_led_update(void) {
 	temp = readTemprature();
 #endif
 	// determine when a whassing happens
-	if( difference(previous_temp, temp) > TEMP_TRESHOLD ) {
+	if( difference(previous_temp, temp) > TEMP_TRESHOLD && previous_temp > temp) {
 		// when wassing happens, turn green led on
 		Green_led_on();
 #ifdef TEST
