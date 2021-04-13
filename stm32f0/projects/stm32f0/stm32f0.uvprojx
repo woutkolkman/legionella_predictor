@@ -337,7 +337,7 @@
               <MiscControls></MiscControls>
               <Define>USE_STDPERIPH_DRIVER, STM32F0XX</Define>
               <Undefine></Undefine>
-              <IncludePath>.\inc;..\..\libraries\CMSIS\Include;..\..\libraries\CMSIS\ST\STM32F0xx\Include;..\..\libraries\STM32F0xx_StdPeriph_Driver\inc;..\..\utilities\STM32F0-Discovery;..\..\..\Sensor\STM32CubeF0-master\STM32CubeF0-master\Drivers\STM32F0xx_HAL_Driver\Src;..\..\..\Sensor\STM32CubeF0-master\STM32CubeF0-master\Drivers\STM32F0xx_HAL_Driver\Inc</IncludePath>
+              <IncludePath>.\inc;..\..\libraries\CMSIS\Include;..\..\libraries\CMSIS\ST\STM32F0xx\Include;..\..\libraries\STM32F0xx_StdPeriph_Driver\inc;..\..\utilities\STM32F0-Discovery</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -395,6 +395,11 @@
               <FileName>usart.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\src\usart.c</FilePath>
+            </File>
+            <File>
+              <FileName>DS18B20.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\DS18B20.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -465,16 +470,6 @@
               <FileName>system_stm32f0xx.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\startup\system_stm32f0xx.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>sensor-library</GroupName>
-          <Files>
-            <File>
-              <FileName>DS18B20.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\Sensor\DS18B20.c</FilePath>
             </File>
           </Files>
         </Group>
