@@ -311,7 +311,7 @@
           </ArmAdsMisc>
           <Cads>
             <interw>1</interw>
-            <Optim>4</Optim>
+            <Optim>1</Optim>
             <oTime>0</oTime>
             <SplitLS>0</SplitLS>
             <OneElfS>0</OneElfS>
@@ -337,7 +337,7 @@
               <MiscControls></MiscControls>
               <Define>USE_STDPERIPH_DRIVER, STM32F0XX</Define>
               <Undefine></Undefine>
-              <IncludePath>.\inc;..\..\libraries\CMSIS\Include;..\..\libraries\CMSIS\ST\STM32F0xx\Include;..\..\libraries\STM32F0xx_StdPeriph_Driver\inc;..\..\utilities\STM32F0-Discovery;D:\OneDrive\OneDrive - Windesheim Office365\Jaar 3\Semester 2\Periode 3\KBS IoT\Libraries</IncludePath>
+              <IncludePath>.\inc;..\..\libraries\CMSIS\Include;..\..\libraries\CMSIS\ST\STM32F0xx\Include;..\..\libraries\STM32F0xx_StdPeriph_Driver\inc;..\..\utilities\STM32F0-Discovery;..\..\..\Sensor\STM32CubeF0-master\STM32CubeF0-master\Drivers\STM32F0xx_HAL_Driver\Src;..\..\..\Sensor\STM32CubeF0-master\STM32CubeF0-master\Drivers\STM32F0xx_HAL_Driver\Inc</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -472,24 +472,9 @@
           <GroupName>sensor-library</GroupName>
           <Files>
             <File>
-              <FileName>tm_stm32f4_delay.c</FileName>
+              <FileName>DS18B20.c</FileName>
               <FileType>1</FileType>
-              <FilePath>D:\OneDrive\OneDrive - Windesheim Office365\Jaar 3\Semester 2\Periode 3\KBS IoT\Libraries\tm_stm32f4_delay\tm_stm32f4_delay.c</FilePath>
-            </File>
-            <File>
-              <FileName>tm_stm32f4_timer_properties.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>D:\OneDrive\OneDrive - Windesheim Office365\Jaar 3\Semester 2\Periode 3\KBS IoT\Libraries\tm_stm32f4_delay\tm_stm32f4_timer_properties.c</FilePath>
-            </File>
-            <File>
-              <FileName>tm_stm32f4_ds18b20.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>D:\OneDrive\OneDrive - Windesheim Office365\Jaar 3\Semester 2\Periode 3\KBS IoT\Libraries\tm_stm32f4_ds18b20\tm_stm32f4_ds18b20.c</FilePath>
-            </File>
-            <File>
-              <FileName>tm_stm32f4_onewire.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>D:\OneDrive\OneDrive - Windesheim Office365\Jaar 3\Semester 2\Periode 3\KBS IoT\Libraries\tm_stm32f4_onewire\tm_stm32f4_onewire.c</FilePath>
+              <FilePath>..\..\..\Sensor\DS18B20.c</FilePath>
             </File>
           </Files>
         </Group>
