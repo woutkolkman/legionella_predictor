@@ -25,9 +25,7 @@ void execute_test(test_t (*test)(void), char *name) {
 	else {
 		USART_putstr("FAILED");
 	}
-	USART_putstr("\n");
-	
-	
+	USART_putstr("\n");	
 }
 
 // test 1
