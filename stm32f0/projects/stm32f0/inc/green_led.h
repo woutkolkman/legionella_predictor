@@ -5,6 +5,6 @@
 
 // public defines
 void Green_led_init(void);
-void Green_led_update(void);
+void Green_led_update(float);
 
 #endif

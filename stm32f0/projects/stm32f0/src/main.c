@@ -6,6 +6,8 @@
 #include "usart.h"
 #include "green_led.h"
 
+#include "test_code.c"
+
 // ----------------------------------------------------------------------------
 // Global variables
 // ----------------------------------------------------------------------------
@@ -29,7 +31,7 @@ int main(void)
 	while(1) {
 		//STM_EVAL_LEDToggle(LED3);
 		//STM_EVAL_LEDToggle(LED4);
-		Green_led_update();
+		Green_led_update(test_read_tempture());
 		delay(SystemCoreClock/8/10);
 	}
 }

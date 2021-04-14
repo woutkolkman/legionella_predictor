@@ -1,12 +1,6 @@
 #include "green_led.h"
 #include "stm32f0xx_gpio.h"
 
-#define TEST
-#ifdef TEST
-#include "test_code.c"
-#include "usart.h"
-#endif
-
 // private defines
 void Green_led_on(void);
 void Green_led_off(void);
@@ -55,35 +49,17 @@ float difference(float a, float b) {
 }
 
 // set green led on when temprature drops, else set green led off
-void Green_led_update(void) {
+void Green_led_update(float temp) {
  static float previous_temp;
- float temp;
-	// vraag tempratuur op
-#ifdef TEST
-	temp = test_read_tempture();
-#else
-	temp = readTemprature();
-#endif
 	// determine when a whassing happens
 	if( difference(previous_temp, temp) > TEMP_TRESHOLD && previous_temp > temp) {
 		// when wassing happens, turn green led on
 		Green_led_on();
-#ifdef TEST
-		USART_putstr("Green led on. temp=");
-#endif
 	}
 	else {
 		// else, turn green led off
 		Green_led_off();
-#ifdef TEST
-		USART_putstr("Green led off. temp=");
-#endif
 	}
-
-#ifdef TEST
-	USART_putint((int16_t) temp);
-	USART_putstr("\n");
-#endif
 	
   // update previous_temp
   previous_temp = temp;	
