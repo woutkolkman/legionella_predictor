@@ -1,6 +1,7 @@
 #include "stm32f0_discovery.h"
 #include "stm32f0xx_gpio.h"
 #include "DS18B20.h"
+#include "usart.h"
 
 // defines
 #define ONEWIRE_OUT  GPIO_Pin_5
@@ -41,7 +42,6 @@ void init_sensor(void) { // sensor on PA4
 	GPIO_Init(GPIOA, &GPIO_InitStruct);
 }
 
-
 float check_DS(void) {
 	
 	init_sensor();
@@ -52,8 +52,24 @@ float check_DS(void) {
 	delay_DS(270000);
 	report_temperature();
 
-	return temperature_DS;
+  return temperature_DS;
 }
+
+/*void check_DS(void) {
+	
+  char string[100];
+	
+	init_sensor();
+  ping_DS();	
+  report_ROM();
+  report_scratchpad();
+  start_conversion();
+	delay_DS(270000);
+	report_temperature();
+
+  USART_itoa(temperature_DS, string);
+  USART_putstr(string);
+}*/
 
 static void ping_DS(void) {
 	
@@ -78,7 +94,6 @@ static void start_conversion(void) {
 	send_DS(SKIP_ROM);
 	send_DS(CONVERT_TEMP);
 }
-
 
 static void report_temperature(void) {
 	
@@ -152,7 +167,7 @@ static void send_DS(uint8_t value) {
 		delay_DS(315); // 95
 
 		ONEWIRE_OUTPUT_HIGH;
-		delay_DS(0); //2
+		delay_DS(0); // 2
 		
 		value = value >> 1;
 	}
@@ -167,7 +182,7 @@ static uint8_t read_DS(void) {
 		value = value >> 1;
 		ONEWIRE_OUTPUT_LOW;
 
-		delay_DS(45);// 15
+		delay_DS(45); // 15
     ONEWIRE_OUTPUT_HIGH;
     delay_DS(20); // 10
 
@@ -179,7 +194,17 @@ static uint8_t read_DS(void) {
 	return value;
 }
 
-void delay_DS(const int d) {
+void delay_DS(uint32_t usecs) {
+	
+	uint32_t n = usecs;
+
+	while (n) {
+		n--;
+	  __nop();
+	}
+}
+
+/*void delay_DS(const int d) {
 	
 	volatile int i;
 
@@ -187,4 +212,4 @@ void delay_DS(const int d) {
 		; 
 	}
 	return;
-}
+}*/
