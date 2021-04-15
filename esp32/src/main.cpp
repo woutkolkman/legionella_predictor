@@ -73,6 +73,7 @@ void loop() {
             client.println();
 
             // the content of the HTTP response follows the header:
+            client.print("<h3>legionela predetector test server</h3>");
             client.print("Click <a href=\"/H\">here</a> to turn the LED on pin 5 on.<br>");
             client.print("Click <a href=\"/L\">here</a> to turn the LED on pin 5 off.<br>");
 
@@ -90,6 +91,7 @@ void loop() {
         // Check to see if the client request was "GET /H" or "GET /L":
         if (currentLine.endsWith("GET /H")) {
           digitalWrite(5, HIGH);               // GET /H turns the LED on
+          
         }
         if (currentLine.endsWith("GET /L")) {
           digitalWrite(5, LOW);                // GET /L turns the LED off
