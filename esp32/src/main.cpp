@@ -1,6 +1,9 @@
 #include <Arduino.h>
 #include <WiFi.h>
 
+// contain html code
+#include "website.h"
+
 const char *ssid = "hallo_tiemen";
 const char *password = "hallo123";
 WiFiServer server(80);
@@ -73,10 +76,10 @@ void loop() {
             client.println();
 
             // the content of the HTTP response follows the header:
-            client.print("<h3>legionela predetector test server</h3>");
-            client.print("Click <a href=\"/H\">here</a> to turn the LED on pin 5 on.<br>");
-            client.print("Click <a href=\"/L\">here</a> to turn the LED on pin 5 off.<br>");
-
+            //client.print("<h3>legionela predetector test server</h3>");
+            //client.print("Click <a href=\"/H\">here</a> to turn the LED on pin 5 on.<br>");
+            //client.print("Click <a href=\"/L\">here</a> to turn the LED on pin 5 off.<br>");
+            client.print(webpage);
             // The HTTP response ends with another blank line:
             client.println();
             // break out of the while loop:
