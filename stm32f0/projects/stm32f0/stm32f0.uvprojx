@@ -396,6 +396,11 @@
               <FileType>1</FileType>
               <FilePath>.\src\usart.c</FilePath>
             </File>
+            <File>
+              <FileName>EBYTE.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\EBYTE.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
