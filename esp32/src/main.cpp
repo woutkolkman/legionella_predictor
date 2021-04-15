@@ -54,10 +54,7 @@ YOU MUST USE THE ACTUAL GPIO NUMBER
 // from both the receiver and sender modules
 struct DATA {
   unsigned long Count;
-  int Bits;
-  float Volts;
-  float Amps;
-
+  int8_t Temperature;
 };
 
 // these are just dummy variables, replace with your own
@@ -115,8 +112,8 @@ void loop() {
     // i highly suggest you send data using structures and not
     // a parsed data--i've always had a hard time getting reliable data using
     // a parsing method
-    Serial.println(Serial2.read());
-    //Transceiver.GetStruct(&MyData, sizeof(MyData));
+    //Serial.println(Serial2.read());
+    Transceiver.GetStruct(&MyData, sizeof(MyData));
 
     // note, you only really need this library to program these EBYTE units
     // you can call readBytes directly on the EBYTE Serial object
@@ -124,8 +121,8 @@ void loop() {
   //Serial.println(tempByte);
 
     // dump out what was just received
-    //Serial.print("Count: "); Serial.println(MyData.Count);
-    //Serial.print("Bits: "); Serial.println(MyData.Bits);
+    Serial.print("Count: "); Serial.println(MyData.Count);
+    Serial.print("Temp: "); Serial.println(MyData.Temperature);
     //Serial.print("Volts: "); Serial.println(MyData.Volts);
     // if you got data, update the checker
     Last = millis();
