@@ -1,4 +1,4 @@
- 
+
 /*
   The MIT License (MIT)
   Copyright (c) 2019 Kris Kasrpzak
@@ -255,8 +255,6 @@ public:
 	void Reset();
 
 protected:
-
-
 
 	// function to read modules parameters
 	bool ReadParameters();

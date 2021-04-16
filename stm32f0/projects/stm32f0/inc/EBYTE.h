@@ -64,6 +64,7 @@
 // ----------------------------------------------------------------------------
 #include <stdint.h>
 #include <stdbool.h>
+#include <Stream.h>
 #include "stm32f0xx.h"
 #include "stm32f0_discovery.h"
 
@@ -186,6 +187,7 @@ to react, some say only 10 ms, but I've found it can be much lonnger, I'm using
 	// so you know what the non changed parameters are know for resending back
 
 	bool LoRa_init(void);
+	void LoRa_Init_GPIO(void);
 	
 	// methods to set modules working parameters NOTHING WILL BE SAVED UNLESS SaveParameters() is called
 	void SetMode(uint8_t mode);
@@ -271,6 +273,10 @@ to react, some say only 10 ms, but I've found it can be much lonnger, I'm using
 	bool ReadModelData(void);
 	void ClearBuffer(void);
 	// variable for the serial stream
+	Stream* _s;
+	Stream* _TD;
+	
+	
 	// pin variables
 	int8_t _M0;
 	int8_t _M1;
