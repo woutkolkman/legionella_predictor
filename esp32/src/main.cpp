@@ -59,7 +59,7 @@ void setup() {
 
   // this init will set the pinModes for you
   Serial.println(Transceiver.init());
-
+  Transceiver.PrintParameters();
 }
 
 void loop() {

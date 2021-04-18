@@ -49,6 +49,14 @@ void LoRa_Init_GPIO() {
 	GPIO_Init(GPIOA, &GPIO_initStructure);
 }
 
+void USART_Init() {
+	
+}
+
+
+
+
+
 void SetMode(uint8_t mode) {
 	switch(mode) {
 		case MODE_NORMAL:
@@ -99,14 +107,13 @@ bool ReadModelData() {
 	if (0xC3 != _Params[0]) {
 
 		for (i = 0; i < 5; i++){
-			Serial.print("trying: "); Serial.println(i);
 			_Params[0] = 0;
 			_Params[1] = 0;
 			_Params[2] = 0;
 			_Params[3] = 0;
 			_Params[4] = 0;
 			_Params[5] = 0;
-			delay(100);
+			//delay(100);
 
 			_s->write(0xC3);
 
@@ -115,6 +122,11 @@ bool ReadModelData() {
 			_s->write(0xC3);
 
 			_s->readBytes((uint8_t*)& _Params, (uint8_t) sizeof(_Params));
+			
+			_Save = _Params[0];	
+			_Model = _Params[1];
+			_Version = _Params[2];
+			_Features = _Params[3];	
 
 			if (0xC3 == _Params[0]){
 				found = true;
@@ -134,3 +146,25 @@ bool ReadModelData() {
 	return found;
 	
 }
+
+void CompleteTask(unsigned long timeout) {
+	//unsigned long t = millis();
+	if(((unsigned long) (t + timeout)) == 0) {
+		t = 0;
+	}
+	
+	if(_AUX != -1) {
+		
+		while(GPIO_ReadInputDataBit(GPIOA, LORA_AUX_PIN) == Bit_RESET) {
+			//also needs delay
+			//if ((millis() - t) > timeout) {
+				//break;
+			//}
+		}
+	} else {
+		//delay should be used, but since aux is connected this isn't important atm
+	}
+	
+	//delay of 2 ms here
+}
+

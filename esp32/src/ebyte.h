@@ -61,7 +61,9 @@
   
 */
 
+
 #include "Arduino.h"
+
 
 
 
@@ -76,7 +78,7 @@ to react, some say only 10 ms, but I've found it can be much lonnger, I'm using
 100 ms below and maybe too long, but it seemed to work in my cases
 
 */
-#define PIN_RECOVER 15 
+#define PIN_RECOVER 15
 
 
 

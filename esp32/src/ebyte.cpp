@@ -677,6 +677,11 @@ bool EBYTE::ReadModelData() {
 			_s->write(0xC3);
 
 			_s->readBytes((uint8_t*)& _Params, (uint8_t) sizeof(_Params));
+			
+			_Save = _Params[0];	
+			_Model = _Params[1];
+			_Version = _Params[2];
+			_Features = _Params[3];
 
 			if (0xC3 == _Params[0]){
 				found = true;
