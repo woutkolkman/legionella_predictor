@@ -749,4 +749,60 @@
     </File>
   </Group>
 
+  <Group>
+    <GroupName>sensor-library</GroupName>
+    <tvExp>1</tvExp>
+    <tvExpOptDlg>0</tvExpOptDlg>
+    <cbSel>0</cbSel>
+    <RteFlg>0</RteFlg>
+    <File>
+      <GroupNumber>5</GroupNumber>
+      <FileNumber>15</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>D:\OneDrive\OneDrive - Windesheim Office365\Jaar 3\Semester 2\Periode 3\KBS IoT\Libraries\tm_stm32f4_delay\tm_stm32f4_delay.c</PathWithFileName>
+      <FilenameWithoutPath>tm_stm32f4_delay.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>5</GroupNumber>
+      <FileNumber>16</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>D:\OneDrive\OneDrive - Windesheim Office365\Jaar 3\Semester 2\Periode 3\KBS IoT\Libraries\tm_stm32f4_delay\tm_stm32f4_timer_properties.c</PathWithFileName>
+      <FilenameWithoutPath>tm_stm32f4_timer_properties.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>5</GroupNumber>
+      <FileNumber>17</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>D:\OneDrive\OneDrive - Windesheim Office365\Jaar 3\Semester 2\Periode 3\KBS IoT\Libraries\tm_stm32f4_ds18b20\tm_stm32f4_ds18b20.c</PathWithFileName>
+      <FilenameWithoutPath>tm_stm32f4_ds18b20.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>5</GroupNumber>
+      <FileNumber>18</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>D:\OneDrive\OneDrive - Windesheim Office365\Jaar 3\Semester 2\Periode 3\KBS IoT\Libraries\tm_stm32f4_onewire\tm_stm32f4_onewire.c</PathWithFileName>
+      <FilenameWithoutPath>tm_stm32f4_onewire.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+  </Group>
+
 </ProjectOpt>

@@ -151,3 +151,17 @@ void USART_clearscreen(void)
 }
 
 #endif
+
+#pragma push
+#pragma O3
+
+void delay(const int d) {
+	
+	volatile int i;
+
+	for (i = d; i > 0; i--) { 
+		; 
+	}
+	return;
+}
+#pragma pop
