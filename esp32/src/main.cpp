@@ -2,14 +2,18 @@
 #include <WiFi.h>
 #include <HTTPClient.h>
 
-const char *ssid = "hoi_simone"; //later laten invullen via website
-const char *password = "hallo123"; //later laten invullen via website
+#define POST_VALUE_LEN 8 //bytes per http parameter (5 numbers: -99.9...999.9)
+#define PAYLOAD_SIZE 60  //* temperature values
+#define POST_PAYLOAD_LEN (1+(POST_VALUE_LEN)*(PAYLOAD_SIZE))
+
+const char *ssid = "Kolkman_2.4GHZ"; //later laten invullen via website
+const char *password = "k1o2l3k4m5a6n7"; //later laten invullen via website
 const char* hostGet = "mydatasite.com"; //later laten invullen via website      TODO mag mogelijk weg
-const char* cloud_url = "145.44.234.220:42069"; //later laten invullen via website
+const char* cloud_url = "http://145.44.234.220:1880/packet"; //later laten invullen via website
+char* post_payload[POST_PAYLOAD_LEN];
 
 
 //function prototypes
-void connect_to_cloud();
 void send_to_cloud();
 void connect_to_network();
 void scan_networks();
@@ -17,10 +21,23 @@ void postData();
 
 
 void setup() {
-  Serial.begin(115200); 
+  Serial.begin(115200);
+
+  //genereer een test POST message met ?v=00001&v=00002&...
+  post_payload[0] = (char*) "?";
+  uint16_t j = 1;
+  for (uint8_t i=0; i<PAYLOAD_SIZE; i++) {
+    post_payload[j] = (char*) "v=00000";
+    j += POST_VALUE_LEN;
+    post_payload[j-1] = (char*) "&";
+//    *post_payload[j-2] = (char) ((i%10)+'0');
+//    *post_payload[j-3] = (char) ((i/10)+'0');
+  }
+  post_payload[j-1] = 0;
 
   connect_to_network();
-  connect_to_cloud();
+  delay(500);
+  send_to_cloud();
 }
 
 
@@ -30,22 +47,40 @@ void loop() {
   if (!WiFi.isConnected()) {
     connect_to_network();
   }
-
-  static bool send = 1;
-  if (send) {
-    send = 0;
-    send_to_cloud();
-  }
-}
-
-
-void connect_to_cloud() {
-
 }
 
 
 void send_to_cloud() {
 
+  if (!WiFi.isConnected()) {
+    Serial.println("Error in WiFi connection");
+    return;
+  }
+
+  Serial.print("Sending to: ");
+  Serial.print(cloud_url);
+  for (uint16_t i=0; i<POST_PAYLOAD_LEN; i++) {
+    Serial.print(post_payload[i]);
+  }
+  Serial.println();
+
+  HTTPClient http;
+
+  http.begin(cloud_url);  //Specify destination for HTTP request
+  http.addHeader("Content-Type", "text/plain");  //Specify content-type header
+  int httpResponseCode = http.POST((uint8_t*) post_payload, POST_PAYLOAD_LEN); //Send the actual POST request
+
+  if (httpResponseCode>0) {
+    String response = http.getString(); //Get the response to the request
+  
+    Serial.println(httpResponseCode);   //Print return code
+    Serial.println(response);           //Print request answer
+  } else {
+    Serial.print("Error on sending POST: ");
+    Serial.println(httpResponseCode);
+  }
+
+  http.end(); //Free resources
 }
 
 
@@ -86,6 +121,7 @@ void connect_to_network() { // function to connect to current WiFi network
     Serial.print(".");
     delay(1000);
   }
+  Serial.println();
   Serial.println(WiFi.localIP()); // show IP address if connection has been made
 }
 
