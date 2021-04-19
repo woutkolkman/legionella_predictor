@@ -1,27 +1,51 @@
 #include <Arduino.h>
 #include <WiFi.h>
+#include <HTTPClient.h>
 
 const char *ssid = "hoi_simone"; //later laten invullen via website
 const char *password = "hallo123"; //later laten invullen via website
-const char* hostGet = "mydatasite.com"; //later laten invullen via website
+const char* hostGet = "mydatasite.com"; //later laten invullen via website      TODO mag mogelijk weg
+const char* cloud_url = "145.44.234.220:42069"; //later laten invullen via website
 
 
 //function prototypes
-void postData();
+void connect_to_cloud();
+void send_to_cloud();
 void connect_to_network();
 void scan_networks();
+void postData();
 
 
 void setup() {
   Serial.begin(115200); 
 
   connect_to_network();
+  connect_to_cloud();
 }
 
 
 void loop() {
-//  postData();
   delay(10);
+
+  if (!WiFi.isConnected()) {
+    connect_to_network();
+  }
+
+  static bool send = 1;
+  if (send) {
+    send = 0;
+    send_to_cloud();
+  }
+}
+
+
+void connect_to_cloud() {
+
+}
+
+
+void send_to_cloud() {
+
 }
 
 
@@ -49,6 +73,9 @@ void scan_networks() { // function to scan local networks in area
 
 
 void connect_to_network() { // function to connect to current WiFi network
+  if (WiFi.isConnected()) {
+    WiFi.disconnect();
+  }
 
   WiFi.mode(WIFI_STA); // mode = station mode
   WiFi.begin(ssid, password); // initialize WiFi using networkname + password
@@ -63,6 +90,7 @@ void connect_to_network() { // function to connect to current WiFi network
 }
 
 
+//TODO deze hele functie mag mogelijk weg
 void postData() {
 
   WiFiClient clientGet;
