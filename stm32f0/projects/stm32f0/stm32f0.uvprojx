@@ -1054,31 +1054,6 @@
             </File>
           </Files>
         </Group>
-        <Group>
-          <GroupName>sensor-library</GroupName>
-          <Files>
-            <File>
-              <FileName>tm_stm32f4_delay.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>D:\OneDrive\OneDrive - Windesheim Office365\Jaar 3\Semester 2\Periode 3\KBS IoT\Libraries\tm_stm32f4_delay\tm_stm32f4_delay.c</FilePath>
-            </File>
-            <File>
-              <FileName>tm_stm32f4_timer_properties.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>D:\OneDrive\OneDrive - Windesheim Office365\Jaar 3\Semester 2\Periode 3\KBS IoT\Libraries\tm_stm32f4_delay\tm_stm32f4_timer_properties.c</FilePath>
-            </File>
-            <File>
-              <FileName>tm_stm32f4_ds18b20.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>D:\OneDrive\OneDrive - Windesheim Office365\Jaar 3\Semester 2\Periode 3\KBS IoT\Libraries\tm_stm32f4_ds18b20\tm_stm32f4_ds18b20.c</FilePath>
-            </File>
-            <File>
-              <FileName>tm_stm32f4_onewire.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>D:\OneDrive\OneDrive - Windesheim Office365\Jaar 3\Semester 2\Periode 3\KBS IoT\Libraries\tm_stm32f4_onewire\tm_stm32f4_onewire.c</FilePath>
-            </File>
-          </Files>
-        </Group>
       </Groups>
     </Target>
   </Targets>
