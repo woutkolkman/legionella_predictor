@@ -6,15 +6,15 @@
 #define PAYLOAD_SIZE 60  //* temperature values
 #define POST_PAYLOAD_LEN (1+(POST_VALUE_LEN)*(PAYLOAD_SIZE))
 
-const char *ssid = "Kolkman_2.4GHZ"; //later laten invullen via website
-const char *password = "k1o2l3k4m5a6n7"; //later laten invullen via website
+const char *ssid = "hoi_simone"; //later laten invullen via website
+const char *password = "hallo123"; //later laten invullen via website
 const char* hostGet = "mydatasite.com"; //later laten invullen via website      TODO mag mogelijk weg
-const char* cloud_url = "http://145.44.234.220:1880/packet"; //later laten invullen via website
+const char* cloud_url = "http://145.44.234.220:443/packet"; //later laten invullen via website
 char* post_payload[POST_PAYLOAD_LEN];
 
 
 //function prototypes
-void send_to_cloud();
+bool send_to_cloud();
 void connect_to_network();
 void scan_networks();
 void postData();
@@ -37,7 +37,9 @@ void setup() {
 
   connect_to_network();
   delay(500);
-  send_to_cloud();
+  if (!send_to_cloud()) {
+    send_to_cloud();
+  }
 }
 
 
@@ -50,11 +52,12 @@ void loop() {
 }
 
 
-void send_to_cloud() {
+bool send_to_cloud() {
+  bool retval = false;
 
   if (!WiFi.isConnected()) {
     Serial.println("Error in WiFi connection");
-    return;
+    return retval;
   }
 
   Serial.print("Sending to: ");
@@ -75,12 +78,14 @@ void send_to_cloud() {
   
     Serial.println(httpResponseCode);   //Print return code
     Serial.println(response);           //Print request answer
+    retval = true;
   } else {
     Serial.print("Error on sending POST: ");
     Serial.println(httpResponseCode);
   }
 
   http.end(); //Free resources
+  return retval;
 }
 
 
