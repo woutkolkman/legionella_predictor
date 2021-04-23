@@ -2,15 +2,18 @@
 #include <WiFi.h>
 #include <HTTPClient.h>
 
+#define length(array) ((sizeof(array)) / (sizeof(array[0])))
 #define POST_VALUE_LEN 8 //bytes per http parameter (5 numbers: -99.9...999.9)
 #define PAYLOAD_SIZE 60  //* temperature values
-#define POST_PAYLOAD_LEN (1+(POST_VALUE_LEN)*(PAYLOAD_SIZE))
+#define POST_PAYLOAD_LEN ((POST_VALUE_LEN)*(PAYLOAD_SIZE))
 
 const char *ssid = "hoi_simone"; //later laten invullen via website
 const char *password = "hallo123"; //later laten invullen via website
 const char* hostGet = "mydatasite.com"; //later laten invullen via website      TODO mag mogelijk weg
-const char* cloud_url = "http://145.44.234.220:443/packet"; //later laten invullen via website
-char* post_payload[POST_PAYLOAD_LEN];
+char cloud_address[] = "http://145.44.235.205";
+char cloud_port[] = "80";
+char cloud_path[] = "/packet";
+char post_payload[1+POST_PAYLOAD_LEN];
 
 
 //function prototypes
@@ -24,22 +27,20 @@ void setup() {
   Serial.begin(115200);
 
   //genereer een test POST message met ?v=00001&v=00002&...
-  post_payload[0] = (char*) "?";
+  post_payload[0] = '?';
   uint16_t j = 1;
   for (uint8_t i=0; i<PAYLOAD_SIZE; i++) {
-    post_payload[j] = (char*) "v=00000";
+    strncpy(&post_payload[j], "v=00000", 7);
     j += POST_VALUE_LEN;
-    post_payload[j-1] = (char*) "&";
-//    *post_payload[j-2] = (char) ((i%10)+'0');
-//    *post_payload[j-3] = (char) ((i/10)+'0');
+    post_payload[j-1] = '&';
+    post_payload[j-2] = (char) ((i%10)+'0');
+    post_payload[j-3] = (char) ((i/10)+'0');
   }
   post_payload[j-1] = 0;
 
   connect_to_network();
   delay(500);
-  if (!send_to_cloud()) {
-    send_to_cloud();
-  }
+  send_to_cloud();
 }
 
 
@@ -53,6 +54,9 @@ void loop() {
 
 
 bool send_to_cloud() {
+  HTTPClient http;
+  int data_length = (strlen(cloud_address) + (strlen(cloud_port)+1/*:*/) + strlen(cloud_path) + POST_PAYLOAD_LEN);
+  char buffer[1+data_length];
   bool retval = false;
 
   if (!WiFi.isConnected()) {
@@ -60,16 +64,18 @@ bool send_to_cloud() {
     return retval;
   }
 
+  Serial.print("Data length: ");
+  Serial.println(data_length);
   Serial.print("Sending to: ");
-  Serial.print(cloud_url);
-  for (uint16_t i=0; i<POST_PAYLOAD_LEN; i++) {
-    Serial.print(post_payload[i]);
-  }
+  strcpy(buffer, cloud_address);
+  strcat(buffer, ":");
+  strcat(buffer, cloud_port);
+  strcat(buffer, cloud_path);
+  strcat(buffer, post_payload);
+  Serial.write((uint8_t*) &buffer, sizeof(buffer));
   Serial.println();
 
-  HTTPClient http;
-
-  http.begin(cloud_url);  //Specify destination for HTTP request
+  http.begin(buffer);  //Specify destination for HTTP request
   http.addHeader("Content-Type", "text/plain");  //Specify content-type header
   int httpResponseCode = http.POST((uint8_t*) post_payload, POST_PAYLOAD_LEN); //Send the actual POST request
 
