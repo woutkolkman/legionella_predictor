@@ -10,8 +10,8 @@
 const char *ssid = "hoi_simone"; //later laten invullen via website
 const char *password = "hallo123"; //later laten invullen via website
 const char* hostGet = "mydatasite.com"; //later laten invullen via website      TODO mag mogelijk weg
-const char* cloud_url = "http://145.44.235.205:80/packet"; //later laten invullen via website
-char* post_payload[1+POST_PAYLOAD_LEN];
+char cloud_url[] = "http://145.44.235.205:80/packet"; //later laten invullen via website
+char post_payload[1+POST_PAYLOAD_LEN];
 
 
 //function prototypes
@@ -25,14 +25,14 @@ void setup() {
   Serial.begin(115200);
 
   //genereer een test POST message met ?v=00001&v=00002&...
-  post_payload[0] = (char*) "?";
+  post_payload[0] = '?';
   uint16_t j = 1;
   for (uint8_t i=0; i<PAYLOAD_SIZE; i++) {
-    post_payload[j] = (char*) "v=00001";
+    strncpy(&post_payload[j], "v=00001", 7);
     j += POST_VALUE_LEN;
-    post_payload[j-1] = (char*) "&";
-//    *post_payload[j-2] = (char) ((i%10)+'0');
-//    *post_payload[j-3] = (char) ((i/10)+'0');
+    post_payload[j-1] = '&';
+    post_payload[j-2] = (char) ((i%10)+'0');
+    post_payload[j-3] = (char) ((i/10)+'0');
   }
   post_payload[j-1] = 0;
 
@@ -72,17 +72,15 @@ bool send_to_cloud() {
 
 
   strcpy(buffer, cloud_url);
-//  strcat(buffer, *post_payload);
-  for (char* i=post_payload; *i; i++) {
-
-  }
+  strcat(buffer, post_payload);
   
-  char* c;
+ /* char c;
   for (uint16_t i=0; i<POST_PAYLOAD_LEN; i++) {
-//    Serial.print(post_payload[i]);
-    c = post_payload[i];
+    Serial.print(post_payload[i]);
+    c = *post_payload[i];
     buffer[strlen(cloud_url) + i] = c;
   }
+  Serial.println();*/
   Serial.write((uint8_t*) &buffer, sizeof(buffer));
   Serial.println();
   while(1);
