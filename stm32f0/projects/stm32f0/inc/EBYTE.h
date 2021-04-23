@@ -1,76 +1,17 @@
-/*
-  The MIT License (MIT)
-  Copyright (c) 2019 Kris Kasrpzak
-  Permission is hereby granted, free of charge, to any person obtaining a copy of
-  this software and associated documentation files (the "Software"), to deal in
-  the Software without restriction, including without limitation the rights to
-  use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
-  the Software, and to permit persons to whom the Software is furnished to do so,
-  subject to the following conditions:
-  The above copyright notice and this permission notice shall be included in all
-  copies or substantial portions of the Software.
-  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
-  FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
-  COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
-  IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
-  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-  On a personal note, if you develop an application or product using this library 
-  and make millions of dollars, I'm happy for you!
-*/
+//#define DMA 1
 
-/* 
-  Code by Kris Kasprzak kris.kasprzak@yahoo.com
-  This library is intended to be used with EBYTE transcievers, small wireless units for MCU's such as
-  Teensy and Arduino. This library let's users program the operating parameters and both send and recieve data.
-  This company makes several modules with different capabilities, but most #defines here should be compatible with them
-  All constants were extracted from several data sheets and listed in binary as that's how the data sheet represented each setting
-  Hopefully, any changes or additions to constants can be a matter of copying the data sheet constants directly into these #defines
-  Usage of this library consumes around 970 bytes
-  Revision		Data		Author			Description
-  1.0			3/6/2019	Kasprzak		Initial creation
-  2.0			3/2/2020	Kasprzak		Added all functions to build the options bit (FEC, Pullup, and TransmissionMode
-  3.0			3/27/2020	Kasprzak		Added more Get functions
-  4.0			6/23/2020	Kasprzak		Added private method to clear the buffer to ensure read methods would not be filled with buffered data
-  5.0			12/4/2020	Kasprzak		moved Reset to public, added Clear to SetMode to avoid buffer corruption during programming
-
-  Module connection
-  Module	MCU						Description
-  MO		Any digital pin*		pin to control working/program modes
-  M1		Any digital pin*		pin to control working/program modes
-  Rx		Any digital pin			pin to MCU TX pin (module transmits to MCU, hence MCU must recieve data from module
-  Tx		Any digital pin			pin to MCU RX pin (module transmits to MCU, hence MCU must recieve data from module
-  AUX		Any digital pin			pin to indicate when an operation is complete (low is busy, high is done)
-  Vcc		+3v3 or 5V0				
-  Vcc		Ground					Ground must be common to module and MCU		
-  notes:
-  * caution in connecting to Arduino pin 0 and 1 as those pins are for USB connection to PC
-  you may need a 4K7 pullup to Rx and AUX pins (possibly Tx) if using and Arduino
-  Module source
-  http://www.ebyte.com/en/
-  example module this library is intended to be used with
-  http://www.ebyte.com/en/product-view-news.aspx?id=174
-  Code usage
-  1. Create a serial object
-  2. Create EBYTE object that uses the serail object
-  3. begin the serial object
-  4. init the EBYTE object
-  5. set parameters (optional but required if sender and reciever are different)
-  6. send or listen to sent data
-  
-*/
 // ----------------------------------------------------------------------------
 // Includes
 // ----------------------------------------------------------------------------
+#include <stdlib.h>
 #include <stdint.h>
 #include <stdbool.h>
+#include "stm32f0xx_it.h"
 //#include <Stream.h>
+#include "usart.h"
 #include "stm32f0xx.h"
 #include "stm32f0_discovery.h"
-
-
-// if you seem to get "corrupt settings add this line to your .ino
-// #include <avr/io.h>
+#include "serial.h"
 
 // ----------------------------------------------------------------------------
 // GPIO Pin Defines
@@ -80,8 +21,20 @@
 #define LORA_M1_PIN GPIO_Pin_11
 #define LORA_AUX_PIN GPIO_Pin_12
 
+#define TX_BUFFER_SIZE 400 //According to the datasheet, the LoRa module can store 400 bytes
+#define RX_BUFFER_SIZE 200
 
-/* 
+//Timer 3 for delay of 1 MS
+#define TIM3PERIOD (1000-1)
+#define TIM3PRESCALE 48
+
+//delay defines
+#define NO_AUX_DELAY 1000
+#define MINIMUM_AFTER_AUX_DELAY 20
+
+#define NEXT_RXREAD_LOCATION ((RxReadLocation + 1) % RX_BUFFER_SIZE)
+
+/*
 
 if modules don't seem to save, you will have to adjust this value
 when settin M0 an M1 there is gererally a short time for the transceiver modules
@@ -90,8 +43,6 @@ to react, some say only 10 ms, but I've found it can be much lonnger, I'm using
 
 */
 #define PIN_RECOVER 15 
-
-
 
 
 // modes NORMAL send and recieve for example
@@ -156,22 +107,6 @@ to react, some say only 10 ms, but I've found it can be much lonnger, I'm using
 #define OPT_FECDISABLE  0b0
 #define OPT_FECENABLE 0b1	
 
-// transmitter output power--check government regulations on legal transmit power
-// refer to the data sheet as not all modules support these power levels
-// constants for 1W units
-// (can be different for transmitter and reveiver)
-//#define OPT_TP30 0b00		// 30 db
-//#define OPT_TP27 0b01		// 27 db
-//#define OPT_TP24 0b10		// 24 db
-//#define OPT_TP21 0b11		// 21 db
-
-// constants or 500 mW units
-//#define OPT_TP27 0b00		// 27 db
-//#define OPT_TP24 0b01		// 24 db
-//#define OPT_TP21 0b10		// 21 db
-//#define OPT_TP18 0b11		// 17 db
-//#define OPT_TP17 0b11		// 17 db
-
 // constants or 100 mW units
 #define OPT_TP20 0b00		// 20 db
 #define OPT_TP17 0b01		// 17 db
@@ -179,17 +114,23 @@ to react, some say only 10 ms, but I've found it can be much lonnger, I'm using
 #define OPT_TP11 0b11		// 10 db
 #define OPT_TP10 0b11		// 10 db
 
-	// code to initialize the library
-	// this method reads all parameters from the module and stores them in memory
-	// library modifications could be made to only read upon a change at a savings of 30 or so bytes
-	// the issue with these modules are some parameters are a collection of several options AND
-	// ALL parameters must be sent even if only one option is changed--hence get all parameters initially
-	// so you know what the non changed parameters are know for resending back
 
-	bool LoRa_init(void);
-	void LoRa_Init_GPIO(void);
+	bool init_LoRa(void);
+	void init_LoRa_GPIO(void);
 	
-	// methods to set modules working parameters NOTHING WILL BE SAVED UNLESS SaveParameters() is called
+	void init_USART(void);
+	void init_USART_GPIO(void);
+	
+	void init_buffer(void);
+	
+	void init_DMA_write(void);
+	
+	void init_Timer_Delay(void);
+	
+	void delay(unsigned long delayTime);
+	
+	void readBytes(uint8_t* buffer, uint8_t size);
+	
 	void SetMode(uint8_t mode);
 	void SetAddress(uint16_t val);
 	void SetAddressH(uint8_t val);
@@ -209,9 +150,7 @@ to react, some say only 10 ms, but I've found it can be much lonnger, I'm using
 	void SetTransmitPower(uint8_t val);
 
 	bool GetAux(void);
-
-	bool available(void);
-	void flush(void);
+	
 	// methods to get some operating parameters
 	uint16_t GetAddress(void);
 
@@ -239,11 +178,11 @@ to react, some say only 10 ms, but I've found it can be much lonnger, I'm using
 		
 	// methods to get data from sending unit
 	uint8_t GetByte(void);
-	bool GetStruct(const void *TheStructure, uint16_t size_);
+	void GetStruct(const void *TheStructure, uint16_t size_);
 	
 	// method to send to data to receiving unit
 	void SendByte(uint8_t TheByte);
-	bool SendStruct(const void *TheStructure, uint16_t size_);
+	void SendStruct(const void *TheStructure, uint16_t size_);
 	
 	// mehod to print parameters
 	void PrintParameters(void);
@@ -272,44 +211,8 @@ to react, some say only 10 ms, but I've found it can be much lonnger, I'm using
 	
 	bool ReadModelData(void);
 	void ClearBuffer(void);
-	// variable for the serial stream
-	Stream* _s;
-	Stream* _TD;
 	
+	extern volatile uint8_t *RxBuffer;
+	extern uint16_t RxWriteLocation;
 	
-	// pin variables
-	int8_t _M0;
-	int8_t _M1;
-	int8_t _AUX;
-
-	// variable for the 6 bytes that are sent to the module to program it
-	// or bytes received to indicate modules programmed settings
-	uint8_t _Params[6];
-
-	// indicidual variables for each of the 6 bytes
-	// _Params could be used as the main variable storage, but since some bytes
-	// are a collection of several options, let's just make storage consistent
-	// also Param[1] is different data depending on the _Save variable
-	uint8_t _Save;
-	uint8_t _AddressHigh;
-	uint8_t _AddressLow;
-	uint8_t _Speed;
-	uint8_t _Channel;
-	uint8_t _Options;
-
-	
-	// individual variables for all the options
-	uint8_t _ParityBit;
-	uint8_t _UARTDataRate;
-	uint8_t _AirDataRate;
-	uint8_t _OptionTrans;
-	uint8_t _OptionPullup;
-	uint8_t _OptionWakeup;
-	uint8_t _OptionFEC;
-	uint8_t _OptionPower;
-	uint16_t _Address;
-	uint8_t _Model;
-	uint8_t _Version;
-	uint8_t _Features;
-	uint8_t _buf;
-
+	extern bool full;

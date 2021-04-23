@@ -7,6 +7,22 @@
         "new": "cpp",
         "ostream": "cpp",
         "sstream": "cpp",
-        "streambuf": "cpp"
+        "streambuf": "cpp",
+        "vector": "cpp",
+        "functional": "cpp",
+        "random": "cpp",
+        "type_traits": "cpp",
+        "tuple": "cpp",
+        "array": "cpp",
+        "cstddef": "cpp",
+        "cstdio": "cpp",
+        "cstring": "cpp",
+        "cwchar": "cpp",
+        "initializer_list": "cpp",
+        "memory": "cpp",
+        "stdexcept": "cpp",
+        "system_error": "cpp",
+        "typeinfo": "cpp",
+        "utility": "cpp"
     }
 }

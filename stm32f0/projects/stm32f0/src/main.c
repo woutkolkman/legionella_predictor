@@ -1,44 +1,66 @@
 /******************************************************************************
  * File           : Main program
  *****************************************************************************/
-#include "stm32f0xx.h"
-#include "stm32f0_discovery.h"
-#include "usart.h"
+#include "main.h"
 
-// ----------------------------------------------------------------------------
-// Global variables
-// ----------------------------------------------------------------------------
-
-// ----------------------------------------------------------------------------
-// Function prototypes
-// ----------------------------------------------------------------------------
-void delay(const int d);
 
 // ----------------------------------------------------------------------------
 // Main
 // ----------------------------------------------------------------------------
 int main(void)
 {
-	// Configure LED3 and LED4 on STM32F0-Discovery
-	STM_EVAL_LEDInit(LED3);
-	STM_EVAL_LEDInit(LED4);
+	init_USART2();
+	Serial_clearscreen();
+	init_LoRa();
 	
 	while(1) {
-		STM_EVAL_LEDToggle(LED3);
-		STM_EVAL_LEDToggle(LED4);
-		delay(SystemCoreClock/8/10);
+		#if TRANSCEIVE == 0
+		
+		
+		#elif TRANSCEIVE == 1
+		
+		static bool up;
+		PrintParameters();
+		if(up) {
+			MyData.Temperature++;
+		} else {
+			MyData.Temperature--;
+		}
+		MyData.Count++;
+		if(MyData.Temperature <= -10) {
+			up = true;
+		}
+		if(MyData.Temperature >= 85) {
+			up = false;
+		}
+		
+		SendByte(0x38);
+		Serial_print("Sending Count: ");Serial_putint(MyData.Count);Serial_print(" = Temp: ");Serial_putintln(MyData.Temperature);
+		
+		#endif
 	}
 }
 
-#pragma push
-#pragma O3
-void delay(const int d)
-{
-	volatile int i;
-
-	for(i=d; i>0; i--){ ; }
-
-	return;
+void init_USART2() {
+	USART_InitTypeDef USART_Initstructure;
+	GPIO_InitTypeDef GPIO_initStructure;
+	
+	RCC_AHBPeriphClockCmd(RCC_AHBENR_GPIOAEN, ENABLE); 	//periph clock enable
+	
+	//GPIO for UART
+	GPIO_initStructure.GPIO_Mode = GPIO_Mode_AF;
+	GPIO_initStructure.GPIO_OType = GPIO_OType_PP;
+	GPIO_initStructure.GPIO_Pin = USART2_PINS;
+	GPIO_initStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
+	GPIO_initStructure.GPIO_Speed = GPIO_Speed_50MHz;
+	
+	GPIO_Init(GPIOA, &GPIO_initStructure);
+	
+	GPIO_PinAFConfig(GPIOA, GPIO_PinSource2, GPIO_AF_1);
+	GPIO_PinAFConfig(GPIOA, GPIO_PinSource3, GPIO_AF_1);
+	
+	RCC_APB1PeriphClockCmd(RCC_APB1Periph_USART2, ENABLE);
+	USART_StructInit(&USART_Initstructure);
+	USART_Init(USART2, &USART_Initstructure);
+	USART_Cmd(USART2, ENABLE);
 }
-#pragma pop
-

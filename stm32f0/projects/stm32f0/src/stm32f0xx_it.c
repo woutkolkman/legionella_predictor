@@ -27,9 +27,19 @@
   ******************************************************************************
   */
 
+#define RX_BUFFER_SIZE 200
+#define NEXT_RXWRITE_LOCATION ((RxWriteLocation + 1) % RX_BUFFER_SIZE)
+
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f0xx_it.h"
 #include "STM32F0_discovery.h"
+#include <stdbool.h>
+
+extern volatile unsigned long timehad;
+volatile uint8_t* RxBuffer;
+volatile uint16_t RxWriteLocation;
+extern uint16_t RxReadLocation;
+bool full;
 
 // ----------------------------------------------------------------------------
 // Global variables
@@ -102,12 +112,26 @@ void SysTick_Handler(void)
 /*  file (startup_stm32f0xx.s).                                               */
 /******************************************************************************/
 
-void USART1_IRQHandler(void)
-{
+void TIM3_IRQHandler(void) {
+	timehad++;
+	TIM_ClearITPendingBit(TIM3, TIM_IT_Update);
 }
 
-void USART2_IRQHandler(void)
-{
+void USART1_IRQHandler(void)
+{ 
+	// Read Data Register not empty interrupt?
+  if(USART1->ISR & USART_ISR_RXNE) {
+		if(NEXT_RXWRITE_LOCATION == RxReadLocation) {
+			RxBuffer[RxWriteLocation] = USART1->RDR;
+			RxWriteLocation = NEXT_RXWRITE_LOCATION;
+			full = true;
+		} else if (RxWriteLocation == RxReadLocation && full) {
+			USART1->RDR; //throw away data, no space left
+		} else {
+			RxBuffer[RxWriteLocation] = USART1->RDR;
+			RxWriteLocation = NEXT_RXWRITE_LOCATION;
+		}
+	}
 }
 
 /**
@@ -115,13 +139,9 @@ void USART2_IRQHandler(void)
   * @param  None
   * @retval None
   */
-void TIM3_IRQHandler(void)
-{
-	if(TIM_GetITStatus(TIM3, TIM_IT_Update) != RESET)
-	{
-		TIM_ClearITPendingBit(TIM3, TIM_IT_Update);
-		STM_EVAL_LEDToggle(LED4);
-	}
+
+void DMA1_Channel2_3_IRQHandler(void) {
+	
 }
 
 /**
