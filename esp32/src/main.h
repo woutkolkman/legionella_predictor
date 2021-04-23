@@ -2,7 +2,7 @@
 //TRANSCEIVE 1 is the ESP LoRa transmitting part
 //TRANSCEIVE 2 is the ESP LoRa Receiving 1 byte part
 //TRANSCEIVE 3 is the ESP LoRa Sending 1 byte part
-#define TRANSCEIVE 3
+#define TRANSCEIVE 0
 
 #include "ebyte.h"
 
@@ -22,10 +22,9 @@ YOU MUST USE THE ACTUAL GPIO NUMBER
 struct DATA {
   unsigned long Count;
   int8_t Temperature;
-};
+} MyData;
 
 // these are just dummy variables, replace with your own
-DATA MyData;
 unsigned long Last;
 #if TRANSCEIVE == 1
 bool up;

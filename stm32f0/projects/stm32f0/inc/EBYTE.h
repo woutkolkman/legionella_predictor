@@ -21,7 +21,7 @@
 #define LORA_M1_PIN GPIO_Pin_11		//GPIOA11
 #define LORA_AUX_PIN GPIO_Pin_12	//GPIOA12
 
-#define TX_BUFFER_SIZE 400 //According to the datasheet, the LoRa module can store 400 bytes
+#define TX_BUFFER_SIZE 100 //According to the datasheet, the LoRa module can store 400 bytes
 #define RX_BUFFER_SIZE 200
 
 //Timer 3 for delay of 1 MS

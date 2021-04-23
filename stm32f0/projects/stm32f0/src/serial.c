@@ -1,5 +1,31 @@
 #include "serial.h"
 
+
+void init_USART2() {
+	USART_InitTypeDef USART_Initstructure;
+	GPIO_InitTypeDef GPIO_initStructure;
+	
+	RCC_AHBPeriphClockCmd(RCC_AHBENR_GPIOAEN, ENABLE); 	//periph clock enable
+	
+	//GPIO for UART
+	GPIO_initStructure.GPIO_Mode = GPIO_Mode_AF;
+	GPIO_initStructure.GPIO_OType = GPIO_OType_PP;
+	GPIO_initStructure.GPIO_Pin = USART2_PINS;
+	GPIO_initStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
+	GPIO_initStructure.GPIO_Speed = GPIO_Speed_50MHz;
+	
+	GPIO_Init(GPIOA, &GPIO_initStructure);
+	
+	GPIO_PinAFConfig(GPIOA, GPIO_PinSource2, GPIO_AF_1);
+	GPIO_PinAFConfig(GPIOA, GPIO_PinSource3, GPIO_AF_1);
+	
+	RCC_APB1PeriphClockCmd(RCC_APB1Periph_USART2, ENABLE);
+	USART_StructInit(&USART_Initstructure);
+	USART_Init(USART2, &USART_Initstructure);
+	USART_Cmd(USART2, ENABLE);
+}
+
+
 void Serial_char(char c) {
   // Wait for Transmit data register empty
   while((USART2->ISR & USART_ISR_TXE) == 0) ;

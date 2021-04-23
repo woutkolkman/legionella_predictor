@@ -3,8 +3,8 @@
 #include "stm32f0_discovery.h"
 #include "usart.h"
 
-#define TRANSCEIVE 2
-#define USART2_PINS (GPIO_Pin_2 | GPIO_Pin_3)
+#define TRANSCEIVE 1
+
 
 // ----------------------------------------------------------------------------
 // Global variables
@@ -21,4 +21,4 @@ struct DATA {
 // ----------------------------------------------------------------------------
 // Function prototypes
 // ----------------------------------------------------------------------------
-void init_USART2(void);
+

@@ -7,6 +7,7 @@
 //global stuff
 
 uint16_t RxReadLocation;
+uint8_t *TxBuffer;
 
 // pin variables
 	int8_t _M0;
@@ -45,8 +46,6 @@ uint16_t RxReadLocation;
 	uint8_t _buf;
 
 	volatile unsigned long timehad;
-
-
 
 
 bool init_LoRa() {
@@ -151,6 +150,11 @@ void init_buffer() {
 		//Error handling;
 		HardFault_Handler();
 	}
+	TxBuffer = (uint8_t*)malloc(sizeof(uint8_t)*TX_BUFFER_SIZE);
+	if(TxBuffer == NULL) {
+		//Error handling;
+		HardFault_Handler();
+	}
 }
 
 void init_Timer_Delay() {
@@ -185,15 +189,27 @@ uint8_t GetByte() {
 }
 
 void SendStruct(const void* TheStructure, uint16_t size) {
-	uint16_t count = 0;
-	while(count < size) {
-		//USART_putc();
-	}
 	
+	//https://stackoverflow.com/questions/7067927/how-do-you-convert-void-pointer-to-char-pointer-in-c
+	
+  uint16_t count = 0;
+	uint8_t *CTheStructure = (uint8_t *) TheStructure;
+	TxBuffer = CTheStructure;
+	while (count < size) {
+	  USART_putc(TxBuffer[count]);
+		count++;
+	}
+	CompleteTask(1000);
 }
+
 void getStruct(const void* TheStructure, uint16_t size) {
 	
+	uint16_t count = 0;
 	
+	while (count < size) {
+	
+	}
+	CompleteTask(1000);
 }
 
 void CompleteTask(unsigned long timeout) {
