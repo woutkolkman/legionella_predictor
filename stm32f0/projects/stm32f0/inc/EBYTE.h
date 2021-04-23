@@ -16,10 +16,10 @@
 // ----------------------------------------------------------------------------
 // GPIO Pin Defines
 // ----------------------------------------------------------------------------
-#define LORA_USART1_PINS (GPIO_Pin_9 | GPIO_Pin_10)
-#define LORA_M0_PIN GPIO_Pin_8
-#define LORA_M1_PIN GPIO_Pin_11
-#define LORA_AUX_PIN GPIO_Pin_12
+#define LORA_USART1_PINS (GPIO_Pin_9 /*GPIOA9 (tx)*/| GPIO_Pin_10/*GPIOA10 (Rx)*/)
+#define LORA_M0_PIN GPIO_Pin_8		//GPIOA8
+#define LORA_M1_PIN GPIO_Pin_11		//GPIOA11
+#define LORA_AUX_PIN GPIO_Pin_12	//GPIOA12
 
 #define TX_BUFFER_SIZE 400 //According to the datasheet, the LoRa module can store 400 bytes
 #define RX_BUFFER_SIZE 200
@@ -211,8 +211,10 @@ to react, some say only 10 ms, but I've found it can be much lonnger, I'm using
 	
 	bool ReadModelData(void);
 	void ClearBuffer(void);
+	bool available(void);
 	
 	extern volatile uint8_t *RxBuffer;
 	extern uint16_t RxWriteLocation;
+	
 	
 	extern bool full;

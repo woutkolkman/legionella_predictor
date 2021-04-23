@@ -13,3 +13,4 @@ void Serial_println(char *str);
 void Serial_putint(int16_t v);
 void Serial_putintln(int16_t v);
 void Serial_clearscreen(void);
+void Serial_newLine(void);

@@ -3,12 +3,14 @@
 #include "stm32f0_discovery.h"
 #include "usart.h"
 
-#define TRANSCEIVE 1
+#define TRANSCEIVE 2
 #define USART2_PINS (GPIO_Pin_2 | GPIO_Pin_3)
 
 // ----------------------------------------------------------------------------
 // Global variables
 // ----------------------------------------------------------------------------
+extern uint16_t RxReadLocation;
+
 
 struct DATA {
   unsigned long Count;

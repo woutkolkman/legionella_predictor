@@ -98,6 +98,8 @@ void init_USART() {
 	USART_DMACmd(USART1, USART_DMAReq_Tx, ENABLE);
 	#else
 	USART_Cmd(USART1, ENABLE);
+	USART_ITConfig(USART1, USART_IT_RXNE, ENABLE);
+	NVIC_EnableIRQ(USART1_IRQn);
 	
 	#endif
 	
@@ -165,14 +167,20 @@ void init_Timer_Delay() {
 	NVIC_EnableIRQ(TIM3_IRQn);
 }
 
+bool available() {
+	return(USART1->ISR & USART_ISR_RXNE);
+}
+
 void SendByte( uint8_t TheByte) {
 	USART_putc(TheByte);
+	CompleteTask(1000);
 }
 
 uint8_t GetByte() {
 	uint8_t result = RxBuffer[RxReadLocation];
 	RxReadLocation = NEXT_RXREAD_LOCATION;
 	full = false;
+	CompleteTask(1000);
 	return result;
 }
 
@@ -520,7 +528,7 @@ bool ReadModelData() {
 
 	if (0xC3 != _Params[0]) {
 		for (timeout = 0; timeout < 5; timeout++){
-			Serial_print("Trying: ");Serial_putint(timeout);Serial_println("\r\n");
+			Serial_print("Trying: ");Serial_putint(timeout);Serial_print("\r\n");
 			_Params[0] = 0;
 			_Params[1] = 0;
 			_Params[2] = 0;

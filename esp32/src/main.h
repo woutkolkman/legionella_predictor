@@ -1,6 +1,8 @@
-//TRANSCEIVE 1 is the ESP LoRa Receiving part
-//TRANSCEIVE 2 is the ESP LoRa transmitting part
-#define TRANSCEIVE 1
+//TRANSCEIVE 0 is the ESP LoRa Receiving part
+//TRANSCEIVE 1 is the ESP LoRa transmitting part
+//TRANSCEIVE 2 is the ESP LoRa Receiving 1 byte part
+//TRANSCEIVE 3 is the ESP LoRa Sending 1 byte part
+#define TRANSCEIVE 3
 
 #include "ebyte.h"
 

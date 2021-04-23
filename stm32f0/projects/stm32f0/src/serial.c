@@ -21,8 +21,7 @@ void Serial_print(char *str) {
 
 void Serial_println(char *str) {
 	Serial_print(str);
-	Serial_char('\n');
-	Serial_char('\r');
+	Serial_newLine();
 }
 
 void Serial_putint(int16_t v) {
@@ -60,8 +59,7 @@ void Serial_putint(int16_t v) {
 
 void Serial_putintln(int16_t v) {
 	Serial_putint(v);
-	Serial_char('\n');
-	Serial_char('\r');
+	Serial_newLine();
 }
 void Serial_clearscreen(void)
 {
@@ -72,3 +70,6 @@ void Serial_clearscreen(void)
   Serial_println(cmd2);
 }
 
+void Serial_newLine() {
+	Serial_print("\n\r");
+}

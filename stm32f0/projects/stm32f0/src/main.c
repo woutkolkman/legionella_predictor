@@ -12,15 +12,17 @@ int main(void)
 	init_USART2();
 	Serial_clearscreen();
 	init_LoRa();
-	
+	PrintParameters();
 	while(1) {
-		#if TRANSCEIVE == 0
-		
-		
-		#elif TRANSCEIVE == 1
+		#if TRANSCEIVE == 2
+		if(RxWriteLocation != RxReadLocation || full) {
+			Serial_print("byte received: ");Serial_putintln(GetByte());
+		}
+			
+		#elif TRANSCEIVE == 3
 		
 		static bool up;
-		PrintParameters();
+		
 		if(up) {
 			MyData.Temperature++;
 		} else {
@@ -35,7 +37,8 @@ int main(void)
 		}
 		
 		SendByte(0x38);
-		Serial_print("Sending Count: ");Serial_putint(MyData.Count);Serial_print(" = Temp: ");Serial_putintln(MyData.Temperature);
+		Serial_print("Sending Byte: 0x38");Serial_newLine();
+		//Serial_print("Sending Count: ");Serial_putint(MyData.Count);Serial_print(" = Temp: ");Serial_putintln(MyData.Temperature);
 		
 		#endif
 	}
