@@ -2,18 +2,17 @@
 #include <WiFi.h>
 #include <HTTPClient.h>
 
-#define length(array) ((sizeof(array)) / (sizeof(array[0])))
 #define POST_VALUE_LEN 8 //bytes per http parameter (5 numbers: -99.9...999.9)
 #define PAYLOAD_SIZE 60  //* temperature values
 #define POST_PAYLOAD_LEN ((POST_VALUE_LEN)*(PAYLOAD_SIZE))
 
-const char *ssid = "hoi_simone"; //later laten invullen via website
-const char *password = "hallo123"; //later laten invullen via website
-const char* hostGet = "mydatasite.com"; //later laten invullen via website      TODO mag mogelijk weg
-char cloud_address[] = "http://145.44.235.205";
-char cloud_port[] = "80";
-char cloud_path[] = "/packet";
+const char *ssid = "hoi_simone";                //later laten invullen via website
+const char *password = "hallo123";              //later laten invullen via website
+char cloud_address[] = "http://145.44.235.205"; //later laten invullen via website
+char cloud_port[] = "80";                       //later laten invullen via website
+char cloud_path[] = "/packet";                  //later laten invullen via website
 char post_payload[1+POST_PAYLOAD_LEN];
+const char *transmitter_id = "XHD38SD3";        //vervangen door wat transmitter verzend
 
 
 //function prototypes
@@ -26,6 +25,7 @@ void postData();
 void setup() {
   Serial.begin(115200);
 
+#if 0
   //genereer een test POST message met ?v=00001&v=00002&...
   post_payload[0] = '?';
   uint16_t j = 1;
@@ -37,10 +37,25 @@ void setup() {
     post_payload[j-3] = (char) ((i/10)+'0');
   }
   post_payload[j-1] = 0;
+#else
+  //genereer een test POST payload met elke regel een temperatuur
+  strcpy(post_payload, transmitter_id);
+  strcat(post_payload, "\n");
+  char buff[5]; //'-','1','2','8','\0'
+  for (uint8_t i=0; i<PAYLOAD_SIZE; i++) {
+    strcat( post_payload, itoa(i,&buff[0],DEC) );
+    strcat(post_payload, "\n");
+  }
+  /*
+   * De waardes die aan het begin van post_payload staan zijn het oudste. 
+   * Waardes worden gescheiden met '\n'. 
+   * De eerste regel bevat het transmitter ID. 
+   */
+#endif
 
   connect_to_network();
   delay(500);
-  send_to_cloud();
+  send_to_cloud(); //verzend de testdata 1x nadat wifi is verbonden
 }
 
 
@@ -55,8 +70,8 @@ void loop() {
 
 bool send_to_cloud() {
   HTTPClient http;
-  int data_length = (strlen(cloud_address) + (strlen(cloud_port)+1/*:*/) + strlen(cloud_path) + POST_PAYLOAD_LEN);
-  char buffer[1+data_length];
+  int data_length = (strlen(cloud_address) + (strlen(cloud_port)+1/*:*/) + strlen(cloud_path) /*+ POST_PAYLOAD_LEN*/);
+  char server_url[1+data_length];
   bool retval = false;
 
   if (!WiFi.isConnected()) {
@@ -67,15 +82,17 @@ bool send_to_cloud() {
   Serial.print("Data length: ");
   Serial.println(data_length);
   Serial.print("Sending to: ");
-  strcpy(buffer, cloud_address);
-  strcat(buffer, ":");
-  strcat(buffer, cloud_port);
-  strcat(buffer, cloud_path);
-  strcat(buffer, post_payload);
-  Serial.write((uint8_t*) &buffer, sizeof(buffer));
+  strcpy(server_url, cloud_address);
+  strcat(server_url, ":");
+  strcat(server_url, cloud_port);
+  strcat(server_url, cloud_path);
+//  strcat(buffer, post_payload);
+  Serial.write((uint8_t*) &server_url, sizeof(server_url));
   Serial.println();
+  Serial.print("Payload: ");
+  Serial.println(post_payload);
 
-  http.begin(buffer);  //Specify destination for HTTP request
+  http.begin(server_url);  //Specify destination for HTTP request
   http.addHeader("Content-Type", "text/plain");  //Specify content-type header
   int httpResponseCode = http.POST((uint8_t*) post_payload, POST_PAYLOAD_LEN); //Send the actual POST request
 
@@ -137,7 +154,7 @@ void connect_to_network() { // function to connect to current WiFi network
 }
 
 
-//TODO deze hele functie mag mogelijk weg
+/*//TODO deze hele functie mag mogelijk weg
 void postData() {
 
   WiFiClient clientGet;
@@ -189,3 +206,4 @@ void postData() {
   Serial.println(hostGet);
   clientGet.stop();
 }
+*/
