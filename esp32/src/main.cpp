@@ -19,26 +19,12 @@ const char *transmitter_id = "XHD38SD3";        //vervangen door wat transmitter
 bool send_to_cloud();
 void connect_to_network();
 void scan_networks();
-void postData();
 
 
 void setup() {
   Serial.begin(115200);
 
-#if 0
-  //genereer een test POST message met ?v=00001&v=00002&...
-  post_payload[0] = '?';
-  uint16_t j = 1;
-  for (uint8_t i=0; i<PAYLOAD_SIZE; i++) {
-    strncpy(&post_payload[j], "v=00000", 7);
-    j += POST_VALUE_LEN;
-    post_payload[j-1] = '&';
-    post_payload[j-2] = (char) ((i%10)+'0');
-    post_payload[j-3] = (char) ((i/10)+'0');
-  }
-  post_payload[j-1] = 0;
-#else
-  //genereer een test POST payload met elke regel een temperatuur
+  //genereer een test POST payload met elke regel een temperatuur (deze code moet nog worden weggehaald)
   strcpy(post_payload, transmitter_id);
   strcat(post_payload, "\n");
   char buff[5]; //'-','1','2','8','\0'
@@ -50,8 +36,9 @@ void setup() {
    * De waardes die aan het begin van post_payload staan zijn het oudste. 
    * Waardes worden gescheiden met '\n'. 
    * De eerste regel bevat het transmitter ID. 
+   * Deze blok code voor testwaardes komt niet in de eindversie, maar de inhoud 
+   * van post_payload wordt gegenereerd tijdens het ontvangen van LoRa data. 
    */
-#endif
 
   connect_to_network();
   delay(500);
@@ -68,9 +55,13 @@ void loop() {
 }
 
 
+/*
+ * This function generates a HTTP POST message to cloud_address with the contents of post_payload. 
+ */
 bool send_to_cloud() {
+
   HTTPClient http;
-  int data_length = (strlen(cloud_address) + (strlen(cloud_port)+1/*:*/) + strlen(cloud_path) /*+ POST_PAYLOAD_LEN*/);
+  int data_length = (strlen(cloud_address) + (strlen(cloud_port)+1/*:*/) + strlen(cloud_path));
   char server_url[1+data_length];
   bool retval = false;
 
@@ -86,7 +77,6 @@ bool send_to_cloud() {
   strcat(server_url, ":");
   strcat(server_url, cloud_port);
   strcat(server_url, cloud_path);
-//  strcat(buffer, post_payload);
   Serial.write((uint8_t*) &server_url, sizeof(server_url));
   Serial.println();
   Serial.print("Payload: ");
@@ -152,58 +142,3 @@ void connect_to_network() { // function to connect to current WiFi network
   Serial.println();
   Serial.println(WiFi.localIP()); // show IP address if connection has been made
 }
-
-
-/*//TODO deze hele functie mag mogelijk weg
-void postData() {
-
-  WiFiClient clientGet;
-  const int httpGetPort = 80;
-
-  //the path and file to send the data to:
-  String urlGet = "/data/collector.php";
- 
-  // We now create and add parameters:
-  String src = "ESP";
-  String typ = "flt";
-  String nam = "temp";
-  String vint = "92"; 
-
-  urlGet += "?src=" + src + "&typ=" + typ + "&nam=" + nam + "&int=" + vint;
-  Serial.print(">>> Connecting to host: ");
-  Serial.println(hostGet);
-
-  if (!clientGet.connect(hostGet, httpGetPort)) {
-    Serial.print("Connection failed: ");
-    Serial.print(hostGet);
-
-  } else {
-    clientGet.println("GET " + urlGet + " HTTP/1.1");
-    clientGet.print("Host: ");
-    clientGet.println(hostGet);
-    clientGet.println("User-Agent: ESP8266/1.0");
-    clientGet.println("Connection: close\r\n\r\n");
-
-    unsigned long timeoutP = millis();
-    while (clientGet.available() == 0) {
-      if (millis() - timeoutP > 10000) {
-        Serial.print(">>> Client Timeout: ");
-        Serial.println(hostGet);
-        clientGet.stop();
-        return;
-      }
-    }
-
-    //just checks the 1st line of the server response. Could be expanded if needed.
-    while(clientGet.available()){
-      String retLine = clientGet.readStringUntil('\r');
-      Serial.println(retLine);
-      break;
-    }
-  } //end client connection if else
-
-  Serial.print(">>> Closing host: ");
-  Serial.println(hostGet);
-  clientGet.stop();
-}
-*/
