@@ -4,7 +4,7 @@
 
 String new_sidd = "";
 String new_password = "";
-char char_sidd[80],char_password[80];
+bool mode_is_hotspot = true;
 
 // basic webpage format
 const char webpage_head[] = {
@@ -32,6 +32,10 @@ const char webpage_head[] = {
 			    "}\n"
 			    "#wifi tr:nth-child(even) {\n"
 				    "background-color: #dddddd;\n"
+			    "}\n"
+          ".info {\n"
+				    "border: 1px solid blue;\n"
+				    "text-align: center;\n"
 			    "}\n"
 		    "</style>\n"
 	    "</head>\n\n"
@@ -71,6 +75,12 @@ const char webpage_wifi_form[] = {
 void homepage() {
  String message = "";
   message += webpage_head;
+
+  // show wifi status
+  message += "<div class='info'>\n";
+	message += "<p>" + ((mode_is_hotspot == false) ? ("Device connected to network " + new_sidd) : ("Device in hotspot mode.")) + "</p>\n";
+	message += "</div>";
+
   message += "<p>click here to enter wifi credentials <a href='/scanwifi'>HERE</a></p>\n";
   message += webpage_tail;
 	server.send(200, "text/html", message);
@@ -133,6 +143,7 @@ void scan_networks() {
 void connect_to_network() {
  String message = "";
  bool connect_to_wifi = false;
+ char char_sidd[80],char_password[80];
   // add head of webpage
   message += webpage_head;
 
@@ -155,20 +166,8 @@ void connect_to_network() {
   // if we get succesfull new wifi credentials
   if(connect_to_wifi == true)
   {
-    WiFi.mode(WIFI_STA); // mode = station mode
-    
     new_sidd.toCharArray(char_sidd,80);
     new_password.toCharArray(char_password,80);
-    WiFi.begin(char_sidd, char_password); // initialize WiFi using networkname + password
-
-    Serial.println();
-
-    while (WiFi.status() != WL_CONNECTED) { // wait while connected has not been made yet
-      Serial.print(".");
-      delay(1000);
-    }
-    Serial.println(WiFi.localIP()); // show IP address if connection has been made
-
-    MDNS.begin("test");
+    setup_wifi(false,char_sidd,char_password);
   }
 }
