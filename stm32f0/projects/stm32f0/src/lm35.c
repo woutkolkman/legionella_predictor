@@ -35,7 +35,7 @@ void sensor_init(void) { // initialization for analog temperature sensor (LM35)
   while (ADC_GetFlagStatus(ADC1, ADC_FLAG_ADEN) == RESET);
 }
 
-float measure_temperature(void) {
+float measure_temperature(void) { // function to measure current temperature
 		
 	uint16_t adc;
 	float voltage_mV, temperature;
