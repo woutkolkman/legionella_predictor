@@ -38,13 +38,14 @@ void USART2_IRQHandler(void)
 
 void TIM14_IRQHandler(void) { // timer to measure temperature every minute
 	
-	static int counter;
+	uint8_t temp;
+	char a[10];
 	
   if (TIM_GetITStatus(TIM14, TIM_IT_Update) != RESET) {
-		if (++counter >= ONE_MINUTE) { // wait for minute to pass
-			measure_temperature(); // measure current temperature
-			counter = 0; // reset counter
-		}
+		temp = measure_temperature();
+		USART_itoa(temp, a);
+		USART_putstr(a);
+		USART_putstr("\n");
     TIM_ClearITPendingBit(TIM14, TIM_IT_Update);
   }
 }

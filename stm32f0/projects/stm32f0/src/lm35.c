@@ -1,5 +1,6 @@
 #include "stm32f0xx.h"
 #include "stm32f0_discovery.h"
+#include "lm35.h"
 
 void sensor_init(void) { // initialization for analog temperature sensor (LM35)
 	
@@ -35,16 +36,13 @@ void sensor_init(void) { // initialization for analog temperature sensor (LM35)
   while (ADC_GetFlagStatus(ADC1, ADC_FLAG_ADEN) == RESET);
 }
 
-float measure_temperature(void) { // function to measure current temperature
+uint8_t measure_temperature(void) { // function to measure current temperature
 		
 	uint16_t adc;
-	float voltage_mV, temperature;
+	uint8_t temperature;
 
 	// read ADC-value 
 	adc = ADC_GetConversionValue(ADC1);
-	
-	// convert reading into voltage (mV)
-	voltage_mV = adc * (5000 / 1024.0);
 	
 	// convert ADC-reading to temperature (degrees Celsius)
 	temperature = adc * 0.322;
@@ -59,7 +57,7 @@ void TIM14_init(void) {
   RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM14, ENABLE);
   
   TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up; 
-  TIM_TimeBaseStructure.TIM_Period      = 1000 - 1; 
+  TIM_TimeBaseStructure.TIM_Period      = 60000 - 1; 
   TIM_TimeBaseStructure.TIM_Prescaler   = (uint16_t)((SystemCoreClock / 1000) - 1);
   
   // configure time base init
@@ -76,17 +74,5 @@ void TIM14_interrupt_init(void) {
   NVIC_Init(&NVIC_InitStructure);
    
   TIM_ITConfig(TIM14, TIM_IT_Update, ENABLE); // enable TIM_ITConfig interrupt
-  TIM_Cmd(TIM14, ENABLE); // enable interrupt on TIM3
+  TIM_Cmd(TIM14, ENABLE); // enable interrupt on TIM14
 }
-
-#pragma push
-#pragma O3
-void delay(const int d) {
-  
-	volatile int i;
-
-  for (i = d; i > 0; i--) { ; }
-
-  return;
-}
-#pragma pop
