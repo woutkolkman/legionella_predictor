@@ -183,17 +183,3 @@ char *USART_itoa(int16_t i, char *p)
 }
 
 #endif
-
-#pragma push
-#pragma O3
-
-void delay(const int d) {
-	
-	volatile int i;
-
-	for (i = d; i > 0; i--) { 
-		; 
-	}
-	return;
-}
-#pragma pop
