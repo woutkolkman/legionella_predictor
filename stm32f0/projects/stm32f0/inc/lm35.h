@@ -6,7 +6,6 @@
 // function prototypes
 void sensor_init(void);
 uint8_t measure_temperature(void);
-void delay(const int d);
 void TIM14_init(void);
 void TIM14_interrupt_init(void);
 
