@@ -1,18 +1,19 @@
 // shape of code inspired by https://github.com/espressif/arduino-esp32/blob/master/libraries/WebServer/examples/HelloServer/HelloServer.ino
+#include "main.h"
 #include <Arduino.h>
 #include <WiFi.h>
 #include <WebServer.h>
 #include <ESPmDNS.h>
+#include "website.h"
+#include "config_wifi.h"
+
 
 // set server to listen to port 80
 WebServer server(80);
 
 void setup_wifi(bool hotspot,char *ssid, char *password);
 
-// contain html code
-#include "website.h"
-
-// network credentials
+// hotspot wifi credentials
 const char *hotspot_ssid = "legionella_predetector";
 const char *hotspot_password = "zeer_geheim2021";
 
@@ -40,44 +41,3 @@ void loop() {
   delay(2);
 }
 
-void setup_wifi(bool hotspot,char *ssid, char *password) {
- IPAddress IP;
-  // decide to make a hotspot or connect to a network
-  if(hotspot == true) { // make wifi hotspot
-    // setup a wifi access point
-    Serial.printf("Start a wifi accesspoint : %s \n",ssid);
-    WiFi.softAP(ssid, password);
-
-    // get ip address of esp32
-    IP = WiFi.softAPIP();
-
-    // set status flag
-    mode_is_hotspot = true;
-  }
-  else { // connect to a wifi network
-    // setup wifi
-    WiFi.mode(WIFI_STA); // mode = station mode
-    WiFi.begin(ssid, password); // initialize WiFi using networkname + password
-
-    while (WiFi.status() != WL_CONNECTED) { // wait while connected has not been made yet
-      Serial.print(".");
-      delay(1000);
-    }
-    
-    // get ip adress of esp32
-    IP = WiFi.localIP();
-
-    // set status flag
-    mode_is_hotspot = false;
-  }
-
-  // print ip adress to serial
-  Serial.print("\nIP address of ESP32 : ");
-  Serial.println(IP);
-
-  // begin mDNS
-  if (MDNS.begin("test")) {
-    Serial.println("MDNS responder started");
-    MDNS.addService("pretector","HTTP",80);
-  }
-}
