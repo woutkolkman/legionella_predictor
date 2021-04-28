@@ -45,7 +45,7 @@ uint8_t measure_temperature(void) { // function to measure current temperature
 	adc = ADC_GetConversionValue(ADC1);
 	
 	// convert ADC-reading to temperature (degrees Celsius)
-	temperature = adc * 0.322;
+	temperature = adc * 0.25;
 
 	return temperature;
 }
