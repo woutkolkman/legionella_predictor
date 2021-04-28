@@ -7,7 +7,6 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include "stm32f0xx_it.h"
-//#include <Stream.h>
 #include "usart.h"
 #include "stm32f0xx.h"
 #include "stm32f0_discovery.h"
@@ -21,8 +20,8 @@
 #define LORA_M1_PIN GPIO_Pin_11		//GPIOA11
 #define LORA_AUX_PIN GPIO_Pin_12	//GPIOA12
 
-#define TX_BUFFER_SIZE 100 //According to the datasheet, the LoRa module can store 400 bytes
-#define RX_BUFFER_SIZE 200
+#define TX_BUFFER_SIZE 100 
+#define RX_BUFFER_SIZE 100
 
 //Timer 3 for delay of 1 MS
 #define TIM3PERIOD (1000-1)
@@ -114,23 +113,20 @@ to react, some say only 10 ms, but I've found it can be much lonnger, I'm using
 #define OPT_TP11 0b11		// 10 db
 #define OPT_TP10 0b11		// 10 db
 
-
+//init functions
 	bool init_LoRa(void);
 	void init_LoRa_GPIO(void);
-	
 	void init_USART(void);
 	void init_USART_GPIO(void);
-	
 	void init_buffer(void);
-	
 	void init_DMA_write(void);
-	
 	void init_Timer_Delay(void);
 	
-	void delay(unsigned long delayTime);
+	void timerDelay(unsigned long delayTime);
 	
 	void readBytes(uint8_t* buffer, uint8_t size);
 	
+	//setters
 	void SetMode(uint8_t mode);
 	void SetAddress(uint16_t val);
 	void SetAddressH(uint8_t val);
@@ -148,17 +144,14 @@ to react, some say only 10 ms, but I've found it can be much lonnger, I'm using
 	void SetWORTIming(uint8_t val);
 	void SetFECMode(uint8_t val);
 	void SetTransmitPower(uint8_t val);
-
-	bool GetAux(void);
 	
-	// methods to get some operating parameters
+	
+	// getters
+	bool GetAux(void);
 	uint16_t GetAddress(void);
-
-	// methods to get module data
 	uint8_t GetModel(void);
 	uint8_t GetVersion(void);
 	uint8_t GetFeatures(void);
-
 	uint8_t GetAddressH(void);
 	uint8_t GetAddressL(void);
 	uint8_t GetAirDataRate(void);
@@ -170,11 +163,8 @@ to react, some say only 10 ms, but I've found it can be much lonnger, I'm using
 	uint8_t GetWORTIming(void);
 	uint8_t GetFECMode(void);
 	uint8_t GetTransmitPower(void);
-
-
 	uint8_t GetOptions(void);
 	uint8_t GetSpeed(void);
-
 		
 	// methods to get data from sending unit
 	uint8_t GetByte(void);
@@ -213,6 +203,7 @@ to react, some say only 10 ms, but I've found it can be much lonnger, I'm using
 	void ClearBuffer(void);
 	bool available(void);
 	
+	//global used variables, from other files, needed here.
 	extern volatile uint8_t *RxBuffer;
 	extern uint16_t RxWriteLocation;
 	

@@ -4,56 +4,54 @@
 #include <EBYTE.h>
 
 
-//global stuff
+//global variables. Putting them in the 'EBYTE.h' files gives 'multiply defined' errors. 
 
 uint16_t RxReadLocation;
 uint8_t *TxBuffer;
 
 // pin variables
-	int8_t _M0;
-	int8_t _M1;
-	int8_t _AUX;
+int8_t _M0;
+int8_t _M1;
+int8_t _AUX;
 
-	// variable for the 6 bytes that are sent to the module to program it
-	// or bytes received to indicate modules programmed settings
-	uint8_t _Params[6];
+// variable for the 6 bytes that are sent to the module to program it
+// or bytes received to indicate modules programmed settings
+uint8_t _Params[6];
 
-	// indicidual variables for each of the 6 bytes
-	// _Params could be used as the main variable storage, but since some bytes
-	// are a collection of several options, let's just make storage consistent
-	// also Param[1] is different data depending on the _Save variable
-	uint8_t _Save;
-	uint8_t _AddressHigh;
-	uint8_t _AddressLow;
-	uint8_t _Speed;
-	uint8_t _Channel;
-	uint8_t _Options;
-
+// indicidual variables for each of the 6 bytes
+// _Params could be used as the main variable storage, but since some bytes
+// are a collection of several options, let's just make storage consistent
+// also Param[1] is different data depending on the _Save variable
+uint8_t _Save;
+uint8_t _AddressHigh;
+uint8_t _AddressLow;
+uint8_t _Speed;
+uint8_t _Channel;
+uint8_t _Options;
 	
-	// individual variables for all the options
-	uint8_t _ParityBit;
-	uint8_t _UARTDataRate;
-	uint8_t _AirDataRate;
-	uint8_t _OptionTrans;
-	uint8_t _OptionPullup;
-	uint8_t _OptionWakeup;
-	uint8_t _OptionFEC;
-	uint8_t _OptionPower;
-	uint16_t _Address;
-	uint8_t _Model;
-	uint8_t _Version;
-	uint8_t _Features;
-	uint8_t _buf;
+// individual variables for all the options
+uint8_t _ParityBit;
+uint8_t _UARTDataRate;
+uint8_t _AirDataRate;
+uint8_t _OptionTrans;
+uint8_t _OptionPullup;
+uint8_t _OptionWakeup;
+uint8_t _OptionFEC;
+uint8_t _OptionPower;
+uint16_t _Address;
+uint8_t _Model;
+uint8_t _Version;
+uint8_t _Features;
+uint8_t _buf;
 
-	volatile unsigned long timehad;
+volatile unsigned long timehad;
 
-
+//global initialisation function for the lora module
 bool init_LoRa() {
 	bool ok;
 	init_LoRa_GPIO();
 	init_Timer_Delay();
 	init_USART();
-	
 	
 	SetMode(MODE_NORMAL);
 	
@@ -71,6 +69,7 @@ bool init_LoRa() {
 	return true;
 }
 
+//initializes the pinouts of M0, M1 and AUX (Rx and Tx will be in usart)
 void init_LoRa_GPIO() {
 	GPIO_InitTypeDef GPIO_initStructure;
 	
@@ -83,6 +82,7 @@ void init_LoRa_GPIO() {
 	GPIO_Init(GPIOA, &GPIO_initStructure);
 }
 
+//initializes USART1
 void init_USART() {
 	USART_InitTypeDef USART_Initstructure;
 	init_USART_GPIO();
@@ -104,6 +104,7 @@ void init_USART() {
 	
 }
 
+//initializes the GPIO pins for usart1
 void init_USART_GPIO() {
 	GPIO_InitTypeDef GPIO_initStructure;
 	
@@ -122,6 +123,7 @@ void init_USART_GPIO() {
 	GPIO_PinAFConfig(GPIOA, GPIO_PinSource10, GPIO_AF_1);
 }
 #ifdef DMA
+//initializes the DMA
 void init_DMA_write() {
 	DMA_InitTypeDef DMA_InitStructure;
 	
@@ -144,6 +146,8 @@ void init_DMA_write() {
 	
 }
 #endif
+
+//allocates memory for the buffers
 void init_buffer() {
 	RxBuffer = (uint8_t*)malloc(sizeof(uint8_t)*RX_BUFFER_SIZE);
 	if(RxBuffer == NULL) {
@@ -157,6 +161,7 @@ void init_buffer() {
 	}
 }
 
+//initializes the timer used for delays
 void init_Timer_Delay() {
 	TIM_TimeBaseInitTypeDef TIM_TimeBaseInitStructure;
 	
@@ -179,7 +184,6 @@ void SendByte( uint8_t TheByte) {
 	USART_putc(TheByte);
 	CompleteTask(1000);
 }
-
 uint8_t GetByte() {
 	uint8_t result = RxBuffer[RxReadLocation];
 	RxReadLocation = NEXT_RXREAD_LOCATION;
@@ -189,9 +193,6 @@ uint8_t GetByte() {
 }
 
 void SendStruct(const void* TheStructure, uint16_t size) {
-	
-	//https://stackoverflow.com/questions/7067927/how-do-you-convert-void-pointer-to-char-pointer-in-c
-	
   uint16_t count = 0;
 	uint8_t *CTheStructure = (uint8_t *) TheStructure;
 	TxBuffer = CTheStructure;
@@ -204,14 +205,11 @@ void SendStruct(const void* TheStructure, uint16_t size) {
 
 void getStruct(const void* TheStructure, uint16_t size) {
 	
-	uint16_t count = 0;
-	
-	while (count < size) {
-	
-	}
+	//the struct will be stored in the RxBuffer, not implemented
 	CompleteTask(1000);
 }
 
+//wait until sending is complete, or when a second has passed
 void CompleteTask(unsigned long timeout) {
 	if(_AUX != -1) {
 		timehad = 0;
@@ -222,14 +220,15 @@ void CompleteTask(unsigned long timeout) {
 			}
 		}
 	} else {
-		delay(NO_AUX_DELAY);
+		timerDelay(NO_AUX_DELAY);
 	}
-	delay(MINIMUM_AFTER_AUX_DELAY);
+	timerDelay(MINIMUM_AFTER_AUX_DELAY);
 	TIM_Cmd(TIM3, DISABLE);
 }
 
+//setting the lora module mode
 void SetMode(uint8_t mode) {
-	delay(PIN_RECOVER);
+	timerDelay(PIN_RECOVER);
 	switch(mode) {
 		case MODE_NORMAL:
 			GPIO_ResetBits(GPIOA, LORA_M0_PIN | LORA_M1_PIN);
@@ -248,20 +247,22 @@ void SetMode(uint8_t mode) {
 		default:
 			break;
 	}
-	delay(PIN_RECOVER);
+	timerDelay(PIN_RECOVER);
 	ClearBuffer();
 	CompleteTask(4000);	
 }
 
 void Reset() {
 	SetMode(MODE_PROGRAM);
-	delay(50);
+	timerDelay(50);
 	USART_putc(0xC4);
 	USART_putc(0xC4);
 	USART_putc(0xC4);
 	CompleteTask(4000);
 	SetMode(MODE_NORMAL);
 }
+
+// a list of setters and getters
 
 void SetAddressH(uint8_t val) {
 	_AddressHigh = val;
@@ -380,35 +381,11 @@ bool GetAux() {
 	return GPIO_ReadInputDataBit(GPIOA, LORA_AUX_PIN);
 }
 
+//after using setters, settings aren't saved in the lora module yet, use this function for that.
 void SaveParameters(uint8_t val) {
 	
 	SetMode(MODE_PROGRAM);
-	
-	// ClearBuffer();
-
-	// here you can save permanenly or temp
-	delay(5);
-
-	/*
-	Serial.print("val: ");
-	Serial.println(val);
-
-	Serial.print("_AddressHigh: ");
-	Serial.println(_AddressHigh);
-
-	Serial.print("_AddressLow: ");
-	Serial.println(_AddressLow);
-
-	Serial.print("_Speed: ");
-	Serial.println(_Speed);
-
-	Serial.print("_Channel: ");
-	Serial.println(_Channel);
-
-	Serial.print("_Options: ");
-	Serial.println(_Options);
-	*/
-
+	timerDelay(PIN_RECOVER);
 
 	USART_putc(val);
 	USART_putc(_AddressHigh);
@@ -417,15 +394,12 @@ void SaveParameters(uint8_t val) {
 	USART_putc(_Channel);
 	USART_putc(_Options);
 
-	delay(50);
+	timerDelay(50);
 
 	CompleteTask(4000);
 	
-	SetMode(MODE_NORMAL);
-
-	
+	SetMode(MODE_NORMAL);	
 }
-
 
 void PrintParameters() {
 
@@ -464,7 +438,6 @@ void PrintParameters() {
 	Serial_println("----------------------------------------");
 
 }
-
 
 bool ReadParameters() {
 
@@ -515,7 +488,6 @@ bool ReadParameters() {
 }
 
 bool ReadModelData() {
-	uint8_t timeout;
 	bool found;
 	_Params[0] = 0;
 	_Params[1] = 0;
@@ -543,87 +515,64 @@ bool ReadModelData() {
 	_Features = _Params[3];	
 
 	if (0xC3 != _Params[0]) {
+		uint8_t timeout;
 		for (timeout = 0; timeout < 5; timeout++){
-			Serial_print("Trying: ");Serial_putint(timeout);Serial_print("\r\n");
+			Serial_print("Trying: ");Serial_putintln(timeout);
 			_Params[0] = 0;
 			_Params[1] = 0;
 			_Params[2] = 0;
 			_Params[3] = 0;
 			_Params[4] = 0;
 			_Params[5] = 0;
-			delay(100);
-
+			timerDelay(100);
 			USART_putc(0xC3);
-	
 			USART_putc(0xC3);
-	
 			USART_putc(0xC3);
-
-			readBytes((uint8_t*)& _Params, (uint8_t) sizeof(_Params));
-			
+			readBytes((uint8_t*)& _Params, (uint8_t) sizeof(_Params));			
 			_Save = _Params[0];	
 			_Model = _Params[1];
 			_Version = _Params[2];
 			_Features = _Params[3];	
-
 			if (0xC3 == _Params[0]){
 				found = true;
 				break;
-			}
-			
+			}		
 		}
 	}
 	else {
 		found = true;
 	}
-
 	SetMode(MODE_NORMAL);
-
 	CompleteTask(1000);
-
 	return found;
 	
 }
-
-
 /*
 method to get module model and E50-TTL-100 will return 50
 */
-
 uint8_t GetModel() {
-
 	return _Model;
-	
 }
 
 /*
 method to get module version (undocumented as to the value)
 */
-
 uint8_t GetVersion() {
-
-	return _Version;
-	
+	return _Version;	
 }
 
 /*
 method to get module version (undocumented as to the value)
 */
-
-
 uint8_t GetFeatures() {
-
 	return _Features;
-
 }
-
-
-
-void delay(unsigned long delayTime) {
+//a simple delay function, goes to sleeping mode while the delay isn't finished yet
+void timerDelay(unsigned long delayTime) {
 	timehad = 0;
 	TIM_Cmd(TIM3, ENABLE);
 	while(timehad < delayTime) {
-		//sleepysleepy
+		PWR_EnterSleepMode(PWR_SLEEPEntry_WFI);
 	}
 	TIM_Cmd(TIM3, DISABLE);
 }
@@ -639,7 +588,7 @@ void readBytes(uint8_t* buffer, uint8_t size) {
 		full = false;
 	}
 }
-
+//goes to the end/beginning of the buffer, so it's empty
 void ClearBuffer() {
 	while(RxReadLocation != RxWriteLocation || full) {
 		RxReadLocation = NEXT_RXREAD_LOCATION;

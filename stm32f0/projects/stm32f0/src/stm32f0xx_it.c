@@ -121,13 +121,13 @@ void USART1_IRQHandler(void)
 { 
 	// Read Data Register not empty interrupt?
   if(USART1->ISR & USART_ISR_RXNE) {
-		if(NEXT_RXWRITE_LOCATION == RxReadLocation) {
+		if(NEXT_RXWRITE_LOCATION == RxReadLocation) {						//last location of the buffer will be filled, setting bool to let it know it's full.
 			RxBuffer[RxWriteLocation] = USART1->RDR;
 			RxWriteLocation = NEXT_RXWRITE_LOCATION;
 			full = true;
-		} else if (RxWriteLocation == RxReadLocation && full) {
+		} else if (RxWriteLocation == RxReadLocation && full) {	//the buffer is full, but a new character is there, throw away this character as there is no space left
 			USART1->RDR; //throw away data, no space left
-		} else {
+		} else {																								//Just add the received data to the buffer, everything is fine
 			RxBuffer[RxWriteLocation] = USART1->RDR;
 			RxWriteLocation = NEXT_RXWRITE_LOCATION;
 		}

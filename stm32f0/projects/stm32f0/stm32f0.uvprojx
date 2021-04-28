@@ -461,6 +461,71 @@
               <FileType>1</FileType>
               <FilePath>..\..\libraries\STM32F0xx_StdPeriph_Driver\src\stm32f0xx_spi.c</FilePath>
             </File>
+            <File>
+              <FileName>stm32f0xx_adc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>C:\Keil_v5\ARM\stm32f0discovery projects\libraries\STM32F0xx_StdPeriph_Driver\src\stm32f0xx_adc.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f0xx_cec.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>C:\Keil_v5\ARM\stm32f0discovery projects\libraries\STM32F0xx_StdPeriph_Driver\src\stm32f0xx_cec.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f0xx_comp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>C:\Keil_v5\ARM\stm32f0discovery projects\libraries\STM32F0xx_StdPeriph_Driver\src\stm32f0xx_comp.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f0xx_crc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>C:\Keil_v5\ARM\stm32f0discovery projects\libraries\STM32F0xx_StdPeriph_Driver\src\stm32f0xx_crc.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f0xx_dac.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>C:\Keil_v5\ARM\stm32f0discovery projects\libraries\STM32F0xx_StdPeriph_Driver\src\stm32f0xx_dac.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f0xx_dbgmcu.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>C:\Keil_v5\ARM\stm32f0discovery projects\libraries\STM32F0xx_StdPeriph_Driver\src\stm32f0xx_dbgmcu.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f0xx_dma.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>C:\Keil_v5\ARM\stm32f0discovery projects\libraries\STM32F0xx_StdPeriph_Driver\src\stm32f0xx_dma.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f0xx_flash.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>C:\Keil_v5\ARM\stm32f0discovery projects\libraries\STM32F0xx_StdPeriph_Driver\src\stm32f0xx_flash.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f0xx_i2c.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>C:\Keil_v5\ARM\stm32f0discovery projects\libraries\STM32F0xx_StdPeriph_Driver\src\stm32f0xx_i2c.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f0xx_iwdg.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>C:\Keil_v5\ARM\stm32f0discovery projects\libraries\STM32F0xx_StdPeriph_Driver\src\stm32f0xx_iwdg.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f0xx_pwr.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>C:\Keil_v5\ARM\stm32f0discovery projects\libraries\STM32F0xx_StdPeriph_Driver\src\stm32f0xx_pwr.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f0xx_rtc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>C:\Keil_v5\ARM\stm32f0discovery projects\libraries\STM32F0xx_StdPeriph_Driver\src\stm32f0xx_rtc.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f0xx_wwdg.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>C:\Keil_v5\ARM\stm32f0discovery projects\libraries\STM32F0xx_StdPeriph_Driver\src\stm32f0xx_wwdg.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

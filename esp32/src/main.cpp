@@ -29,7 +29,8 @@ void loop() {
     Transceiver.GetStruct(&MyData, sizeof(MyData));
 
     // dump out what was just received
-    Serial.print("Count: "); Serial.println(MyData.Count);
+    Serial.print("transmitter_ID: ");Serial.println(MyData.transmitter_ID);
+    Serial.print("Hour: "); Serial.println(MyData.hour);
     Serial.print("Temp: "); Serial.println(MyData.Temperature);
 
     // if you got data, update the checker
@@ -39,7 +40,7 @@ void loop() {
   else {
     // if the time checker is over some prescribed amount
     // let the user know there is no incoming data
-    if ((millis() - Last) > 1000) {
+    if ((millis() - Last) > 60000) {
       Serial.println("Searching: ");
       Last = millis();
     }

@@ -20,7 +20,8 @@ YOU MUST USE THE ACTUAL GPIO NUMBER
 
 
 struct DATA {
-  unsigned long Count;
+  uint8_t transmitter_ID;
+  unsigned long hour;
   int8_t Temperature;
 } MyData;
 
