@@ -87,7 +87,7 @@ void homepage() {
 }
 
 // generate page for invalid urls
-void pageNotFound() {
+void page_not_found() {
  String message = "File Not Found\n\n";
   message += "URI: ";
   message += server.uri();

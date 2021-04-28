@@ -1,3 +1,4 @@
+// shape of code inspired by https://github.com/espressif/arduino-esp32/blob/master/libraries/WebServer/examples/HelloServer/HelloServer.ino
 #include <Arduino.h>
 #include <WiFi.h>
 #include <WebServer.h>
@@ -27,8 +28,7 @@ void setup() {
   server.on("/",homepage);
   server.on("/scanwifi",scan_networks);
   server.on("/connectwifi",connect_to_network);
-  server.onNotFound(pageNotFound);
-
+  server.onNotFound(page_not_found);
 
   // start to listen to port 80
   Serial.println("HTTP server started on 80");
