@@ -16,7 +16,7 @@ const char webpage_head[] = {
     "<!DOCTYPE html>\n"
     "<html>\n"
 	    "<head>\n"
-		    "<title>legionella predetector setup</title>\n"
+		    "<title>Legionella Predictor Setup</title>\n"
 		    "<style>\n"
 	    	    /* formmatting of title */
 			    ".tittle {\n"
