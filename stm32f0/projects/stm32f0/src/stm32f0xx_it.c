@@ -61,7 +61,7 @@ void USART1_IRQHandler(void) {
 void TIM14_IRQHandler(void) { // timer to measure temperature every minute
 	
   if (TIM_GetITStatus(TIM14, TIM_IT_Update) != RESET) { // wait a minute
-	measure_temperature(); // measure temperature 
+		measure_temperature(); // measure temperature 
     TIM_ClearITPendingBit(TIM14, TIM_IT_Update);
   }
 }
