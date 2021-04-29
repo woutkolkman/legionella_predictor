@@ -48,7 +48,7 @@ const char webpage_head[] = {
 	
 	    "<body>\n"
 		    "<div class=\"tittle\">\n"
-			    "<h1>legionella predetector setup</h1>\n"
+			    "<h1>Legionella Predictor Setup</h1>\n"
 		    "</div>\n"
 };
 
