@@ -1,10 +1,10 @@
-//TRANSCEIVE 0 is the ESP LoRa Receiving part
-//TRANSCEIVE 1 is the ESP LoRa transmitting part
-//TRANSCEIVE 2 is the ESP LoRa Receiving 1 byte part
-//TRANSCEIVE 3 is the ESP LoRa Sending 1 byte part
-#define TRANSCEIVE 0
-
 #include "ebyte.h"
+
+#include <Arduino.h>
+#include <WiFi.h>
+
+// contain html code
+#include "website.h"
 
 /*
 WARNING: IF USING AN ESP32
@@ -18,18 +18,20 @@ YOU MUST USE THE ACTUAL GPIO NUMBER
 #define PIN_M1 22   // D2 on the board (possibly called pin 22)
 #define PIN_AX 21   // D15 on the board (possibly called pin 21)
 
-
 struct DATA {
   uint8_t transmitter_ID;
   unsigned long hour;
   int8_t Temperature;
 } MyData;
 
-// these are just dummy variables, replace with your own
-unsigned long Last;
-#if TRANSCEIVE == 1
-bool up;
-#endif
-
+//function definition 
+void LoRa_get_data(void);
 // create the transceiver object, passing in the serial and pins
 EBYTE Transceiver(&Serial2, PIN_M0, PIN_M1, PIN_AX);
+
+// network credentials
+const char *ssid = "legionella_predetector";
+const char *password = "zeer_geheim2021";
+
+// set server to listen to port 80
+WiFiServer server(80);

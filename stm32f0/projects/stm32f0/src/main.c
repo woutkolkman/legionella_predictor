@@ -3,33 +3,29 @@
  *****************************************************************************/
 #include "main.h"
 
-
 // ----------------------------------------------------------------------------
 // Main
 // ----------------------------------------------------------------------------
-int main(void)
-{
+int main(void) {
+	
+	// Configure LED3 and LED4 on STM32F0-Discovery
+	//STM_EVAL_LEDInit(LED3);
+	//STM_EVAL_LEDInit(LED4);
 	init_serial();
 	Serial_clearscreen();
 	init_LoRa();
 	PrintParameters();
+	Green_led_init();
 	MyData.transmitter_ID = TRANSMITTER_ID;
 	while(1) {
-// ----------------------------------------------------------------------------
-// if transceive is 0, the receiving part is active
-// if transceive is 1, the transmitting part is active
-// transceive 2 and transceive 3 were debug settings, 2 receiving 1 byte
-// and 3 transmitting 1 byte
-// ----------------------------------------------------------------------------
-		#if TRANSCEIVE == 0
-		
-		GetStruct(&MyData, sizeof(MyData));
-		
-		Serial_print("Count: "); Serial_println(MyData.Count);
-    Serial_print("Temp: "); Serial_println(MyData.Temperature);
-		
-		#elif TRANSCEIVE == 1
 		static bool up;
+		
+		//read temperature measurement should be added here!
+		//STM_EVAL_LEDToggle(LED3);
+		//STM_EVAL_LEDToggle(LED4);
+		
+		//Green_led_update(test_read_tempture());
+		//delay(SystemCoreClock/8/10);			//maybe this delay has to be gone, not sure about that, so keeping it.
 		
 		//temperature rising or falling (just to simulate that)
 		if(up) {
@@ -50,18 +46,6 @@ int main(void)
 		//sending the date and showing what is sent.
 		SendStruct(&MyData, sizeof(MyData));
 		Serial_print("Sending ID: ");Serial_putint(MyData.transmitter_ID);Serial_print(" Hour: ");Serial_putint(MyData.hour);Serial_print(" = Temp: ");Serial_putintln(MyData.Temperature);
-		timerDelay(MINUTE);
-		
-		#elif TRANSCEIVE == 2
-		if(RxWriteLocation != RxReadLocation || full) {
-			Serial_print("byte received: ");Serial_putintln(GetByte());
-		}
-			
-		#elif TRANSCEIVE == 3
-		
-		SendByte(0x38);
-		Serial_print("Sending Byte 0x38");Serial_newLine();
-		
-		#endif
+		timerDelay(MINUTE);	
 	}
 }
