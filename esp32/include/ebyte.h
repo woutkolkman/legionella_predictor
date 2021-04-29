@@ -1,4 +1,5 @@
-
+#ifndef EBYTE_H
+#define EBYTE_H
 /*
   The MIT License (MIT)
   Copyright (c) 2019 Kris Kasrpzak
@@ -315,4 +316,4 @@ private:
 	uint8_t _buf;
 
 };
-
+#endif
