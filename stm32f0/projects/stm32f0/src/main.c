@@ -4,9 +4,7 @@
 #include "lm35.h"
 
 int main(void) {
-	
-	USART_init();
-	USART_clearscreen();
+
 	sensor_init();
 	TIM14_init();
 	TIM14_interrupt_init();
