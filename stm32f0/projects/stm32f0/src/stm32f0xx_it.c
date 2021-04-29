@@ -2,19 +2,16 @@
 #define NEXT_RXWRITE_LOCATION ((RxWriteLocation + 1) % RX_BUFFER_SIZE)
 
 #include "stm32f0xx_it.h"
-#include "lm35.h"
-#include "STM32F0_discovery.h"
 #include "stdbool.h"
+#include "lm35.h"
+#include "struct.h"
+#include "serial.h"
 
 extern volatile unsigned long timehad;
 volatile uint8_t* RxBuffer;
 volatile uint16_t RxWriteLocation;
 extern uint16_t RxReadLocation;
 bool full;
-
-void NMI_Handler(void)
-{
-}
 
 void HardFault_Handler(void)
 {
@@ -60,8 +57,11 @@ void USART1_IRQHandler(void) {
 	
 void TIM14_IRQHandler(void) { // timer to measure temperature every minute
 	
+	uint8_t data;
+	
   if (TIM_GetITStatus(TIM14, TIM_IT_Update) != RESET) { // wait a minute
-		measure_temperature(); // measure temperature 
+		MyData.Temperature = measure_temperature();
+	//SendStruct(&MyData, sizeof(MyData));
     TIM_ClearITPendingBit(TIM14, TIM_IT_Update);
   }
 }
