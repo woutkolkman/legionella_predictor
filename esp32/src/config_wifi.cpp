@@ -3,7 +3,6 @@
 #include <Arduino.h>
 #include <WiFi.h>
 #include <WebServer.h>
-#include <ESPmDNS.h>
 
 // setup hotspot or connect to a network
 void setup_wifi(bool hotspot,char *ssid, char *password) {
@@ -40,10 +39,4 @@ void setup_wifi(bool hotspot,char *ssid, char *password) {
   // print ip adress to serial
   Serial.print("\nIP address of ESP32 : ");
   Serial.println(IP);
-
-  // begin mDNS
-  if (MDNS.begin("test")) {
-    Serial.println("MDNS responder started");
-    MDNS.addService("pretector","HTTP",80);
-  }
 }
