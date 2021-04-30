@@ -15,6 +15,9 @@ YOU MUST USE THE ACTUAL GPIO NUMBER
 #define PIN_M1_ 22   // D2 on the board (possibly called pin 22)
 #define PIN_AX 21   // D15 on the board (possibly called pin 21)
 
+// struct defines
+#define TEMPERATURE_SIZE 60
+
 // globals
 extern WebServer interface_server;
 

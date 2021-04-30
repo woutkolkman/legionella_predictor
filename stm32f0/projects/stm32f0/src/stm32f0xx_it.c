@@ -60,11 +60,10 @@ void USART1_IRQHandler(void) {
 void TIM14_IRQHandler(void) { // timer to measure temperature every minute
 	
   if (TIM_GetITStatus(TIM14, TIM_IT_Update) != RESET) { // wait a minute
-		MyData.Temperature = measure_temperature();
-		counter++;
-		if (counter == 10) { // moet naar 60
-			send = true;
-			counter = 0;
+		MyData.Temperature[counter++] = measure_temperature();
+		if (counter == TEMPERATURE_SIZE) { // if hour has passed
+			send = true; // STM32 must send data to ESP32
+			counter = 0; // reset counter
 		}
     TIM_ClearITPendingBit(TIM14, TIM_IT_Update);
   }

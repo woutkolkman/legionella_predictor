@@ -10,10 +10,11 @@
 // set server to listen to port 80
 WebServer interface_server(80);
 EBYTE Transceiver(&Serial2, PIN_M0_, PIN_M1_, PIN_AX);
+
 struct DATA {
   uint8_t transmitter_ID;
   unsigned long hour;
-  uint8_t Temperature;
+  uint8_t Temperature[TEMPERATURE_SIZE];
 } MyData;
 
 void setup_wifi(bool hotspot,char *ssid, char *password);
@@ -70,6 +71,6 @@ void LoRa_get_data() {
   // dump out what was just received
   Serial.print("transmitter_ID: ");Serial.println(MyData.transmitter_ID);
   Serial.print("Hour: "); Serial.println(MyData.hour);
-  Serial.print("Temp: "); Serial.println(MyData.Temperature);
+  Serial.print("Temp: "); Serial.println(MyData.Temperature[TEMPERATURE_SIZE - 1]);
 
 }

@@ -3,6 +3,8 @@
 #include "lm35.h"
 #include "struct.h"
 
+struct DATA MyData;
+
 int main(void) {
 	
 	sensor_init();	
@@ -22,11 +24,14 @@ int main(void) {
 	Green_led_init();
 	
 	while (1) {
-		
+
 		if (send) {
-			SendStruct(&MyData.Temperature, sizeof(MyData));
+			SendStruct(&MyData, sizeof(MyData));
+		  Serial_putint(MyData.Temperature[counter]);
+			Serial_print(" ");
+			send = false;
 		}
-		
+
 	/*MyData.Temperature++;
 		MyData.hour++;
 		MyData.transmitter_ID++;
