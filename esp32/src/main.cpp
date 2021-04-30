@@ -13,7 +13,7 @@ EBYTE Transceiver(&Serial2, PIN_M0_, PIN_M1_, PIN_AX);
 struct DATA {
   uint8_t transmitter_ID;
   unsigned long hour;
-  int8_t Temperature;
+  uint8_t Temperature;
 } MyData;
 
 void setup_wifi(bool hotspot,char *ssid, char *password);

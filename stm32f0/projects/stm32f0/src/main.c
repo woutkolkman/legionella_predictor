@@ -5,6 +5,7 @@
 #include "stm32f0xx_it.h"
 #include "usart.h"
 #include "lm35.h"
+//#include "struct.h"
 
 int main(void) {
 
@@ -27,14 +28,21 @@ int main(void) {
 	PrintParameters();
 	Green_led_init();
 	
-	while(1) {
-		
-	//read temperature measurement should be added here!
-	//STM_EVAL_LEDToggle(LED3);
-	//STM_EVAL_LEDToggle(LED4);
-		
-		
+	while (1) {
 		
 
+	/*MyData.Temperature++;
+		MyData.hour++;
+		MyData.transmitter_ID++;
+	
+		SendStruct(&MyData, sizeof(MyData));
+		Serial_print("Sending ID = ");
+		Serial_putint(MyData.transmitter_ID);
+		Serial_print(" Hour = ");
+		Serial_putint(MyData.hour);
+		Serial_print(" Temp = ");
+		Serial_putintln(MyData.Temperature);
+		timerDelay(MINUTE);*/
 	}
 }
+

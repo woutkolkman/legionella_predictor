@@ -172,7 +172,7 @@ to react, some say only 10 ms, but I've found it can be much lonnger, I'm using
 	
 	// method to send to data to receiving unit
 	void SendByte(uint8_t TheByte);
-  void SendStruct(const void *TheStructure, uint16_t size_);
+//void SendStruct(const void *TheStructure, uint16_t size_);
 	
 	// mehod to print parameters
 	void PrintParameters(void);
@@ -207,5 +207,8 @@ to react, some say only 10 ms, but I've found it can be much lonnger, I'm using
 	extern volatile uint8_t *RxBuffer;
   extern uint16_t RxWriteLocation;
 	extern bool full;
+	
+	//global used functions 
+	extern void SendStruct(const void *TheStructure, uint16_t size_);
 	
 
