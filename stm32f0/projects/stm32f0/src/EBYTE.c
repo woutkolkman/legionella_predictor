@@ -6,8 +6,8 @@
 
 //global variables. Putting them in the 'EBYTE.h' files gives 'multiply defined' errors. 
 
-uint16_t RxReadLocation;
-uint8_t *TxBuffer;
+uint16_t Rx_read_location;
+uint8_t *Tx_buffer;
 
 // pin variables
 int8_t _M0;
@@ -23,28 +23,28 @@ uint8_t _Params[6];
 // are a collection of several options, let's just make storage consistent
 // also Param[1] is different data depending on the _Save variable
 uint8_t _Save;
-uint8_t _AddressHigh;
-uint8_t _AddressLow;
+uint8_t _Address_High;
+uint8_t _Address_low;
 uint8_t _Speed;
 uint8_t _Channel;
 uint8_t _Options;
 	
 // individual variables for all the options
-uint8_t _ParityBit;
-uint8_t _UARTDataRate;
-uint8_t _AirDataRate;
-uint8_t _OptionTrans;
-uint8_t _OptionPullup;
-uint8_t _OptionWakeup;
-uint8_t _OptionFEC;
-uint8_t _OptionPower;
+uint8_t _Parity_bit;
+uint8_t _UART_data_rate;
+uint8_t _Air_data_rate;
+uint8_t _Option_transmission;
+uint8_t _Option_pullup;
+uint8_t _Option_wakeup;
+uint8_t _Option_FEC;
+uint8_t _Option_power;
 uint16_t _Address;
 uint8_t _Model;
 uint8_t _Version;
 uint8_t _Features;
 uint8_t _buf;
 
-volatile unsigned long timehad;
+volatile unsigned long time_passed;
 
 //global initialisation function for the lora module
 bool init_LoRa() {
@@ -53,15 +53,15 @@ bool init_LoRa() {
 	init_Timer_Delay();
 	init_USART();
 	
-	SetMode(MODE_NORMAL);
+	set_mode(MODE_NORMAL);
 	
-	ok = ReadModelData();
+	ok = read_model_data();
 	
 	if(!ok) {
 		return false;
 	}
 	
-	ok = ReadParameters();
+	ok = read_parameters();
 	if(!ok) {
 		return false;
 	}
@@ -131,7 +131,7 @@ void init_DMA_write() {
 	
 	// DMA channel Tx of USART Configuration
   DMA_InitStructure.DMA_PeripheralBaseAddr = (uint32_t) &(USART1->TDR);
-  DMA_InitStructure.DMA_MemoryBaseAddr     = (uint32_t) TxBuffer;
+  DMA_InitStructure.DMA_MemoryBaseAddr     = (uint32_t) Tx_buffer;
   DMA_InitStructure.DMA_DIR                = DMA_DIR_PeripheralDST;
   DMA_InitStructure.DMA_BufferSize         = TX_BUFFER_SIZE;
   DMA_InitStructure.DMA_PeripheralInc      = DMA_PeripheralInc_Disable;
@@ -149,13 +149,13 @@ void init_DMA_write() {
 
 //allocates memory for the buffers
 void init_buffer() {
-	RxBuffer = (uint8_t*)malloc(sizeof(uint8_t)*RX_BUFFER_SIZE);
-	if(RxBuffer == NULL) {
+	Rx_buffer = (uint8_t*)malloc(sizeof(uint8_t)*RX_BUFFER_SIZE);
+	if(Rx_buffer == NULL) {
 		//Error handling;
 		HardFault_Handler();
 	}
-	TxBuffer = (uint8_t*)malloc(sizeof(uint8_t)*TX_BUFFER_SIZE);
-	if(TxBuffer == NULL) {
+	Tx_buffer = (uint8_t*)malloc(sizeof(uint8_t)*TX_BUFFER_SIZE);
+	if(Tx_buffer == NULL) {
 		//Error handling;
 		HardFault_Handler();
 	}
@@ -176,59 +176,65 @@ void init_Timer_Delay() {
 	NVIC_EnableIRQ(TIM3_IRQn);
 }
 
+//checks whether Data is received through LoRa
 bool available() {
 	return(USART1->ISR & USART_ISR_RXNE);
 }
 
-void SendByte( uint8_t TheByte) {
-	USART_putc(TheByte);
-	CompleteTask(1000);
+//sends a byte through LoRa
+void send_byte( uint8_t the_byte) {
+	USART_putc(the_byte);
+	complete_task(1000);
 }
-uint8_t GetByte() {
-	uint8_t result = RxBuffer[RxReadLocation];
-	RxReadLocation = NEXT_RXREAD_LOCATION;
-	full = false;
-	CompleteTask(1000);
+
+//receives a byte through LoRa
+uint8_t get_byte() {
+	uint8_t result = Rx_buffer[Rx_read_location];
+	Rx_read_location = NEXT_RX_READ_LOCATION;
+	is_full = false;
+	complete_task(1000);
 	return result;
 }
 
-void SendStruct(const void* TheStructure, uint16_t size) {
+//sends a struct through LoRa
+void send_struct(const void* the_structure, uint16_t size) {
   uint16_t count = 0;
-	uint8_t *CTheStructure = (uint8_t *) TheStructure;
-	TxBuffer = CTheStructure;
+	uint8_t *C_The_Structure = (uint8_t *) the_structure;
+	Tx_buffer = C_The_Structure;
 	while (count < size) {
-	  USART_putc(TxBuffer[count]);
+	  USART_putc(Tx_buffer[count]);
 		count++;
 	}
-	CompleteTask(1000);
+	complete_task(1000);
 }
 
-void getStruct(const void* TheStructure, uint16_t size) {
+//receiving / reading a struct from LoRa
+void get_struct(const void* the_structure, uint16_t size) {
 	
-	//the struct will be stored in the RxBuffer, not implemented
-	CompleteTask(1000);
+	//the struct will be stored in the Rx_buffer, not implemented
+	complete_task(1000);
 }
 
 //wait until sending is complete, or when a second has passed
-void CompleteTask(unsigned long timeout) {
+void complete_task(unsigned long time_out) {
 	if(_AUX != -1) {
-		timehad = 0;
+		time_passed = 0;
 		TIM_Cmd(TIM3, ENABLE);
 		while(GPIO_ReadInputDataBit(GPIOA, LORA_AUX_PIN) == Bit_RESET) {
-			if (timehad > timeout) {
+			if (time_passed > time_out) {
 				break;
 			}
 		}
 	} else {
-		timerDelay(NO_AUX_DELAY);
+		timer_delay(NO_AUX_DELAY);
 	}
-	timerDelay(MINIMUM_AFTER_AUX_DELAY);
+	timer_delay(MINIMUM_AFTER_AUX_DELAY);
 	TIM_Cmd(TIM3, DISABLE);
 }
 
 //setting the lora module mode
-void SetMode(uint8_t mode) {
-	timerDelay(PIN_RECOVER);
+void set_mode(uint8_t mode) {
+	timer_delay(PIN_RECOVER);
 	switch(mode) {
 		case MODE_NORMAL:
 			GPIO_ResetBits(GPIOA, LORA_M0_PIN | LORA_M1_PIN);
@@ -247,124 +253,136 @@ void SetMode(uint8_t mode) {
 		default:
 			break;
 	}
-	timerDelay(PIN_RECOVER);
-	ClearBuffer();
-	CompleteTask(4000);	
+	timer_delay(PIN_RECOVER);
+	clear_buffer();
+	complete_task(4000);	
 }
 
+//resetting the LoRa module. Permanent settings will not be erased
 void Reset() {
-	SetMode(MODE_PROGRAM);
-	timerDelay(50);
+	set_mode(MODE_PROGRAM);
+	timer_delay(50);
 	USART_putc(0xC4);
 	USART_putc(0xC4);
 	USART_putc(0xC4);
-	CompleteTask(4000);
-	SetMode(MODE_NORMAL);
+	complete_task(4000);
+	set_mode(MODE_NORMAL);
 }
 
 // a list of setters and getters
 
-void SetAddressH(uint8_t val) {
-	_AddressHigh = val;
+//setting address High
+void set_address_h(uint8_t val) {
+	_Address_High = val;
 }
-uint8_t GetAddressH() {
-	return _AddressHigh;
-}
-
-void SetAddressL(uint8_t val) {
-	_AddressLow = val;
-}
-uint8_t GetAddressL() {
-	return _AddressLow;
+uint8_t get_address_h() {
+	return _Address_High;
 }
 
-void SetChannel(uint8_t val) {
+//setting Address Low
+void set_address_l(uint8_t val) {
+	_Address_low = val;
+}
+uint8_t get_address_l() {
+	return _Address_low;
+}
+
+//setting channel
+void set_channel(uint8_t val) {
 	_Channel = val;
 }
-uint8_t GetChannel() {
+uint8_t get_channel() {
 	return _Channel;
 }
-
-void SetAirDataRate(uint8_t val) {
-	_AirDataRate = val;
-	BuildSpeedByte();
+//setting the air data rate
+void set_air_data_rate(uint8_t val) {
+	_Air_data_rate = val;
+	build_speed_byte();
 }
-uint8_t GetAirDataRate() {
-	return _AirDataRate;
-}
-
-void SetParityBit(uint8_t val) {
-	_ParityBit = val;
-	BuildSpeedByte();
-}
-uint8_t GetParityBit( ) {
-	return _ParityBit;
+uint8_t get_air_data_rate() {
+	return _Air_data_rate;
 }
 
-void SetTransmissionMode(uint8_t val) {
-	_OptionTrans = val;
-	BuildOptionByte();
+//setting whether there is a parity bit
+void set_parity_bit(uint8_t val) {
+	_Parity_bit = val;
+	build_speed_byte();
 }
-uint8_t GetTransmissionMode( ) {
-	return _OptionTrans;
-}
-
-void SetPullupMode(uint8_t val) {
-	_OptionPullup = val;
-	BuildOptionByte();
-}
-uint8_t GetPullupMode( ) {
-	return _OptionPullup;
+uint8_t get_parity_bit( ) {
+	return _Parity_bit;
 }
 
-void SetWORTIming(uint8_t val) {
-	_OptionWakeup = val;
-	BuildOptionByte();
+//setting the transmission mode
+void set_transmission_mode(uint8_t val) {
+	_Option_transmission = val;
+	build_option_byte();
 }
-uint8_t GetWORTIming() {
-	return _OptionWakeup;
-}
-
-void SetFECMode(uint8_t val) {
-	_OptionFEC = val;
-	BuildOptionByte();
-}
-uint8_t GetFECMode( ) {
-	return _OptionFEC;
+uint8_t get_transmission_mode( ) {
+	return _Option_transmission;
 }
 
-void SetTransmitPower(uint8_t val) {
-
-	_OptionPower = val;
-	BuildOptionByte();
-
+//setting the pullup mode
+void set_pullup_mode(uint8_t val) {
+	_Option_pullup = val;
+	build_option_byte();
 }
-uint8_t GetTransmitPower() {
-	return _OptionPower;
-}
-
-void SetAddress(uint16_t Val) {
-	_AddressHigh = ((Val & 0xFFFF) >> 8);
-	_AddressLow = (Val & 0xFF);
-}
-uint16_t GetAddress() {
-	return (_AddressHigh << 8) | (_AddressLow );
+uint8_t get_pullup_mode( ) {
+	return _Option_pullup;
 }
 
-void SetUARTBaudRate(uint8_t val) {
-	_UARTDataRate = val;
-	BuildSpeedByte();
+//setting the WOR timing
+void set_wor_timing(uint8_t val) {
+	_Option_wakeup = val;
+	build_option_byte();
 }
-uint8_t GetUARTBaudRate() {
-	return _UARTDataRate;
+uint8_t get_WOR_timing() {
+	return _Option_wakeup;
+}
+
+//setting the FEC mode
+void set_FEC_mode(uint8_t val) {
+	_Option_FEC = val;
+	build_option_byte();
+}
+uint8_t get_FEC_mode( ) {
+	return _Option_FEC;
+}
+
+//setting the transmitting power
+void set_transmit_power(uint8_t val) {
+
+	_Option_power = val;
+	build_option_byte();
+
+}
+uint8_t get_transmit_power() {
+	return _Option_power;
+}
+
+//setting the address (both low and high)
+void set_address(uint16_t Val) {
+	_Address_High = ((Val & 0xFFFF) >> 8);
+	_Address_low = (Val & 0xFF);
+}
+uint16_t get_address() {
+	return (_Address_High << 8) | (_Address_low );
+}
+
+//setting the LoRa baudrate. Sometimes something different than 9600 will not work. 
+void set_UART_baud_rate(uint8_t val) {
+	_UART_data_rate = val;
+	build_speed_byte();
+}
+uint8_t get_uart_baud_rate() {
+	return _UART_data_rate;
 }
 
 /*
 method to build the byte for programming (notice it's a collection of a few variables)
 */
-void BuildSpeedByte() {
+void build_speed_byte() {
 	_Speed = 0;
-	_Speed = ((_ParityBit & 0xFF) << 6) | ((_UARTDataRate & 0xFF) << 3) | (_AirDataRate & 0xFF);
+	_Speed = ((_Parity_bit & 0xFF) << 6) | ((_UART_data_rate & 0xFF) << 3) | (_Air_data_rate & 0xFF);
 }
 
 
@@ -372,46 +390,50 @@ void BuildSpeedByte() {
 method to build the option byte for programming (notice it's a collection of a few variables)
 */
 
-void BuildOptionByte() {
-	_Options = ((_OptionTrans & 0xFF) << 7) | ((_OptionPullup & 0xFF) << 6) | ((_OptionWakeup & 0xFF) << 3) | ((_OptionFEC & 0xFF) << 2) | (_OptionPower & 0x03);
+void build_option_byte() {
+	_Options = ((_Option_transmission & 0xFF) << 7) | ((_Option_pullup & 0xFF) << 6) | ((_Option_wakeup & 0xFF) << 3) | ((_Option_FEC & 0xFF) << 2) | (_Option_power & 0x03);
 }
 
-
-bool GetAux() {
+//checking whether the LoRa module is busy doing something
+bool get_aux() {
 	return GPIO_ReadInputDataBit(GPIOA, LORA_AUX_PIN);
 }
 
 //after using setters, settings aren't saved in the lora module yet, use this function for that.
-void SaveParameters(uint8_t val) {
+void save_parameters(uint8_t val) {
 	
-	SetMode(MODE_PROGRAM);
-	timerDelay(PIN_RECOVER);
+	set_mode(MODE_PROGRAM);
+	timer_delay(PIN_RECOVER);
 
 	USART_putc(val);
-	USART_putc(_AddressHigh);
-	USART_putc(_AddressLow);
+	USART_putc(_Address_High);
+	USART_putc(_Address_low);
 	USART_putc(_Speed);
 	USART_putc(_Channel);
 	USART_putc(_Options);
 
-	timerDelay(50);
+	timer_delay(50);
 
-	CompleteTask(4000);
+	complete_task(4000);
 	
-	SetMode(MODE_NORMAL);	
+	set_mode(MODE_NORMAL);	
 }
 
-void PrintParameters() {
+/*
+method to print parameters, this can be called anytime after init(), because init gets parameters
+and any method updates the variables
+*/
+void print_parameters() {
 
-	_ParityBit = (_Speed & 0XC0) >> 6;
-	_UARTDataRate = (_Speed & 0X38) >> 3;
-	_AirDataRate = _Speed & 0X07;
+	_Parity_bit = (_Speed & 0XC0) >> 6;
+	_UART_data_rate = (_Speed & 0X38) >> 3;
+	_Air_data_rate = _Speed & 0X07;
 
-	_OptionTrans = (_Options & 0X80) >> 7;
-	_OptionPullup = (_Options & 0X40) >> 6;
-	_OptionWakeup = (_Options & 0X38) >> 3;
-	_OptionFEC = (_Options & 0X07) >> 2;
-	_OptionPower = (_Options & 0X03);
+	_Option_transmission = (_Options & 0X80) >> 7;
+	_Option_pullup = (_Options & 0X40) >> 6;
+	_Option_wakeup = (_Options & 0X38) >> 3;
+	_Option_FEC = (_Options & 0X07) >> 2;
+	_Option_power = (_Options & 0X03);
 
 	Serial_println("----------------------------------------");
 	Serial_print("Model no.: ");  Serial_putintln(_Model);
@@ -419,27 +441,28 @@ void PrintParameters() {
 	Serial_print("Features : ");  Serial_putintln(_Features);
 	Serial_println(" ");
 	Serial_print("Mode : ");  Serial_putintln(_Save);
-	Serial_print("AddH : ");  Serial_putintln(_AddressHigh);
-	Serial_print("AddL : ");  Serial_putintln(_AddressLow);
+	Serial_print("AddH : ");  Serial_putintln(_Address_High);
+	Serial_print("AddL : ");  Serial_putintln(_Address_low);
 	Serial_print("Sped : ");  Serial_putintln(_Speed);
 	Serial_print("Chan : ");  Serial_putintln(_Channel);
 	Serial_print("Optn : ");  Serial_putintln(_Options);
-	Serial_print("Addr : ");  Serial_putintln(GetAddress());
+	Serial_print("Addr : ");  Serial_putintln(get_address());
 	Serial_println(" ");
-	Serial_print("SpeedParityBit    : ");  Serial_putintln(_ParityBit);
-	Serial_print("SpeedUARTDataRate : ");  Serial_putintln(_UARTDataRate);
-	Serial_print("SpeedAirDataRate  : ");  Serial_putintln(_AirDataRate);
-	Serial_print("OptionTrans       : ");  Serial_putintln(_OptionTrans);
-	Serial_print("OptionPullup      : ");  Serial_putintln(_OptionPullup);
-	Serial_print("OptionWakeup      : ");  Serial_putintln(_OptionWakeup);
-	Serial_print("OptionFEC         : ");  Serial_putintln(_OptionFEC);
-	Serial_print("OptionPower       : ");  Serial_putintln(_OptionPower);
+	Serial_print("SpeedParityBit    : ");  Serial_putintln(_Parity_bit);
+	Serial_print("SpeedUARTDataRate : ");  Serial_putintln(_UART_data_rate);
+	Serial_print("SpeedAirDataRate  : ");  Serial_putintln(_Air_data_rate);
+	Serial_print("OptionTrans       : ");  Serial_putintln(_Option_transmission);
+	Serial_print("OptionPullup      : ");  Serial_putintln(_Option_pullup);
+	Serial_print("OptionWakeup      : ");  Serial_putintln(_Option_wakeup);
+	Serial_print("OptionFEC         : ");  Serial_putintln(_Option_FEC);
+	Serial_print("OptionPower       : ");  Serial_putintln(_Option_power);
 
 	Serial_println("----------------------------------------");
 
 }
 
-bool ReadParameters() {
+//reading parameters 
+bool read_parameters() {
 
 	_Params[0] = 0;
 	_Params[1] = 0;
@@ -448,7 +471,7 @@ bool ReadParameters() {
 	_Params[4] = 0;
 	_Params[5] = 0;
 
-	SetMode(MODE_PROGRAM);
+	set_mode(MODE_PROGRAM);
 
 	USART_putc(0xC1);
 
@@ -456,27 +479,27 @@ bool ReadParameters() {
 
 	USART_putc(0xC1);
 
-	readBytes((uint8_t*)&_Params, (uint8_t) sizeof(_Params));
+	read_bytes((uint8_t*)&_Params, (uint8_t) sizeof(_Params));
 
 	_Save = _Params[0];
-	_AddressHigh = _Params[1];
-	_AddressLow = _Params[2];
+	_Address_High = _Params[1];
+	_Address_low = _Params[2];
 	_Speed = _Params[3];
 	_Channel = _Params[4];
 	_Options = _Params[5];
 
-	_Address =  (_AddressHigh << 8) | (_AddressLow);
-	_ParityBit = (_Speed & 0XC0) >> 6;
-	_UARTDataRate = (_Speed & 0X38) >> 3;
-	_AirDataRate = _Speed & 0X07;
+	_Address =  (_Address_High << 8) | (_Address_low);
+	_Parity_bit = (_Speed & 0XC0) >> 6;
+	_UART_data_rate = (_Speed & 0X38) >> 3;
+	_Air_data_rate = _Speed & 0X07;
 
-	_OptionTrans = (_Options & 0X80) >> 7;
-	_OptionPullup = (_Options & 0X40) >> 6;
-	_OptionWakeup = (_Options & 0X38) >> 3;
-	_OptionFEC = (_Options & 0X07) >> 2;
-	_OptionPower = (_Options & 0X03);
+	_Option_transmission = (_Options & 0X80) >> 7;
+	_Option_pullup = (_Options & 0X40) >> 6;
+	_Option_wakeup = (_Options & 0X38) >> 3;
+	_Option_FEC = (_Options & 0X07) >> 2;
+	_Option_power = (_Options & 0X03);
 	
-	SetMode(MODE_NORMAL);
+	set_mode(MODE_NORMAL);
 
 	if (0xC0 != _Params[0]){
 		
@@ -487,7 +510,9 @@ bool ReadParameters() {
 	
 }
 
-bool ReadModelData() {
+
+//reading the model data of the module
+bool read_model_data() {
 	bool found;
 	_Params[0] = 0;
 	_Params[1] = 0;
@@ -497,7 +522,7 @@ bool ReadModelData() {
 	_Params[5] = 0;
 
 	found = false;
-	SetMode(MODE_PROGRAM);
+	set_mode(MODE_PROGRAM);
 	
 	USART_putc(0xC3);
 	
@@ -506,7 +531,7 @@ bool ReadModelData() {
 	USART_putc(0xC3);
 
 	
-	readBytes((uint8_t*)& _Params, (uint8_t) sizeof(_Params));
+	read_bytes((uint8_t*)& _Params, (uint8_t) sizeof(_Params));
 	
 	
 	_Save = _Params[0];	
@@ -524,11 +549,11 @@ bool ReadModelData() {
 			_Params[3] = 0;
 			_Params[4] = 0;
 			_Params[5] = 0;
-			timerDelay(100);
+			timer_delay(100);
 			USART_putc(0xC3);
 			USART_putc(0xC3);
 			USART_putc(0xC3);
-			readBytes((uint8_t*)& _Params, (uint8_t) sizeof(_Params));			
+			read_bytes((uint8_t*)& _Params, (uint8_t) sizeof(_Params));			
 			_Save = _Params[0];	
 			_Model = _Params[1];
 			_Version = _Params[2];
@@ -542,56 +567,56 @@ bool ReadModelData() {
 	else {
 		found = true;
 	}
-	SetMode(MODE_NORMAL);
-	CompleteTask(1000);
+	set_mode(MODE_NORMAL);
+	complete_task(1000);
 	return found;
 	
 }
 /*
 method to get module model and E50-TTL-100 will return 50
 */
-uint8_t GetModel() {
+uint8_t get_model() {
 	return _Model;
 }
 
 /*
 method to get module version (undocumented as to the value)
 */
-uint8_t GetVersion() {
+uint8_t get_version() {
 	return _Version;	
 }
 
 /*
 method to get module version (undocumented as to the value)
 */
-uint8_t GetFeatures() {
+uint8_t get_features() {
 	return _Features;
 }
 //a simple delay function, goes to sleeping mode while the delay isn't finished yet
-void timerDelay(unsigned long delayTime) {
-	timehad = 0;
+void timer_delay(unsigned long delay_time) {
+	time_passed = 0;
 	TIM_Cmd(TIM3, ENABLE);
-	while(timehad < delayTime) {
+	while(time_passed < delay_time) {
 		PWR_EnterSleepMode(PWR_SLEEPEntry_WFI);
 	}
 	TIM_Cmd(TIM3, DISABLE);
 }
 
-void readBytes(uint8_t* buffer, uint8_t size) {
+void read_bytes(uint8_t* buffer, uint8_t size) {
 	uint8_t count = 0;
 	while(count < size) {
-		if(RxReadLocation == RxWriteLocation && !full) {
+		if(Rx_read_location == Rx_write_location && !is_full) {
 			break;
 		}
-		buffer[count]	= RxBuffer[RxReadLocation];
-		RxReadLocation = NEXT_RXREAD_LOCATION;
-		full = false;
+		buffer[count]	= Rx_buffer[Rx_read_location];
+		Rx_read_location = NEXT_RX_READ_LOCATION;
+		is_full = false;
 	}
 }
 //goes to the end/beginning of the buffer, so it's empty
-void ClearBuffer() {
-	while(RxReadLocation != RxWriteLocation || full) {
-		RxReadLocation = NEXT_RXREAD_LOCATION;
-		full = false;
+void clear_buffer() {
+	while(Rx_read_location != Rx_write_location || is_full) {
+		Rx_read_location = NEXT_RX_READ_LOCATION;
+		is_full = false;
 	}
 }

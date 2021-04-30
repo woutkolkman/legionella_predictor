@@ -34,7 +34,7 @@
   2.0			3/2/2020	Kasprzak		Added all functions to build the options bit (FEC, Pullup, and TransmissionMode
   3.0			3/27/2020	Kasprzak		Added more Get functions
   4.0			6/23/2020	Kasprzak		Added private method to clear the buffer to ensure read methods would not be filled with buffered data
-  5.0			12/4/2020	Kasprzak		moved Reset to public, added Clear to SetMode to avoid buffer corruption during programming
+  5.0			12/4/2020	Kasprzak		moved Reset to public, added Clear to set_mode to avoid buffer corruption during programming
 
   Module connection
   Module	MCU						Description
@@ -188,69 +188,69 @@ public:
 
 	bool init();
 	
-	// methods to set modules working parameters NOTHING WILL BE SAVED UNLESS SaveParameters() is called
-	void SetMode(uint8_t mode = MODE_NORMAL);
-	void SetAddress(uint16_t val = 0);
-	void SetAddressH(uint8_t val = 0);
-	void SetAddressL(uint8_t val = 0);
-	void SetAirDataRate(uint8_t val);
-	void SetUARTBaudRate(uint8_t val);
-	void SetSpeed(uint8_t val);
-	void SetOptions(uint8_t val);
-	void SetChannel(uint8_t val);
-	void SetParityBit(uint8_t val);
+	// methods to set modules working parameters NOTHING WILL BE SAVED UNLESS save_parameters() is called
+	void set_mode(uint8_t mode = MODE_NORMAL);
+	void set_address(uint16_t val = 0);
+	void set_address_h(uint8_t val = 0);
+	void set_address_l(uint8_t val = 0);
+	void set_air_data_rate(uint8_t val);
+	void set_UART_baud_rate(uint8_t val);
+	void set_speed(uint8_t val);
+	void set_options(uint8_t val);
+	void set_channel(uint8_t val);
+	void set_parity_bit(uint8_t val);
 	
 	//functions to set the options
-	void SetTransmissionMode(uint8_t val);
-	void SetPullupMode(uint8_t val);
-	void SetWORTIming(uint8_t val);
-	void SetFECMode(uint8_t val);
-	void SetTransmitPower(uint8_t val);
+	void set_transmission_mode(uint8_t val);
+	void set_pullup_mode(uint8_t val);
+	void set_WOR_timing(uint8_t val);
+	void set_FEC_mode(uint8_t val);
+	void set_transmit_power(uint8_t val);
 
-	bool GetAux();
+	bool get_aux();
 
 	bool available();
 	void flush();
 	// methods to get some operating parameters
-	uint16_t GetAddress();
+	uint16_t get_address();
 
 	// methods to get module data
-	uint8_t GetModel();
-	uint8_t GetVersion();
-	uint8_t GetFeatures();
+	uint8_t get_model();
+	uint8_t get_version();
+	uint8_t get_features();
 
-	uint8_t GetAddressH();
-	uint8_t GetAddressL();
-	uint8_t GetAirDataRate();
-	uint8_t GetUARTBaudRate();
-	uint8_t GetChannel();
-	uint8_t GetParityBit();
-	uint8_t GetTransmissionMode();
-	uint8_t GetPullupMode();
-	uint8_t GetWORTIming();
-	uint8_t GetFECMode();
-	uint8_t GetTransmitPower();
+	uint8_t get_address_h();
+	uint8_t get_address_l();
+	uint8_t get_air_data_rate();
+	uint8_t get_UART_baud_rate();
+	uint8_t get_channel();
+	uint8_t get_parity_bit();
+	uint8_t get_transmission_mode();
+	uint8_t get_pullup_mode();
+	uint8_t get_WOR_timing();
+	uint8_t get_FEC_mode();
+	uint8_t get_transmit_power();
 
 
-	uint8_t GetOptions();
-	uint8_t GetSpeed();
+	uint8_t get_options();
+	uint8_t get_speed();
 
 		
 	// methods to get data from sending unit
-	uint8_t GetByte();
-	bool GetStruct(const void *TheStructure, uint16_t size_);
+	uint8_t get_byte();
+	bool get_struct(const void *The_structure, uint16_t size_);
 	
 	// method to send to data to receiving unit
-	void SendByte(uint8_t TheByte);
-	bool SendStruct(const void *TheStructure, uint16_t size_);
+	void send_byte(uint8_t The_Byte);
+	bool send_struct(const void *The_structure, uint16_t size_);
 	
 	// mehod to print parameters
-	void PrintParameters();
+	void print_parameters();
 	
 	// parameters are set above but NOT saved, here's how you save parameters
 	// notion here is you can set several but save once as opposed to saving on each parameter change
 	// you can save permanently (retained at start up, or temp which is ideal for dynamically changing the address or frequency
-	void SaveParameters(uint8_t val = PERMANENT);
+	void save_parameters(uint8_t val = PERMANENT);
 	
 	// MFG is not clear on what Reset does, but my testing indicates it clears buffer
 	// I use this when needing to restart the EBYTE after programming while data is still streaming in
@@ -260,21 +260,21 @@ public:
 protected:
 
 	// function to read modules parameters
-	bool ReadParameters();
+	bool read_parameters();
 
 	// method to let method know of module is busy doing something (timeout provided to avoid lockups)
-	void CompleteTask(unsigned long timeout = 0);
+	void complete_task(unsigned long timeout = 0);
 	
 	// utility funciton to build the "speed byte" which is a collection of a few different parameters
-	void BuildSpeedByte();
+	void build_speed_byte();
 
 	// utility funciton to build the "options byte" which is a collection of a few different parameters
-	void BuildOptionByte();
+	void build_option_byte();
 	
 private:
 
-	bool ReadModelData();
-	void ClearBuffer();
+	bool read_model_data();
+	void clear_buffer();
 	// variable for the serial stream
 	Stream*  _s;
 	Stream*  _TD;
@@ -293,22 +293,22 @@ private:
 	// are a collection of several options, let's just make storage consistent
 	// also Param[1] is different data depending on the _Save variable
 	uint8_t _Save;
-	uint8_t _AddressHigh;
-	uint8_t _AddressLow;
+	uint8_t _Address_high;
+	uint8_t _Address_low;
 	uint8_t _Speed;
 	uint8_t _Channel;
 	uint8_t _Options;
 
 	
 	// individual variables for all the options
-	uint8_t _ParityBit;
-	uint8_t _UARTDataRate;
-	uint8_t _AirDataRate;
-	uint8_t _OptionTrans;
-	uint8_t _OptionPullup;
-	uint8_t _OptionWakeup;
-	uint8_t _OptionFEC;
-	uint8_t _OptionPower;
+	uint8_t _Parity_bit;
+	uint8_t _UART_data_rate;
+	uint8_t _Air_data_rate;
+	uint8_t _Option_trans;
+	uint8_t _Option_pullup;
+	uint8_t _Option_wakeup;
+	uint8_t _Option_FEC;
+	uint8_t _Option_power;
 	uint16_t _Address;
 	uint8_t _Model;
 	uint8_t _Version;

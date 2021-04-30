@@ -32,7 +32,7 @@
   2.0			3/2/2020	Kasprzak		Added all functions to build the options bit (FEC, Pullup, and TransmissionMode
   3.0			3/27/2020	Kasprzak		Added more Get functions
   4.0			6/23/2020	Kasprzak		Added private method to clear the buffer to ensure read methods would not be filled with buffered data
-  5.0			12/4/2020	Kasprzak		moved Reset to public, added Clear to SetMode to avoid buffer corruption during programming
+  5.0			12/4/2020	Kasprzak		moved Reset to public, added Clear to set_mode to avoid buffer corruption during programming
 */
 
 #include <EBYTE.h>
@@ -73,18 +73,18 @@ bool EBYTE::init() {
 	pinMode(_M0, OUTPUT);
 	pinMode(_M1, OUTPUT);
 
-	SetMode(MODE_NORMAL);
+	set_mode(MODE_NORMAL);
 
 	// first get the module data (must be called first for some odd reason
 	
-	ok = ReadModelData();
+	ok = read_model_data();
 
 	if (!ok) {
 		return false;
 	}
 	// now get parameters to put unit defaults into the class variables
 
-	ok = ReadParameters();
+	ok = read_parameters();
 	if (!ok) {
 		return false;
 	}
@@ -118,9 +118,9 @@ Method to write a single byte...not sure how useful this really is. If you need 
 more that one byte, put the data into a data structure and send it in a big chunk
 */
 
-void EBYTE::SendByte( uint8_t TheByte) {
+void EBYTE::send_byte( uint8_t The_Byte) {
 
-	_s->write(TheByte);
+	_s->write(The_Byte);
 	
 }
 
@@ -130,7 +130,7 @@ Method to get a single byte...not sure how useful this really is. If you need to
 more that one byte, put the data into a data structure and send/receive it in a big chunk
 */
 
-uint8_t EBYTE::GetByte() {
+uint8_t EBYTE::get_byte() {
 
 	return _s->read();
 
@@ -146,12 +146,12 @@ NOTE: of your sender and receiver MCU's are different (Teensy and Arduino) cauti
 types each handle ints floats differently
 */
 
-bool EBYTE::SendStruct(const void *TheStructure, uint16_t size_) {
+bool EBYTE::send_struct(const void *the_structure, uint16_t size_) {
 
 
-		_buf = _s->write((uint8_t *) TheStructure, size_);
+		_buf = _s->write((uint8_t *) the_structure, size_);
 		
-		CompleteTask(1000);
+		complete_task(1000);
 		
 		return (_buf == size_);
 
@@ -168,11 +168,11 @@ types each handle ints floats differently
 */
 
 
-bool EBYTE::GetStruct(const void *TheStructure, uint16_t size_) {
+bool EBYTE::get_struct(const void *the_structure, uint16_t size_) {
 	
-	_buf = _s->readBytes((uint8_t *) TheStructure, size_);
+	_buf = _s->readBytes((uint8_t *) the_structure, size_);
 
-	CompleteTask(1000);
+	complete_task(1000);
 
 	return (_buf == size_);
 }
@@ -180,15 +180,15 @@ bool EBYTE::GetStruct(const void *TheStructure, uint16_t size_) {
 
 /*
 Utility method to wait until module is doen tranmitting
-a timeout is provided to avoid an infinite loop
+a time_out is provided to avoid an infinite loop
 */
 
-void EBYTE::CompleteTask(unsigned long timeout) {
+void EBYTE::complete_task(unsigned long time_out) {
 
 	unsigned long t = millis();
 
 	// make darn sure millis() is not about to reach max data type limit and start over
-	if (((unsigned long) (t + timeout)) == 0){
+	if (((unsigned long) (t + time_out)) == 0){
 		t = 0;
 	}
 
@@ -198,7 +198,7 @@ void EBYTE::CompleteTask(unsigned long timeout) {
 		
 		while (digitalRead(_AUX) == LOW) {
 			
-			if ((millis() - t) > timeout){
+			if ((millis() - t) > time_out){
 				break;
 			}
 		}
@@ -220,7 +220,7 @@ void EBYTE::CompleteTask(unsigned long timeout) {
 method to set the mode (program, normal, etc.)
 */
 
-void EBYTE::SetMode(uint8_t mode) {
+void EBYTE::set_mode(uint8_t mode) {
 	
 	// data sheet claims module needs some extra time after mode setting (2ms)
 	// most of my projects uses 10 ms, but 40ms is safer
@@ -256,10 +256,10 @@ void EBYTE::SetMode(uint8_t mode) {
 	// i've had some issues where after programming, the returned model is 0, and all settings appear to be corrupt
 	// i imagine the issue is due to the internal buffer full of junk, hence clearing
 	// Reset() *MAY* work but this seems better.
-	ClearBuffer();
+	clear_buffer();
 
 	// wait until aux pin goes back low
-	CompleteTask(4000);
+	complete_task(4000);
 	
 }
 
@@ -273,18 +273,18 @@ void EBYTE::SetMode(uint8_t mode) {
 // if your unit gets corrupt or you need to restore values, you will have to do brute force
 // example for and E44-915
 // look at the data sheet for default values
-//  Trans.SetAddressH(0);
-//  Trans.SetAddressL(0);
-//  Trans.SetSpeed(0b00011100);  
-//  Trans.SetChannel(1);
-//  Trans.SetOptions(0b01000100);
-//  Trans.SaveParameters(PERMANENT);
+//  Trans.set_address_h(0);
+//  Trans.set_address_l(0);
+//  Trans.set_speed(0b00011100);  
+//  Trans.set_channel(1);
+//  Trans.set_options(0b01000100);
+//  Trans.save_parameters(PERMANENT);
 
 
 void EBYTE::Reset() {
 
 	
-	SetMode(MODE_PROGRAM);
+	set_mode(MODE_PROGRAM);
 
 	delay(50); // not sure you need this
 
@@ -292,23 +292,29 @@ void EBYTE::Reset() {
 	_s->write(0xC4);
 	_s->write(0xC4);
 
-	CompleteTask(4000);
+	complete_task(4000);
 
-	SetMode(MODE_NORMAL);
+	set_mode(MODE_NORMAL);
 
 }
 
-
-void EBYTE::SetSpeed(uint8_t val) {
+/*
+method to set the speed, 
+*/
+void EBYTE::set_speed(uint8_t val) {
 	_Speed = val;
 }
-void EBYTE::SetOptions(uint8_t val) {
-	_Options = val;
-}
-uint8_t EBYTE::GetSpeed() {
+uint8_t EBYTE::get_speed() {
 	return _Speed ;
 }
-uint8_t EBYTE::GetOptions() {
+
+/*
+method to set options, 
+*/
+void EBYTE::set_options(uint8_t val) {
+	_Options = val;
+}
+uint8_t EBYTE::get_options() {
 	return _Options;
 }
 
@@ -317,25 +323,25 @@ method to set the high bit of the address
 */
 
 
-void EBYTE::SetAddressH(uint8_t val) {
-	_AddressHigh = val;
+void EBYTE::set_address_h(uint8_t val) {
+	_Address_high = val;
 }
 
-uint8_t EBYTE::GetAddressH() {
-	return _AddressHigh;
+uint8_t EBYTE::get_address_h() {
+	return _Address_high;
 }
 
 /*
-method to set the lo bit of the address
+method to set the low bit of the address
 */
 
-void EBYTE::SetAddressL(uint8_t val) {
-	_AddressLow = val;
+void EBYTE::set_address_l(uint8_t val) {
+	_Address_low = val;
 }
 
 
-uint8_t EBYTE::GetAddressL() {
-	return _AddressLow;
+uint8_t EBYTE::get_address_l() {
+	return _Address_low;
 }
 
 
@@ -343,10 +349,10 @@ uint8_t EBYTE::GetAddressL() {
 method to set the channel
 */
 
-void EBYTE::SetChannel(uint8_t val) {
+void EBYTE::set_channel(uint8_t val) {
 	_Channel = val;
 }
-uint8_t EBYTE::GetChannel() {
+uint8_t EBYTE::get_channel() {
 	return _Channel;
 }
 
@@ -355,15 +361,15 @@ uint8_t EBYTE::GetChannel() {
 method to set the air data rate
 */
 
-void EBYTE::SetAirDataRate(uint8_t val) {
+void EBYTE::set_air_data_rate(uint8_t val) {
 
-	_AirDataRate = val;
-	BuildSpeedByte();
+	_Air_data_rate = val;
+	build_speed_byte();
 	
 }
 
-uint8_t EBYTE::GetAirDataRate() {
-	return _AirDataRate;
+uint8_t EBYTE::get_air_data_rate() {
+	return _Air_data_rate;
 }
 
 
@@ -372,59 +378,59 @@ method to set the parity bit
 */
 
 
-void EBYTE::SetParityBit(uint8_t val) {
-	_ParityBit = val;
-	BuildSpeedByte();
+void EBYTE::set_parity_bit(uint8_t val) {
+	_Parity_bit = val;
+	build_speed_byte();
 }
-uint8_t EBYTE::GetParityBit( ) {
-	return _ParityBit;
+uint8_t EBYTE::get_parity_bit( ) {
+	return _Parity_bit;
 }
 
 /*
 method to set the options bits
 */
 
-void EBYTE::SetTransmissionMode(uint8_t val) {
-	_OptionTrans = val;
-	BuildOptionByte();
+void EBYTE::set_transmission_mode(uint8_t val) {
+	_Option_trans = val;
+	build_option_byte();
 }
-uint8_t EBYTE::GetTransmissionMode( ) {
-	return _OptionTrans;
-}
-
-void EBYTE::SetPullupMode(uint8_t val) {
-	_OptionPullup = val;
-	BuildOptionByte();
-}
-uint8_t EBYTE::GetPullupMode( ) {
-	return _OptionPullup;
+uint8_t EBYTE::get_transmission_mode( ) {
+	return _Option_trans;
 }
 
-void EBYTE::SetWORTIming(uint8_t val) {
-	_OptionWakeup = val;
-	BuildOptionByte();
+void EBYTE::set_pullup_mode(uint8_t val) {
+	_Option_pullup = val;
+	build_option_byte();
 }
-uint8_t EBYTE::GetWORTIming() {
-	return _OptionWakeup;
-}
-
-void EBYTE::SetFECMode(uint8_t val) {
-	_OptionFEC = val;
-	BuildOptionByte();
-}
-uint8_t EBYTE::GetFECMode( ) {
-	return _OptionFEC;
+uint8_t EBYTE::get_pullup_mode( ) {
+	return _Option_pullup;
 }
 
-void EBYTE::SetTransmitPower(uint8_t val) {
+void EBYTE::set_WOR_timing(uint8_t val) {
+	_Option_wakeup = val;
+	build_option_byte();
+}
+uint8_t EBYTE::get_WOR_timing() {
+	return _Option_wakeup;
+}
 
-	_OptionPower = val;
-	BuildOptionByte();
+void EBYTE::set_FEC_mode(uint8_t val) {
+	_Option_FEC = val;
+	build_option_byte();
+}
+uint8_t EBYTE::get_FEC_mode( ) {
+	return _Option_FEC;
+}
+
+void EBYTE::set_transmit_power(uint8_t val) {
+
+	_Option_power = val;
+	build_option_byte();
 
 }
 
-uint8_t EBYTE::GetTransmitPower() {
-	return _OptionPower;
+uint8_t EBYTE::get_transmit_power() {
+	return _Option_power;
 }
 
 
@@ -433,9 +439,9 @@ uint8_t EBYTE::GetTransmitPower() {
 method to compute the address based on high and low bits
 */
 
-void EBYTE::SetAddress(uint16_t Val) {
-	_AddressHigh = ((Val & 0xFFFF) >> 8);
-	_AddressLow = (Val & 0xFF);
+void EBYTE::set_address(uint16_t Val) {
+	_Address_high = ((Val & 0xFFFF) >> 8);
+	_Address_low = (Val & 0xFF);
 }
 
 
@@ -444,29 +450,29 @@ method to get the address which is a collection of hi and lo bytes
 */
 
 
-uint16_t EBYTE::GetAddress() {
-	return (_AddressHigh << 8) | (_AddressLow );
+uint16_t EBYTE::get_address() {
+	return (_Address_high << 8) | (_Address_low );
 }
 
 /*
 set the UART baud rate
 */
 
-void EBYTE::SetUARTBaudRate(uint8_t val) {
-	_UARTDataRate = val;
-	BuildSpeedByte();
+void EBYTE::set_UART_baud_rate(uint8_t val) {
+	_UART_data_rate = val;
+	build_speed_byte();
 }
 
-uint8_t EBYTE::GetUARTBaudRate() {
-	return _UARTDataRate;
+uint8_t EBYTE::get_UART_baud_rate() {
+	return _UART_data_rate;
 }
 
 /*
 method to build the byte for programming (notice it's a collection of a few variables)
 */
-void EBYTE::BuildSpeedByte() {
+void EBYTE::build_speed_byte() {
 	_Speed = 0;
-	_Speed = ((_ParityBit & 0xFF) << 6) | ((_UARTDataRate & 0xFF) << 3) | (_AirDataRate & 0xFF);
+	_Speed = ((_Parity_bit & 0xFF) << 6) | ((_UART_data_rate & 0xFF) << 3) | (_Air_data_rate & 0xFF);
 }
 
 
@@ -474,13 +480,13 @@ void EBYTE::BuildSpeedByte() {
 method to build the option byte for programming (notice it's a collection of a few variables)
 */
 
-void EBYTE::BuildOptionByte() {
+void EBYTE::build_option_byte() {
 	_Options = 0;
-	_Options = ((_OptionTrans & 0xFF) << 7) | ((_OptionPullup & 0xFF) << 6) | ((_OptionWakeup & 0xFF) << 3) | ((_OptionFEC & 0xFF) << 2) | (_OptionPower&0b11);
+	_Options = ((_Option_trans & 0xFF) << 7) | ((_Option_pullup & 0xFF) << 6) | ((_Option_wakeup & 0xFF) << 3) | ((_Option_FEC & 0xFF) << 2) | (_Option_power&0b11);
 }
 
 
-bool EBYTE::GetAux() {
+bool EBYTE::get_aux() {
 	return digitalRead(_AUX);
 }
 
@@ -489,11 +495,11 @@ bool EBYTE::GetAux() {
 method to save parameters to the module
 */
 
-void EBYTE::SaveParameters(uint8_t val) {
+void EBYTE::save_parameters(uint8_t val) {
 	
-	SetMode(MODE_PROGRAM);
+	set_mode(MODE_PROGRAM);
 	
-	// ClearBuffer();
+	// clear_buffer();
 
 	// here you can save permanenly or temp
 	delay(5);
@@ -502,11 +508,11 @@ void EBYTE::SaveParameters(uint8_t val) {
 	Serial.print("val: ");
 	Serial.println(val);
 
-	Serial.print("_AddressHigh: ");
-	Serial.println(_AddressHigh);
+	Serial.print("_Address_high: ");
+	Serial.println(_Address_high);
 
-	Serial.print("_AddressLow: ");
-	Serial.println(_AddressLow);
+	Serial.print("_Address_low: ");
+	Serial.println(_Address_low);
 
 	Serial.print("_Speed: ");
 	Serial.println(_Speed);
@@ -520,17 +526,17 @@ void EBYTE::SaveParameters(uint8_t val) {
 
 
 	_s->write(val);
-	_s->write(_AddressHigh);
-	_s->write(_AddressLow);
+	_s->write(_Address_high);
+	_s->write(_Address_low);
 	_s->write(_Speed);
 	_s->write(_Channel);
 	_s->write(_Options);
 
 	delay(50);
 
-	CompleteTask(4000);
+	complete_task(4000);
 	
-	SetMode(MODE_NORMAL);
+	set_mode(MODE_NORMAL);
 
 	
 }
@@ -540,17 +546,17 @@ method to print parameters, this can be called anytime after init(), because ini
 and any method updates the variables
 */
 
-void EBYTE::PrintParameters() {
+void EBYTE::print_parameters() {
 
-	_ParityBit = (_Speed & 0XC0) >> 6;
-	_UARTDataRate = (_Speed & 0X38) >> 3;
-	_AirDataRate = _Speed & 0X07;
+	_Parity_bit = (_Speed & 0XC0) >> 6;
+	_UART_data_rate = (_Speed & 0X38) >> 3;
+	_Air_data_rate = _Speed & 0X07;
 
-	_OptionTrans = (_Options & 0X80) >> 7;
-	_OptionPullup = (_Options & 0X40) >> 6;
-	_OptionWakeup = (_Options & 0X38) >> 3;
-	_OptionFEC = (_Options & 0X07) >> 2;
-	_OptionPower = (_Options & 0X03);
+	_Option_trans = (_Options & 0X80) >> 7;
+	_Option_pullup = (_Options & 0X40) >> 6;
+	_Option_wakeup = (_Options & 0X38) >> 3;
+	_Option_FEC = (_Options & 0X07) >> 2;
+	_Option_power = (_Options & 0X03);
 
 	Serial.println("----------------------------------------");
 	Serial.print(F("Model no.: "));  Serial.println(_Model, HEX);
@@ -558,21 +564,21 @@ void EBYTE::PrintParameters() {
 	Serial.print(F("Features : "));  Serial.println(_Features, HEX);
 	Serial.println(F(" "));
 	Serial.print(F("Mode (HEX/DEC/BIN): "));  Serial.print(_Save, HEX); Serial.print(F("/"));  Serial.print(_Save, DEC); Serial.print(F("/"));  Serial.println(_Save, BIN);
-	Serial.print(F("AddH (HEX/DEC/BIN): "));  Serial.print(_AddressHigh, HEX); Serial.print(F("/")); Serial.print(_AddressHigh, DEC); Serial.print(F("/"));  Serial.println(_AddressHigh, BIN);
-	Serial.print(F("AddL (HEX/DEC/BIN): "));  Serial.print(_AddressLow, HEX); Serial.print(F("/")); Serial.print(_AddressLow, DEC); Serial.print(F("/"));  Serial.println(_AddressLow, BIN);
+	Serial.print(F("AddH (HEX/DEC/BIN): "));  Serial.print(_Address_high, HEX); Serial.print(F("/")); Serial.print(_Address_high, DEC); Serial.print(F("/"));  Serial.println(_Address_high, BIN);
+	Serial.print(F("AddL (HEX/DEC/BIN): "));  Serial.print(_Address_low, HEX); Serial.print(F("/")); Serial.print(_Address_low, DEC); Serial.print(F("/"));  Serial.println(_Address_low, BIN);
 	Serial.print(F("Sped (HEX/DEC/BIN): "));  Serial.print(_Speed, HEX); Serial.print(F("/")); Serial.print(_Speed, DEC); Serial.print(F("/"));  Serial.println(_Speed, BIN);
 	Serial.print(F("Chan (HEX/DEC/BIN): "));  Serial.print(_Channel, HEX); Serial.print(F("/")); Serial.print(_Channel, DEC); Serial.print(F("/"));  Serial.println(_Channel, BIN);
 	Serial.print(F("Optn (HEX/DEC/BIN): "));  Serial.print(_Options, HEX); Serial.print(F("/")); Serial.print(_Options, DEC); Serial.print(F("/"));  Serial.println(_Options, BIN);
-	Serial.print(F("Addr (HEX/DEC/BIN): "));  Serial.print(GetAddress(), HEX); Serial.print(F("/")); Serial.print(GetAddress(), DEC); Serial.print(F("/"));  Serial.println(GetAddress(), BIN);
+	Serial.print(F("Addr (HEX/DEC/BIN): "));  Serial.print(get_address(), HEX); Serial.print(F("/")); Serial.print(get_address(), DEC); Serial.print(F("/"));  Serial.println(get_address(), BIN);
 	Serial.println(F(" "));
-	Serial.print(F("SpeedParityBit (HEX/DEC/BIN)    : "));  Serial.print(_ParityBit, HEX); Serial.print(F("/"));  Serial.print(_ParityBit, DEC); Serial.print(F("/"));  Serial.println(_ParityBit, BIN);
-	Serial.print(F("SpeedUARTDataRate (HEX/DEC/BIN) : "));  Serial.print(_UARTDataRate, HEX); Serial.print(F("/"));  Serial.print(_UARTDataRate, DEC); Serial.print(F("/"));  Serial.println(_UARTDataRate, BIN);
-	Serial.print(F("SpeedAirDataRate (HEX/DEC/BIN)  : "));  Serial.print(_AirDataRate, HEX); Serial.print(F("/"));  Serial.print(_AirDataRate, DEC); Serial.print(F("/"));  Serial.println(_AirDataRate, BIN);
-	Serial.print(F("OptionTrans (HEX/DEC/BIN)       : "));  Serial.print(_OptionTrans, HEX); Serial.print(F("/"));  Serial.print(_OptionTrans, DEC); Serial.print(F("/"));  Serial.println(_OptionTrans, BIN);
-	Serial.print(F("OptionPullup (HEX/DEC/BIN)      : "));  Serial.print(_OptionPullup, HEX); Serial.print(F("/"));  Serial.print(_OptionPullup, DEC); Serial.print(F("/"));  Serial.println(_OptionPullup, BIN);
-	Serial.print(F("OptionWakeup (HEX/DEC/BIN)      : "));  Serial.print(_OptionWakeup, HEX); Serial.print(F("/"));  Serial.print(_OptionWakeup, DEC); Serial.print(F("/"));  Serial.println(_OptionWakeup, BIN);
-	Serial.print(F("OptionFEC (HEX/DEC/BIN)         : "));  Serial.print(_OptionFEC, HEX); Serial.print(F("/"));  Serial.print(_OptionFEC, DEC); Serial.print(F("/"));  Serial.println(_OptionFEC, BIN);
-	Serial.print(F("OptionPower (HEX/DEC/BIN)       : "));  Serial.print(_OptionPower, HEX); Serial.print(F("/"));  Serial.print(_OptionPower, DEC); Serial.print(F("/"));  Serial.println(_OptionPower, BIN);
+	Serial.print(F("SpeedParityBit (HEX/DEC/BIN)    : "));  Serial.print(_Parity_bit, HEX); Serial.print(F("/"));  Serial.print(_Parity_bit, DEC); Serial.print(F("/"));  Serial.println(_Parity_bit, BIN);
+	Serial.print(F("SpeedUARTDataRate (HEX/DEC/BIN) : "));  Serial.print(_UART_data_rate, HEX); Serial.print(F("/"));  Serial.print(_UART_data_rate, DEC); Serial.print(F("/"));  Serial.println(_UART_data_rate, BIN);
+	Serial.print(F("SpeedAirDataRate (HEX/DEC/BIN)  : "));  Serial.print(_Air_data_rate, HEX); Serial.print(F("/"));  Serial.print(_Air_data_rate, DEC); Serial.print(F("/"));  Serial.println(_Air_data_rate, BIN);
+	Serial.print(F("OptionTrans (HEX/DEC/BIN)       : "));  Serial.print(_Option_trans, HEX); Serial.print(F("/"));  Serial.print(_Option_trans, DEC); Serial.print(F("/"));  Serial.println(_Option_trans, BIN);
+	Serial.print(F("OptionPullup (HEX/DEC/BIN)      : "));  Serial.print(_Option_pullup, HEX); Serial.print(F("/"));  Serial.print(_Option_pullup, DEC); Serial.print(F("/"));  Serial.println(_Option_pullup, BIN);
+	Serial.print(F("OptionWakeup (HEX/DEC/BIN)      : "));  Serial.print(_Option_wakeup, HEX); Serial.print(F("/"));  Serial.print(_Option_wakeup, DEC); Serial.print(F("/"));  Serial.println(_Option_wakeup, BIN);
+	Serial.print(F("OptionFEC (HEX/DEC/BIN)         : "));  Serial.print(_Option_FEC, HEX); Serial.print(F("/"));  Serial.print(_Option_FEC, DEC); Serial.print(F("/"));  Serial.println(_Option_FEC, BIN);
+	Serial.print(F("OptionPower (HEX/DEC/BIN)       : "));  Serial.print(_Option_power, HEX); Serial.print(F("/"));  Serial.print(_Option_power, DEC); Serial.print(F("/"));  Serial.println(_Option_power, BIN);
 
 	Serial.println("----------------------------------------");
 
@@ -582,7 +588,7 @@ void EBYTE::PrintParameters() {
 method to read parameters, 
 */
 
-bool EBYTE::ReadParameters() {
+bool EBYTE::read_parameters() {
 
 	_Params[0] = 0;
 	_Params[1] = 0;
@@ -591,7 +597,7 @@ bool EBYTE::ReadParameters() {
 	_Params[4] = 0;
 	_Params[5] = 0;
 
-	SetMode(MODE_PROGRAM);
+	set_mode(MODE_PROGRAM);
 
 	_s->write(0xC1);
 
@@ -602,24 +608,24 @@ bool EBYTE::ReadParameters() {
 	_s->readBytes((uint8_t*)&_Params, (uint8_t) sizeof(_Params));
 
 	_Save = _Params[0];
-	_AddressHigh = _Params[1];
-	_AddressLow = _Params[2];
+	_Address_high = _Params[1];
+	_Address_low = _Params[2];
 	_Speed = _Params[3];
 	_Channel = _Params[4];
 	_Options = _Params[5];
 
-	_Address =  (_AddressHigh << 8) | (_AddressLow);
-	_ParityBit = (_Speed & 0XC0) >> 6;
-	_UARTDataRate = (_Speed & 0X38) >> 3;
-	_AirDataRate = _Speed & 0X07;
+	_Address =  (_Address_high << 8) | (_Address_low);
+	_Parity_bit = (_Speed & 0XC0) >> 6;
+	_UART_data_rate = (_Speed & 0X38) >> 3;
+	_Air_data_rate = _Speed & 0X07;
 
-	_OptionTrans = (_Options & 0X80) >> 7;
-	_OptionPullup = (_Options & 0X40) >> 6;
-	_OptionWakeup = (_Options & 0X38) >> 3;
-	_OptionFEC = (_Options & 0X07) >> 2;
-	_OptionPower = (_Options & 0X03);
+	_Option_trans = (_Options & 0X80) >> 7;
+	_Option_pullup = (_Options & 0X40) >> 6;
+	_Option_wakeup = (_Options & 0X38) >> 3;
+	_Option_FEC = (_Options & 0X07) >> 2;
+	_Option_power = (_Options & 0X03);
 	
-	SetMode(MODE_NORMAL);
+	set_mode(MODE_NORMAL);
 
 	if (0xC0 != _Params[0]){
 		
@@ -631,7 +637,10 @@ bool EBYTE::ReadParameters() {
 }
 
 
-bool EBYTE::ReadModelData() {
+/*
+method to read model data, 
+*/
+bool EBYTE::read_model_data() {
 
 	_Params[0] = 0;
 	_Params[1] = 0;
@@ -643,7 +652,7 @@ bool EBYTE::ReadModelData() {
 	bool found = false;
 	int i = 0;
 	
-	SetMode(MODE_PROGRAM);
+	set_mode(MODE_PROGRAM);
 
 	_s->write(0xC3);
 
@@ -694,9 +703,9 @@ bool EBYTE::ReadModelData() {
 		found = true;
 	}
 
-	SetMode(MODE_NORMAL);
+	set_mode(MODE_NORMAL);
 
-	CompleteTask(1000);
+	complete_task(1000);
 
 	return found;
 	
@@ -706,7 +715,7 @@ bool EBYTE::ReadModelData() {
 method to get module model and E50-TTL-100 will return 50
 */
 
-uint8_t EBYTE::GetModel() {
+uint8_t EBYTE::get_model() {
 
 	return _Model;
 	
@@ -716,7 +725,7 @@ uint8_t EBYTE::GetModel() {
 method to get module version (undocumented as to the value)
 */
 
-uint8_t EBYTE::GetVersion() {
+uint8_t EBYTE::get_version() {
 
 	return _Version;
 	
@@ -727,7 +736,7 @@ method to get module version (undocumented as to the value)
 */
 
 
-uint8_t EBYTE::GetFeatures() {
+uint8_t EBYTE::get_features() {
 
 	return _Features;
 
@@ -739,10 +748,10 @@ method to clear the serial buffer
 without clearing the buffer, i find getting the parameters very unreliable after programming.
 i suspect stuff in the buffer affects rogramming 
 hence, let's clean it out
-this is called as part of the setmode
+this is called as part of the set_mode
 
 */
-void EBYTE::ClearBuffer(){
+void EBYTE::clear_buffer(){
 
 	unsigned long amt = millis();
 

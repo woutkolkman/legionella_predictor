@@ -12,10 +12,9 @@
 WebServer interface_server(80);
 EBYTE Transceiver(&Serial2, PIN_M0_, PIN_M1_, PIN_AX);
 struct DATA {
-  uint8_t transmitter_ID;
-  unsigned long hour;
-  int8_t Temperature;
-} MyData;
+  uint8_t transmitter_ID[TRANSMITTER_ID_SIZE];
+  uint8_t Temperature;
+} Temperatures;
 
 void setup_wifi(bool hotspot,char *ssid, char *password);
 
@@ -61,6 +60,7 @@ void setup() {
 
   // this init will set the pinModes for you
   Transceiver.init();
+
 
   //genereer een test POST payload met elke regel een temperatuur (deze code moet nog worden weggehaald)
   strcpy(post_payload, transmitter_id);
@@ -151,15 +151,21 @@ bool send_to_cloud() {
   return retval;
 }
 
-
 void LoRa_get_data() {
   // i highly suggest you send data using structures and not
     // a parsed data--i've always had a hard time getting reliable data using
     // a parsing method
-  Transceiver.GetStruct(&MyData, sizeof(MyData));
+  Transceiver.get_struct(&Temperatures, sizeof(Temperatures));
 
   // dump out what was just received
-  Serial.print("transmitter_ID: ");Serial.println(MyData.transmitter_ID);
-  Serial.print("Hour: "); Serial.println(MyData.hour);
-  Serial.print("Temp: "); Serial.println(MyData.Temperature);
+
+
+  Serial.print("transmitter_ID: ");
+  for (int i = 0; i < TRANSMITTER_ID_SIZE; i++) {
+    Serial.print(Temperatures.transmitter_ID[i]);
+  }
+  Serial.println();
+  Serial.print(" Temp: "); Serial.println(Temperatures.Temperature);
+
 }
+
