@@ -131,15 +131,15 @@ void LoRa_get_data() {
   // i highly suggest you send data using structures and not
     // a parsed data--i've always had a hard time getting reliable data using
     // a parsing method
-  Transceiver.GetStruct(&MyData, sizeof(MyData));
+  Transceiver.get_struct(&Temperatures, sizeof(Temperatures));
 
   // dump out what was just received
   Serial.print("transmitter_ID: ");
   for (int i = 0; i < TRANSMITTER_ID_SIZE; i++) {
-    Serial.print(MyData.transmitter_ID[i]);
+    Serial.print(Temperatures.transmitter_ID[i]);
   }
   Serial.println();
-  Serial.print("Hour: "); Serial.println(MyData.hour);
-  Serial.print("Temp: "); Serial.println(MyData.Temperature);
+  Serial.print("Hour: "); Serial.println(Temperatures.hour);
+  Serial.print("Temp: "); Serial.println(Temperatures.Temperature);
 
 }

@@ -24,7 +24,7 @@ struct DATA {
   uint8_t transmitter_ID[8];
   unsigned long hour;
   uint8_t Temperature;
-} MyData;
+} Temperatures;
 
 
 //function definition 

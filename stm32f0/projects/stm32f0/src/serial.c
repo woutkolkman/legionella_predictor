@@ -33,7 +33,7 @@ void init_serial() {
 	USART_Cmd(USART2, ENABLE);
 }
 
-
+//prints a character
 void Serial_char(char c) {
   // Wait for Transmit data register empty
   while((USART2->ISR & USART_ISR_TXE) == 0) ;
@@ -94,6 +94,7 @@ void Serial_putint(int16_t v) {
   str[t2] = '\0';
   Serial_print(str);
 }
+
 //print an integer, and start on a new line
 void Serial_putintln(int16_t v) {
 	Serial_putint(v);
