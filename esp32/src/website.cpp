@@ -74,7 +74,10 @@ const char webpage_wifi_form[] = {
 						"<th><label>password : </label></th>\n"
 						"<th><input id='wifi_password' type='password' name='password' required /></th>\n"
 					"</tr>\n"	
-					"<tr><th /><th><input type='submit' name='submit' value='submit' /></th></tr>\n"
+					"<tr>"
+            "<th><input formaction='/scanwifi' type='submit' name='scan_wifi_networks' value='scan for wifi networks' formnovalidate /></th>"
+            "<th><input type='submit' name='submit' value='submit' /></th>"
+          "</tr>\n"
         "</table>\n"
 			"</fieldset>\n"
 		"</form>\n"
@@ -141,31 +144,30 @@ void scan_networks() {
  String message = "";
   message += webpage_head;
 
-  // scan different networks
-  uint8_t number_of_networks = WiFi.scanNetworks(); 
+  // if scan button is pressed, scan for availble wifi networks.
+  if(interface_server.hasArg("scan_wifi_networks")) {
+    // scan different networks
+    uint8_t number_of_networks = WiFi.scanNetworks(); 
 
-  // construct wifi table of avaible networks in html
-  message += "<!-- wifi scan -->";
-	message += "<table id='fancy'>";
-	message +=   "<caption><strong>available wifi networks</strong></caption>";
-	message +=   "<tr>";
-  message +=     "<th>Network name</th>";
-	message +=     "<th>Signal strength</th>";
-	message +=  "</tr>";
-
-  for (int i = 0; i < number_of_networks; i++) { // loop to present network name + signal strength + mac address
-    message += "<tr><td>";
-    message += WiFi.SSID(i) + "</td>";
-
-    message += "<td>"; 
-    char strength[10];
-    itoa(WiFi.RSSI(i),strength,10);
-    message += String(strength) + "</td>";
-
-    message += "</tr>";
+    // construct wifi table of avaible networks in html
+    message += "<!-- wifi scan -->";
+	  message += "<table id='fancy'>";
+	  message +=   "<caption><strong>available wifi networks</strong></caption>";
+	  message +=   "<tr>";
+    message +=     "<th>Network name</th>";
+	  message +=     "<th>Signal strength</th>";
+	  message +=  "</tr>";
+    for (int i = 0; i < number_of_networks; i++) { // loop to present network name + signal strength + mac address
+      message += "<tr><td>";
+      message += WiFi.SSID(i) + "</td>";
+      message += "<td>"; 
+      char strength[10];
+      itoa(WiFi.RSSI(i),strength,10);
+      message += String(strength) + "</td>";
+      message += "</tr>";
+    }
+    message += "</table>";
   }
-
-  message += "</table>";
 
   // wifi form 
   message += webpage_wifi_form;
