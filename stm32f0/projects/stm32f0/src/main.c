@@ -1,14 +1,10 @@
-#include "EBYTE.h"
 #include "main.h"
 #include "stm32f0xx.h"
-#include "stm32f0_discovery.h"
-#include "stm32f0xx_it.h"
-#include "usart.h"
 #include "lm35.h"
-//#include "struct.h"
+#include "struct.h"
 
 int main(void) {
-
+	
 	sensor_init();	
 	TIM14_init();
 	TIM14_interrupt_init();
@@ -18,10 +14,7 @@ int main(void) {
 	
 	// start the first conversion
 	ADC_StartOfConversion(ADC1);
-	
-//Configure LED3 and LED4 on STM32F0-Discovery
-//STM_EVAL_LEDInit(LED3);
-//STM_EVAL_LEDInit(LED4);
+
 	init_serial();
 	Serial_clearscreen();
 	init_LoRa();
@@ -30,7 +23,10 @@ int main(void) {
 	
 	while (1) {
 		
-
+		if (send) {
+			SendStruct(&MyData.Temperature, sizeof(MyData));
+		}
+		
 	/*MyData.Temperature++;
 		MyData.hour++;
 		MyData.transmitter_ID++;

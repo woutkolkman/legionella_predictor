@@ -11,10 +11,5 @@
 // global variables
 extern uint16_t rx_read_location;
 
-/*struct DATA {
-	uint8_t transmitter_ID;
-	unsigned long hour;
-	uint8_t Temperature;
-} MyData;*/
 
 

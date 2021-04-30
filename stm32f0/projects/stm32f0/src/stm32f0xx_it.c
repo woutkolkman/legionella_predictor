@@ -4,15 +4,16 @@
 #include "stm32f0xx_it.h"
 #include "stdbool.h"
 #include "lm35.h"
-#include "struct.h"
 #include "serial.h"
+#include "struct.h"
 
 extern volatile unsigned long timehad;
 volatile uint8_t* RxBuffer;
 volatile uint16_t RxWriteLocation;
 extern uint16_t RxReadLocation;
 bool full;
-void SendStruct(const void *TheStructure, uint16_t size_);
+uint8_t counter = 0;
+bool send = false;
 
 void HardFault_Handler(void)
 {
@@ -59,8 +60,12 @@ void USART1_IRQHandler(void) {
 void TIM14_IRQHandler(void) { // timer to measure temperature every minute
 	
   if (TIM_GetITStatus(TIM14, TIM_IT_Update) != RESET) { // wait a minute
-	  MyData.Temperature = measure_temperature();
-		SendStruct(&MyData, sizeof(MyData));
+		MyData.Temperature = measure_temperature();
+		counter++;
+		if (counter == 10) { // moet naar 60
+			send = true;
+			counter = 0;
+		}
     TIM_ClearITPendingBit(TIM14, TIM_IT_Update);
   }
 }

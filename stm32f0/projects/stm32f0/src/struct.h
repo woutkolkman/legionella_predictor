@@ -7,4 +7,9 @@ struct DATA {
 	uint8_t Temperature;
 } MyData;
 
+extern struct DATA MyData;
+
+
+
+
 

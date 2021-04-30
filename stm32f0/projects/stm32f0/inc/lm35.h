@@ -2,6 +2,11 @@
 #define _LM35_H_
 
 #include "stdint.h"
+#include "stdbool.h"
+
+// global variables
+extern uint8_t counter;
+extern bool send;
 
 // function prototypes
 void sensor_init(void);
