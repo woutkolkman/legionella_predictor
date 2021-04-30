@@ -20,7 +20,7 @@
 #define LORA_M1_PIN GPIO_Pin_11		//GPIOA11
 #define LORA_AUX_PIN GPIO_Pin_12	//GPIOA12
 
-#define TX_BUFFER_SIZE 100 
+#define TX_BUFFER_SIZE 150 
 #define RX_BUFFER_SIZE 100
 
 //Timer 3 for delay of 1 MS

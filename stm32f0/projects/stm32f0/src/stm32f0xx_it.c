@@ -27,7 +27,7 @@
   ******************************************************************************
   */
 
-#define RX_BUFFER_SIZE 200
+#define RX_BUFFER_SIZE 100
 #define NEXT_RXWRITE_LOCATION ((RxWriteLocation + 1) % RX_BUFFER_SIZE)
 
 /* Includes ------------------------------------------------------------------*/

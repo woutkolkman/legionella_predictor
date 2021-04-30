@@ -18,11 +18,14 @@ YOU MUST USE THE ACTUAL GPIO NUMBER
 #define PIN_M1 22   // D2 on the board (possibly called pin 22)
 #define PIN_AX 21   // D15 on the board (possibly called pin 21)
 
+#define TRANSMITTER_ID_SIZE 8
+
 struct DATA {
-  uint8_t transmitter_ID;
+  uint8_t transmitter_ID[8];
   unsigned long hour;
-  int8_t Temperature;
+  uint8_t Temperature[60];
 } MyData;
+
 
 //function definition 
 void LoRa_get_data(void);

@@ -25,7 +25,6 @@ void setup() {
 
   // this init will set the pinModes for you
   Transceiver.init();
-
 }
 
 void loop() {
@@ -135,7 +134,11 @@ void LoRa_get_data() {
   Transceiver.GetStruct(&MyData, sizeof(MyData));
 
   // dump out what was just received
-  Serial.print("transmitter_ID: ");Serial.println(MyData.transmitter_ID);
+  Serial.print("transmitter_ID: ");
+  for (int i = 0; i < TRANSMITTER_ID_SIZE; i++) {
+    Serial.print(MyData.transmitter_ID[i]);
+  }
+  Serial.println();
   Serial.print("Hour: "); Serial.println(MyData.hour);
   Serial.print("Temp: "); Serial.println(MyData.Temperature);
 
