@@ -24,9 +24,9 @@ const char *hotspot_ssid = "legionella_predictor(tiemen)";
 const char *hotspot_password = "zeer_geheim2021";
 
 // http post addresses
-char cloud_address[80]; //later laten invullen via website
-char cloud_port[10];                       //later laten invullen via website
-char cloud_path[80];                  //later laten invullen via website
+char cloud_address[80];
+char cloud_port[10];
+char cloud_path[80];
 char post_payload[1+POST_PAYLOAD_LEN];          //will be filled with transmitter ID, temperature data, separated with '\n'
 const char *transmitter_id = "XHD38SD3";        //vervangen door wat transmitter verzend
 
