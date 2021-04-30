@@ -38,10 +38,10 @@ int main(void) {
 		
 		//simple counter
 		MyData.hour++;
-		if(MyData.Temperature <= -45) {
+		if(MyData.Temperature <= 10) {
 			up = true;
 		}
-		if(MyData.Temperature >= 115) {
+		if(MyData.Temperature >= 80) {
 			up = false;
 		}
 		

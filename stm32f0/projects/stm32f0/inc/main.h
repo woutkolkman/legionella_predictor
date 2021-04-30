@@ -20,7 +20,7 @@ extern uint16_t rx_read_location;
 struct DATA {
 	uint8_t transmitter_ID[8];
   unsigned long hour;
-  uint8_t Temperature[60];
+  uint8_t Temperature;
 } MyData;
 
 
