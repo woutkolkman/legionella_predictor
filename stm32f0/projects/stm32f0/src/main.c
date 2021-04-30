@@ -24,26 +24,26 @@ int main(void) {
 	Green_led_init();
 	
 	while (1) {
-
+	
+		int i;
+		
 		if (send) {
 			SendStruct(&MyData, sizeof(MyData));
-		  Serial_putint(MyData.Temperature[counter]);
-			Serial_print(" ");
+			for (i = 0; i < TEMPERATURE_SIZE; i++) {
+				Serial_putint(i);
+				Serial_print(" : ");
+				Serial_putint(MyData.Temperature[i]);
+				Serial_println(" ");
+			}
+			Serial_print("Transmitter ID = ");
+			Serial_putintln(MyData.transmitter_ID);
+			Serial_print("Hour = ");
+			Serial_putintln(MyData.hour);
 			send = false;
+			if (send == false) {
+				Serial_println("Waiting for new data...");
+			}
 		}
-
-	/*MyData.Temperature++;
-		MyData.hour++;
-		MyData.transmitter_ID++;
-	
-		SendStruct(&MyData, sizeof(MyData));
-		Serial_print("Sending ID = ");
-		Serial_putint(MyData.transmitter_ID);
-		Serial_print(" Hour = ");
-		Serial_putint(MyData.hour);
-		Serial_print(" Temp = ");
-		Serial_putintln(MyData.Temperature);
-		timerDelay(MINUTE);*/
 	}
 }
 

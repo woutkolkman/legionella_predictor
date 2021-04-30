@@ -62,6 +62,7 @@ void TIM14_IRQHandler(void) { // timer to measure temperature every minute
   if (TIM_GetITStatus(TIM14, TIM_IT_Update) != RESET) { // wait a minute
 		MyData.Temperature[counter++] = measure_temperature();
 		if (counter == TEMPERATURE_SIZE) { // if hour has passed
+			MyData.hour++;
 			send = true; // STM32 must send data to ESP32
 			counter = 0; // reset counter
 		}
