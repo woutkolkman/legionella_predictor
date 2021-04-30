@@ -20,13 +20,13 @@ struct DATA {
 void setup_wifi(bool hotspot,char *ssid, char *password);
 
 // hotspot wifi credentials
-const char *hotspot_ssid = "legionella_predictor";
+const char *hotspot_ssid = "legionella_predictor(tiemen)";
 const char *hotspot_password = "zeer_geheim2021";
 
 // http post addresses
-char cloud_address[] = "http://145.44.235.205"; //later laten invullen via website
-char cloud_port[] = "80";                       //later laten invullen via website
-char cloud_path[] = "/packet";                  //later laten invullen via website
+char cloud_address[80]; //later laten invullen via website
+char cloud_port[10];                       //later laten invullen via website
+char cloud_path[80];                  //later laten invullen via website
 char post_payload[1+POST_PAYLOAD_LEN];          //will be filled with transmitter ID, temperature data, separated with '\n'
 const char *transmitter_id = "XHD38SD3";        //vervangen door wat transmitter verzend
 
@@ -36,6 +36,11 @@ void setup() {
   //start USART (serial monitor)
   Serial.begin(115200);
 
+  // setup default cloud settings
+  strcpy(cloud_address, "http://145.44.235.205");
+  strcpy(cloud_port, "80");
+  strcpy(cloud_path,"/packet");
+
   // start wifi hotspot
   setup_wifi(true, (char *) hotspot_ssid,(char *) hotspot_password);
 
@@ -43,6 +48,7 @@ void setup() {
   interface_server.on("/",homepage);
   interface_server.on("/scanwifi",scan_networks);
   interface_server.on("/connectwifi",connect_to_network);
+  interface_server.on("/configcloud",config_cloud_page);
   interface_server.onNotFound(page_not_found);
 
   // start to listen to port 80
@@ -156,5 +162,4 @@ void LoRa_get_data() {
   Serial.print("transmitter_ID: ");Serial.println(MyData.transmitter_ID);
   Serial.print("Hour: "); Serial.println(MyData.hour);
   Serial.print("Temp: "); Serial.println(MyData.Temperature);
-
 }
