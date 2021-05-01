@@ -12,7 +12,7 @@ struct DATA {
 	uint8_t Temperature[TEMPERATURE_SIZE];
 };
 
-extern struct DATA MyData;
+extern struct DATA Temperatures;
 
 /*struct DATA {
 	uint8_t transmitter_ID;

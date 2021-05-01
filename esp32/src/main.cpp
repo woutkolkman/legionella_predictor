@@ -14,8 +14,8 @@ EBYTE Transceiver(&Serial2, PIN_M0_, PIN_M1_, PIN_AX);
 struct DATA {
   uint8_t transmitter_ID;
   unsigned long hour;
-  uint8_t Temperature;
-} MyData;
+  uint8_t Temperature[TEMPERATURE_SIZE];
+} Temperatures;
 
 void setup_wifi(bool hotspot,char *ssid, char *password);
 
@@ -66,16 +66,18 @@ void LoRa_get_data() {
   // i highly suggest you send data using structures and not
     // a parsed data--i've always had a hard time getting reliable data using
     // a parsing method
-  Transceiver.GetStruct(&MyData, sizeof(MyData));
-
-//int i;
+  Transceiver.GetStruct(&Temperatures, sizeof(Temperatures));
 
   // dump out what was just received
-  Serial.print("transmitter_ID: ");Serial.println(MyData.transmitter_ID);
-  Serial.print("Hour: "); Serial.println(MyData.hour);
-  Serial.print("Temp: "); Serial.println(MyData.Temperature);
-/*for (i = 0; i < TEMPERATURE_SIZE; i++) {
-    Serial.println(MyData.Temperature[i]);
-  }*/
-
+  Serial.println("Temperatures: "); 
+  for (int i = 0; i < TEMPERATURE_SIZE; i++) {
+    Serial.print(i);
+    Serial.print(" : ");
+    Serial.print(Temperatures.Temperature[i]);
+    Serial.println(" degrees.");
+  }
+  Serial.print("Transmitter_ID: ");
+  Serial.println(Temperatures.transmitter_ID);
+  Serial.print("Hour: "); 
+  Serial.println(Temperatures.hour);
 }

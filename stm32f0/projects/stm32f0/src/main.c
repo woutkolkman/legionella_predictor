@@ -3,7 +3,7 @@
 #include "lm35.h"
 #include "struct.h"
 
-struct DATA MyData;
+struct DATA Temperatures;
 
 int main(void) {
 	
@@ -28,17 +28,18 @@ int main(void) {
 		int i;
 		
 		if (send) {
-			SendStruct(&MyData, sizeof(MyData));
+			SendStruct(&Temperatures, sizeof(Temperatures));
+			Serial_println("Temperatures: ");
 			for (i = 0; i < TEMPERATURE_SIZE; i++) {
 				Serial_putint(i);
 				Serial_print(" : ");
-				Serial_putint(MyData.Temperature[i]);
-				Serial_println(" ");
+				Serial_putint(Temperatures.Temperature[i]);
+				Serial_println(" degrees.");
 			}
 			Serial_print("Transmitter ID = ");
-			Serial_putintln(MyData.transmitter_ID);
+			Serial_putintln(Temperatures.transmitter_ID);
 			Serial_print("Hour = ");
-			Serial_putintln(MyData.hour);
+			Serial_putintln(Temperatures.hour);
 			send = false;
 			if (send == false) {
 				Serial_println("Waiting for new data...");
