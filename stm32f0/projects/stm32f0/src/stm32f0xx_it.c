@@ -114,11 +114,8 @@ void ADC1_COMP_IRQHandler(void) {
 	if(ADC_GetITStatus(ADC1, ADC1_COMP_IRQn) != RESET){
 		// Clear interrupt bit
 		ADC_ClearITPendingBit(ADC1, ADC1_COMP_IRQn);
-		ADC_ClearFlag(ADC1, ADC_FLAG_ADSTART);
-//		ADC_ClearFlag(ADC1, ADC_FLAG_EOSMP);
 		
-//		if (adc_battery_meas) {
-		if (true) {
+		if (adc_battery_meas) {
 			//battery measurement
 			uint16_t val = ADC_GetConversionValue(ADC1);
 			Serial_print("battery: "); //debug
