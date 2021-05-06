@@ -105,6 +105,12 @@ void TIM14_IRQHandler(void) {
   if (TIM_GetITStatus(TIM14, TIM_IT_Update) != RESET) { // wait a minute
 		measure_temperature(); // measure temperature 
     TIM_ClearITPendingBit(TIM14, TIM_IT_Update);
+		
+		//TODO, measure_temperature() (hierboven) start een conversie en ADC interrupt behandeld de uitkomst
+		//start batterijmeting elk uur (counter tot 60) met onderstaande code, en roep daarna sensor_init() enzo weer aan
+		/*ADC_battery_init();
+		ADC_interrupt_init();
+		battery_read_start();*/
   }
 }
 
@@ -114,6 +120,7 @@ void ADC1_COMP_IRQHandler(void) {
 	if(ADC_GetITStatus(ADC1, ADC1_COMP_IRQn) != RESET){
 		// Clear interrupt bit
 		ADC_ClearITPendingBit(ADC1, ADC1_COMP_IRQn);
+		
 		
 		if (adc_battery_meas) {
 			//battery measurement
@@ -132,7 +139,7 @@ void ADC1_COMP_IRQHandler(void) {
 			
 		} else {
 			//sensor measurement
-			//...
+			//TODO
 		}
 	}
 }

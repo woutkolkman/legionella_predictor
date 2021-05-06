@@ -15,27 +15,16 @@ void delay(const int d) {
 }
 
 int main(void) {
-	#if 1
-	init_serial();
-	ADC_battery_init();
-	ADC_interrupt_init();
 	
-	while(1) {
-//		Serial_putintln(battery_read_sync());
-		battery_read_start();
-		
-		delay((SystemCoreClock/8));
-	}
-	#else
 	sensor_init();
 	TIM14_init();
 	TIM14_interrupt_init();
 	
 	// configure channel 10 GPIOC I/O-pin 0
-	ADC_ChannelConfig(ADC1, ADC_Channel_10, ADC_SampleTime_239_5Cycles);
+	ADC_ChannelConfig(ADC1, ADC_Channel_10, ADC_SampleTime_239_5Cycles);				//TODO dit hoort thuis in sensor_init()
 	
 	// start the first conversion
-	ADC_StartOfConversion(ADC1);
+	ADC_StartOfConversion(ADC1);		//TODO dit hoort thuis in measure_temperature()
 	
 	// Configure LED3 and LED4 on STM32F0-Discovery
 	//STM_EVAL_LEDInit(LED3);
@@ -81,7 +70,6 @@ int main(void) {
 		Serial_print("Temp: ");Serial_putintln(Temperatures.Temperature);
 		timer_delay(MINUTE);	
 	}
-	#endif
 }
 
 //generates the transmission ID. Saves it in the struct
