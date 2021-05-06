@@ -1,11 +1,32 @@
 #include "main.h"
 #include "stm32f0xx.h"
 #include "stm32f0_discovery.h"
-#include "usart.h"
 #include "lm35.h"
+#include "battery.h"
+
+void delay(const int d) {
+	
+	volatile int i;
+
+	for (i = d; i > 0; i--) { 
+		; 
+	}
+	return;
+}
 
 int main(void) {
-
+	#if 1
+	init_serial();
+	ADC_battery_init();
+	ADC_interrupt_init();
+	
+	while(1) {
+//		Serial_putintln(battery_read_sync());
+		battery_read_start();
+		
+		delay((SystemCoreClock/8));
+	}
+	#else
 	sensor_init();
 	TIM14_init();
 	TIM14_interrupt_init();
@@ -26,6 +47,7 @@ int main(void) {
 	print_parameters();
 	Green_led_init();
 	Temperatures.Temperature = 10;
+	
 	while(1) {
 		uint8_t temp_print;
 		static bool up;
@@ -59,6 +81,7 @@ int main(void) {
 		Serial_print("Temp: ");Serial_putintln(Temperatures.Temperature);
 		timer_delay(MINUTE);	
 	}
+	#endif
 }
 
 //generates the transmission ID. Saves it in the struct

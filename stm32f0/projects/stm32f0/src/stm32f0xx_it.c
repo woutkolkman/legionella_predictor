@@ -32,8 +32,10 @@
 
 #include "stm32f0xx_it.h"
 #include "lm35.h"
+#include "battery.h"
 #include "STM32F0_discovery.h"
 #include "stdbool.h"
+#include "serial.h" //debug
 
 extern volatile unsigned long time_passed;
 volatile uint8_t* Rx_buffer;
@@ -73,7 +75,7 @@ void SysTick_Handler(void)
 /*  file (startup_stm32f0xx.s).                                               */
 /******************************************************************************/
 
-//called when a millisecond has passed and Timer 3 is enabled
+//EBYTE LoRa, called when a millisecond has passed and Timer 3 is enabled
 void TIM3_IRQHandler(void) {
 	time_passed++;
 	TIM_ClearITPendingBit(TIM3, TIM_IT_Update);
@@ -96,8 +98,9 @@ void USART1_IRQHandler(void) {
 		}
 	}
 }
-	
-void TIM14_IRQHandler(void) { // timer to measure temperature every minute
+
+// timer to measure temperature every minute
+void TIM14_IRQHandler(void) {
 	
   if (TIM_GetITStatus(TIM14, TIM_IT_Update) != RESET) { // wait a minute
 		measure_temperature(); // measure temperature 
@@ -105,3 +108,34 @@ void TIM14_IRQHandler(void) { // timer to measure temperature every minute
   }
 }
 
+//ADC sample complete
+void ADC1_COMP_IRQHandler(void) {
+	
+	if(ADC_GetITStatus(ADC1, ADC1_COMP_IRQn) != RESET){
+		// Clear interrupt bit
+		ADC_ClearITPendingBit(ADC1, ADC1_COMP_IRQn);
+		ADC_ClearFlag(ADC1, ADC_FLAG_ADSTART);
+//		ADC_ClearFlag(ADC1, ADC_FLAG_EOSMP);
+		
+//		if (adc_battery_meas) {
+		if (true) {
+			//battery measurement
+			uint16_t val = ADC_GetConversionValue(ADC1);
+			Serial_print("battery: "); //debug
+			Serial_putintln(val); //debug
+			
+			//battery low? LED on, else off
+			if (val > BATTERY_THRESHOLD_VOLTAGE) {
+				STM_EVAL_LEDOff(LED4);
+			} else {
+				STM_EVAL_LEDOn(LED4);
+			}
+			adc_battery_meas = false;
+//			sensor_init();
+			
+		} else {
+			//sensor measurement
+			//...
+		}
+	}
+}

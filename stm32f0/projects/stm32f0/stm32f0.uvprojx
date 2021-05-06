@@ -472,6 +472,11 @@
               <FileType>1</FileType>
               <FilePath>.\src\lm35.c</FilePath>
             </File>
+            <File>
+              <FileName>battery.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\battery.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -1076,6 +1081,11 @@
               <FileName>lm35.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\src\lm35.c</FilePath>
+            </File>
+            <File>
+              <FileName>battery.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\battery.c</FilePath>
             </File>
           </Files>
         </Group>
