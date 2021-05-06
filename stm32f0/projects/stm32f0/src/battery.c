@@ -53,8 +53,9 @@ void ADC_interrupt_init(void) {
 //start battery measurement, handle in ISR
 void battery_read_start(void) {
 	
-	ADC_StartOfConversion(ADC1);
+	//TODO transistor pin hoogzetten
 	adc_battery_meas = true;
+	ADC_StartOfConversion(ADC1);
 }
 
 

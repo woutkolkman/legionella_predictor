@@ -134,6 +134,7 @@ void ADC1_COMP_IRQHandler(void) {
 			} else {
 				STM_EVAL_LEDOn(LED4);
 			}
+			//TODO transistor pin laagzetten
 			adc_battery_meas = false;
 //			sensor_init();
 			
