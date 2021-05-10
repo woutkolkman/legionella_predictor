@@ -15,12 +15,13 @@ YOU MUST USE THE ACTUAL GPIO NUMBER
 #define PIN_M1_ 22   // D2 on the board (possibly called pin 22)
 #define PIN_AX 21   // D15 on the board (possibly called pin 21)
 
-// struct defines
-#define TEMPERATURE_SIZE 60
-
 #define POST_VALUE_LEN 8 //bytes per http parameter (5 numbers: -99.9...999.9)
 #define PAYLOAD_SIZE 60  //* temperature values (http POST payload)
 #define POST_PAYLOAD_LEN ((POST_VALUE_LEN)*(PAYLOAD_SIZE))
+// globals
+extern WebServer interface_server;
+#define TRANSMITTER_ID_SIZE 8
+#define TEMPERATURE_SIZE    60
 
 // globals
 extern WebServer interface_server;
