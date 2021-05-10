@@ -9,7 +9,6 @@
 
 struct DATA {
 	uint8_t transmitter_ID[TRANSMITTER_ID_SIZE];
-	unsigned long hour;
 	uint8_t Temperature[TEMPERATURE_SIZE];
 };
 
