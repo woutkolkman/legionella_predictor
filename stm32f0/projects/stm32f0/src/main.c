@@ -32,7 +32,7 @@ int main(void) {
 		int i;
 		
 		if (send) {
-			SendStruct(&Temperatures, sizeof(Temperatures));
+			send_struct(&Temperatures, sizeof(Temperatures));
 			Serial_println("Temperatures: ");
 			for (i = 0; i < TEMPERATURE_SIZE; i++) {
 				Serial_putint(i);
@@ -41,7 +41,9 @@ int main(void) {
 				Serial_println(" degrees.");
 			}
 			Serial_print("Transmitter ID = ");
-			Serial_putintln(Temperatures.transmitter_ID);
+			for(i = 0; i < TRANSMITTER_ID_SIZE; i++) {
+				Serial_putintln(Temperatures.transmitter_ID[i]);
+			}
 			Serial_print("Hour = ");
 			Serial_putintln(Temperatures.hour);
 			send = false;

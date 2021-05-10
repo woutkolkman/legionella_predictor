@@ -208,5 +208,4 @@ to react, some say only 10 ms, but I've found it can be much lonnger, I'm using
 	extern uint16_t Rx_write_location;
 	
 	//global used functions 
-	extern void SendStruct(const void *TheStructure, uint16_t size_);
 	extern bool is_full;
