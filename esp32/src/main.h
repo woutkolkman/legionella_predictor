@@ -27,5 +27,6 @@ extern WebServer interface_server;
 //function definition 
 void LoRa_get_data(void);
 bool send_to_cloud();
+void generate_http_post(void);
 
 #endif
