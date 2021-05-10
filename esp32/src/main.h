@@ -22,6 +22,7 @@ YOU MUST USE THE ACTUAL GPIO NUMBER
 extern WebServer interface_server;
 
 #define TRANSMITTER_ID_SIZE 8
+#define TEMPERATURE_SIZE    60
 
 //function definition 
 void LoRa_get_data(void);
