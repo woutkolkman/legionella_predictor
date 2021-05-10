@@ -6,7 +6,7 @@
 struct DATA Temperatures;
 
 int main(void) {
-	
+	generate_transmission_id();
 	sensor_init();	
 	TIM14_init();
 	TIM14_interrupt_init();
@@ -20,7 +20,7 @@ int main(void) {
 	// Configure LED3 and LED4 on STM32F0-Discovery
 	//STM_EVAL_LEDInit(LED3);
 	//STM_EVAL_LEDInit(LED4);
-	generate_transmission_id();
+	
 	init_serial();
 	Serial_clearscreen();
 	init_LoRa();
@@ -57,9 +57,11 @@ int main(void) {
 //generates the transmission ID. Saves it in the struct
 void generate_transmission_id() {
 	uint8_t count;
+	init_random_number();
 	for(count = 0; count < 8; count++) {
 		Temperatures.transmitter_ID[count] = ((uint8_t) (get_random_number() % BYTE_MAX_NUMBER));
 	}
+	deInit_random_number();
 }
 
 
@@ -67,7 +69,7 @@ void generate_transmission_id() {
 //creates a random number by ADC values and calculations.
 uint32_t get_random_number(void) {
 	uint8_t i;
-	init_random_number();
+	
   // Enable ADCperipheral
   ADC_Cmd(ADC1, ENABLE);
   while (ADC_GetFlagStatus(ADC1, ADC_FLAG_ADEN) == RESET)
@@ -88,10 +90,6 @@ uint32_t get_random_number(void) {
     //clear EOC flag
     ADC_ClearFlag(ADC1, ADC_FLAG_EOC);
   }
-  //disable ADC1 to save power
-  ADC_Cmd(ADC1, DISABLE);
-	ADC_DeInit(ADC1);
-  RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADC1, DISABLE);
   return CRC_CalcCRC(0xBADA55E5);
 }
 
@@ -115,4 +113,14 @@ void init_random_number() {
   ADC_Init(ADC1, &ADC_InitStructure);
   //enable internal channel
   ADC_TempSensorCmd(ENABLE);	
+}
+
+void deInit_random_number() {
+	ADC_TempSensorCmd(DISABLE);
+	ADC_Cmd(ADC1, DISABLE);
+	ADC_DeInit(ADC1);
+  RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADC1, DISABLE);
+	RCC_AHBPeriphClockCmd(RCC_AHBPeriph_CRC, DISABLE);
+	
+	
 }
