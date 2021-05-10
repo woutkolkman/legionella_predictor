@@ -115,12 +115,12 @@ void init_random_number() {
   ADC_TempSensorCmd(ENABLE);	
 }
 
+//deinitializes the ADC for the random numbers
 void deInit_random_number() {
 	ADC_TempSensorCmd(DISABLE);
 	ADC_Cmd(ADC1, DISABLE);
 	ADC_DeInit(ADC1);
   RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADC1, DISABLE);
 	RCC_AHBPeriphClockCmd(RCC_AHBPeriph_CRC, DISABLE);
-	
 	
 }
