@@ -172,5 +172,6 @@ void LoRa_get_data() {
   for (int i = 0; i < TRANSMITTER_ID_SIZE; i++) {
     Serial.print(Temperatures.transmitter_ID[i]);
   }
+  Serial.println(".");
 }
 

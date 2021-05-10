@@ -42,8 +42,9 @@ int main(void) {
 			}
 			Serial_print("Transmitter ID = ");
 			for(i = 0; i < TRANSMITTER_ID_SIZE; i++) {
-				Serial_putintln(Temperatures.transmitter_ID[i]);
+				Serial_putint(Temperatures.transmitter_ID[i]);
 			}
+			Serial_newLine();
 			Serial_print("Hour = ");
 			Serial_putintln(Temperatures.hour);
 			send = false;
