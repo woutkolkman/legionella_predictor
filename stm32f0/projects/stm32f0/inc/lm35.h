@@ -7,11 +7,12 @@
 // global variables
 extern uint8_t counter;
 extern bool send;
+extern bool measure_temp;
 
 // function prototypes
 void sensor_init(void);
 uint8_t measure_temperature(void);
+void ADC_interrupt(void);
 void TIM14_init(void);
-void TIM14_interrupt_init(void);
 
 #endif // _LM35_H_

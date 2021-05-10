@@ -1,32 +1,3 @@
-/**
-  ******************************************************************************
-  * @file    stm32f0xx_it.c 
-  * @author  MCD Application Team
-  * @version V1.0.0
-  * @date    23-March-2012
-  * @brief   Main Interrupt Service Routines.
-  *          This file provides template for all exceptions handler and 
-  *          peripherals interrupt service routine.
-  ******************************************************************************
-  * @attention
-  *
-  * <h2><center>&copy; COPYRIGHT 2012 STMicroelectronics</center></h2>
-  *
-  * Licensed under MCD-ST Liberty SW License Agreement V2, (the "License");
-  * You may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at:
-  *
-  *        http://www.st.com/software_license_agreement_liberty_v2
-  *
-  * Unless required by applicable law or agreed to in writing, software 
-  * distributed under the License is distributed on an "AS IS" BASIS, 
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  *
-  ******************************************************************************
-  */
-
 #define RX_BUFFER_SIZE 100
 #define NEXT_RX_WRITE_LOCATION ((Rx_write_location + 1) % RX_BUFFER_SIZE)
 
@@ -43,6 +14,7 @@ extern uint16_t Rx_read_location;
 bool is_full;
 uint8_t counter = 0;
 bool send = false;
+bool measure_temp = false;
 
 void NMI_Handler(void)
 {
@@ -69,13 +41,6 @@ void SysTick_Handler(void)
 {
 }
 
-/******************************************************************************/
-/*                 STM32F0xx Peripherals Interrupt Handlers                   */
-/*  Add here the Interrupt Handler for the used peripheral(s) (PPP), for the  */
-/*  available peripheral interrupt handler's name please refer to the startup */
-/*  file (startup_stm32f0xx.s).                                               */
-/******************************************************************************/
-
 //called when a millisecond has passed and Timer 3 is enabled
 void TIM3_IRQHandler(void) {
 	time_passed++;
@@ -98,6 +63,14 @@ void USART1_IRQHandler(void) {
 			Rx_write_location = NEXT_RX_WRITE_LOCATION;
 		}
 	}
+}
+
+void ADC1_COMP_IRQHandler(void) {
+	
+  if (ADC_GetITStatus(ADC1, ADC_IT_EOC) != RESET) { // wait for EOC
+		measure_temp = true; // flag is true --> indication to sample
+		ADC_ClearITPendingBit(ADC1, ADC_IT_EOC);
+  }
 }
 	
 void TIM14_IRQHandler(void) { // timer to measure temperature every minute

@@ -6,20 +6,11 @@
 struct DATA Temperatures;
 
 int main(void) {
+	
 	generate_transmission_id();
-	sensor_init();	
+	sensor_init();
+	ADC_interrupt();
 	TIM14_init();
-	TIM14_interrupt_init();
-	
-	// configure channel 10 GPIOC I/O-pin 0
-	ADC_ChannelConfig(ADC1, ADC_Channel_10, ADC_SampleTime_239_5Cycles);
-	
-	// start the first conversion
-	ADC_StartOfConversion(ADC1);
-	
-	// Configure LED3 and LED4 on STM32F0-Discovery
-	//STM_EVAL_LEDInit(LED3);
-	//STM_EVAL_LEDInit(LED4);
 	
 	init_serial();
 	Serial_clearscreen();
@@ -42,8 +33,9 @@ int main(void) {
 			}
 			Serial_print("Transmitter ID = ");
 			for(i = 0; i < TRANSMITTER_ID_SIZE; i++) {
-				Serial_putintln(Temperatures.transmitter_ID[i]);
+				Serial_putint(Temperatures.transmitter_ID[i]);
 			}
+			Serial_print("\n");
 			Serial_print("Hour = ");
 			Serial_putintln(Temperatures.hour);
 			send = false;
