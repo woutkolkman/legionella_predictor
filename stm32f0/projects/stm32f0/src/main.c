@@ -26,7 +26,6 @@ int main(void) {
 	init_LoRa();
 	print_parameters();
 	Green_led_init();
-<<<<<<< HEAD
 	
 	while (1) {
 	
