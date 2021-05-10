@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include "green_led.h"
 
-#define BYTE_MAX_NUMBER 256
+#define MAX_TRANSMISSION_NUMBER ('~' + 1)
 
 // ----------------------------------------------------------------------------
 // Global variables
