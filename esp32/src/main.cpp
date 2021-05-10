@@ -29,7 +29,6 @@ char cloud_address[80];
 char cloud_port[10];
 char cloud_path[80];
 char post_payload[1+POST_PAYLOAD_LEN];          //will be filled with transmitter ID, temperature data, separated with '\n'
-const char *transmitter_id = "XHD38SD3";        //vervangen door wat transmitter verzend
 
 
 // init the ESP32
@@ -62,23 +61,6 @@ void setup() {
 
   // this init will set the pinModes for you
   Transceiver.init();
-
-
-  //genereer een test POST payload met elke regel een temperatuur (deze code moet nog worden weggehaald)
-  strcpy(post_payload, transmitter_id);
-  strcat(post_payload, "\n");
-  char buff[5]; //'-','1','2','8','\0'
-  for (uint8_t i=0; i<PAYLOAD_SIZE; i++) {
-    strcat( post_payload, itoa(i,&buff[0],DEC) );
-    strcat(post_payload, "\n");
-  }
-  /*
-   * De waardes die aan het begin van post_payload staan zijn het oudste. 
-   * Waardes worden gescheiden met '\n'. 
-   * De eerste regel bevat het transmitter ID. 
-   * Deze blok code voor testwaardes komt niet in de eindversie, maar de inhoud 
-   * van post_payload wordt gegenereerd tijdens het ontvangen van LoRa data. 
-   */
 }
 
 
@@ -91,6 +73,8 @@ void loop() {
   // you can also use Transceiver.available()
   if (Transceiver.available()) {
     LoRa_get_data();
+    generate_http_post();
+    send_to_cloud();
   }
 
   //testcode cloud
@@ -104,6 +88,30 @@ void loop() {
   /*if (!WiFi.isConnected()) {
     connect_to_network();
   }*/
+}
+
+
+void generate_http_post(void) {
+
+  uint8_t j=0;
+  for (j = 0; j < TRANSMITTER_ID_SIZE; j++) {
+    post_payload[j] = Temperatures.transmitter_ID[j];
+  }
+  post_payload[j] = 0;
+  strcat(post_payload, "\n");
+
+  char buff[5]; //'-','1','2','8','\0'
+  for (uint8_t i=0; i<PAYLOAD_SIZE; i++) {
+    strcat( post_payload, itoa(Temperatures.Temperature[i],&buff[0],DEC) );
+    strcat(post_payload, "\n");
+  }
+  /*
+   * De waardes die aan het begin van post_payload staan zijn het oudste. 
+   * Waardes worden gescheiden met '\n'. 
+   * De eerste regel bevat het transmitter ID. 
+   * Deze blok code voor testwaardes komt niet in de eindversie, maar de inhoud 
+   * van post_payload wordt gegenereerd tijdens het ontvangen van LoRa data. 
+   */
 }
 
 
@@ -153,6 +161,7 @@ bool send_to_cloud() {
   return retval;
 }
 
+
 void LoRa_get_data() {
   // i highly suggest you send data using structures and not
     // a parsed data--i've always had a hard time getting reliable data using
@@ -174,4 +183,3 @@ void LoRa_get_data() {
   }
   Serial.println(".");
 }
-
