@@ -20,7 +20,7 @@
 #define LORA_M1_PIN GPIO_Pin_11		//GPIOA11
 #define LORA_AUX_PIN GPIO_Pin_12	//GPIOA12
 
-#define TX_BUFFER_SIZE 100 
+#define TX_BUFFER_SIZE 150 
 #define RX_BUFFER_SIZE 100
 
 //Timer 3 for delay of 1 MS
@@ -31,7 +31,7 @@
 #define NO_AUX_DELAY 1000
 #define MINIMUM_AFTER_AUX_DELAY 20
 
-#define NEXT_RXREAD_LOCATION ((RxReadLocation + 1) % RX_BUFFER_SIZE)
+#define NEXT_RX_READ_LOCATION ((Rx_read_location + 1) % RX_BUFFER_SIZE)
 
 /*
 
@@ -122,65 +122,65 @@ to react, some say only 10 ms, but I've found it can be much lonnger, I'm using
 	void init_DMA_write(void);
 	void init_Timer_Delay(void);
 	
-	void timerDelay(unsigned long delayTime);
+	void timer_delay(unsigned long delay_time);
 	
-	void readBytes(uint8_t* buffer, uint8_t size);
+	void read_bytes(uint8_t* buffer, uint8_t size);
 	
 	//setters
-	void SetMode(uint8_t mode);
-	void SetAddress(uint16_t val);
-	void SetAddressH(uint8_t val);
-	void SetAddressL(uint8_t val);
-	void SetAirDataRate(uint8_t val);
-	void SetUARTBaudRate(uint8_t val);
-	void SetSpeed(uint8_t val);
-	void SetOptions(uint8_t val);
-	void SetChannel(uint8_t val);
-	void SetParityBit(uint8_t val);
+	void set_mode(uint8_t mode);
+	void set_address(uint16_t val);
+	void set_address_h(uint8_t val);
+	void set_address_l(uint8_t val);
+	void set_air_data_rate(uint8_t val);
+	void set_UART_baud_rate(uint8_t val);
+	void set_speed(uint8_t val);
+	void set_options(uint8_t val);
+	void set_channel(uint8_t val);
+	void set_parity_bit(uint8_t val);
 	
 	//functions to set the options
-	void SetTransmissionMode(uint8_t val);
-	void SetPullupMode(uint8_t val);
-	void SetWORTIming(uint8_t val);
-	void SetFECMode(uint8_t val);
-	void SetTransmitPower(uint8_t val);
+	void set_transmission_mode(uint8_t val);
+	void set_pullup_mode(uint8_t val);
+	void set_wor_timing(uint8_t val);
+	void set_FEC_mode(uint8_t val);
+	void set_transmit_power(uint8_t val);
 	
 	
 	// getters
-	bool GetAux(void);
-	uint16_t GetAddress(void);
-	uint8_t GetModel(void);
-	uint8_t GetVersion(void);
-	uint8_t GetFeatures(void);
-	uint8_t GetAddressH(void);
-	uint8_t GetAddressL(void);
-	uint8_t GetAirDataRate(void);
-	uint8_t GetUARTBaudRate(void);
-	uint8_t GetChannel(void);
-	uint8_t GetParityBit(void);
-	uint8_t GetTransmissionMode(void);
-	uint8_t GetPullupMode(void);
-	uint8_t GetWORTIming(void);
-	uint8_t GetFECMode(void);
-	uint8_t GetTransmitPower(void);
-	uint8_t GetOptions(void);
-	uint8_t GetSpeed(void);
+	bool get_aux(void);
+	uint16_t get_address(void);
+	uint8_t get_model(void);
+	uint8_t get_version(void);
+	uint8_t get_features(void);
+	uint8_t get_address_h(void);
+	uint8_t get_address_l(void);
+	uint8_t get_air_data_rate(void);
+	uint8_t get_uart_baud_rate(void);
+	uint8_t get_channel(void);
+	uint8_t get_parity_bit(void);
+	uint8_t get_transmission_mode(void);
+	uint8_t get_pullup_mode(void);
+	uint8_t get_WOR_timing(void);
+	uint8_t get_FEC_mode(void);
+	uint8_t get_transmit_power(void);
+	uint8_t get_options(void);
+	uint8_t get_speed(void);
 		
 	// methods to get data from sending unit
-	uint8_t GetByte(void);
-	void GetStruct(const void *TheStructure, uint16_t size_);
+	uint8_t get_byte(void);
+	void get_struct(const void *the_structure, uint16_t size_);
 	
 	// method to send to data to receiving unit
-	void SendByte(uint8_t TheByte);
-//void SendStruct(const void *TheStructure, uint16_t size_);
+	void send_byte(uint8_t the_byte);
+	void send_struct(const void *the_structure, uint16_t size_);
 	
 	// mehod to print parameters
-	void PrintParameters(void);
+	void print_parameters(void);
 	
 	// parameters are set above but NOT saved, here's how you save parameters
 	// notion here is you can set several but save once as opposed to saving on each parameter change
 	// you can save permanently (retained at start up, or temp which is ideal for dynamically changing the address or frequency
-	void SaveParameters(uint8_t val);
+	void save_parameters(uint8_t val);
 	
 	// MFG is not clear on what Reset does, but my testing indicates it clears buffer
 	// I use this when needing to restart the EBYTE after programming while data is still streaming in
@@ -188,27 +188,25 @@ to react, some say only 10 ms, but I've found it can be much lonnger, I'm using
 	void Reset(void);
 
 	// function to read modules parameters
-	bool ReadParameters(void);
+	bool read_parameters(void);
 
 	// method to let method know of module is busy doing something (timeout provided to avoid lockups)
-	void CompleteTask(unsigned long timeout);
+	void complete_task(unsigned long timeout);
 	
 	// utility funciton to build the "speed byte" which is a collection of a few different parameters
-	void BuildSpeedByte(void);
+	void build_speed_byte(void);
 
 	// utility funciton to build the "options byte" which is a collection of a few different parameters
-	void BuildOptionByte(void);
+	void build_option_byte(void);
 	
-	bool ReadModelData(void);
-	void ClearBuffer(void);
+	bool read_model_data(void);
+	void clear_buffer(void);
 	bool available(void);
 	
 	//global used variables, from other files, needed here.
-	extern volatile uint8_t *RxBuffer;
-  extern uint16_t RxWriteLocation;
-	extern bool full;
+	extern volatile uint8_t *Rx_buffer;
+	extern uint16_t Rx_write_location;
 	
 	//global used functions 
 	extern void SendStruct(const void *TheStructure, uint16_t size_);
-	
-
+	extern bool is_full;
