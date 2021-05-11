@@ -2,11 +2,15 @@
 #define NEXT_RX_WRITE_LOCATION ((Rx_write_location + 1) % RX_BUFFER_SIZE)
 
 #include "stm32f0xx_it.h"
+<<<<<<< HEAD
 #include "lm35.h"
 #include "battery.h"
 #include "STM32F0_discovery.h"
 #include "stdbool.h"
 #include "serial.h" //debug
+#include "stdbool.h"
+#include "lm35.h"
+#include "serial.h"
 #include "struct.h"
 
 extern volatile unsigned long time_passed;
@@ -14,8 +18,8 @@ volatile uint8_t* Rx_buffer;
 volatile uint16_t Rx_write_location;
 extern uint16_t Rx_read_location;
 bool is_full;
-bool send = false;
 uint8_t counter = 0;
+bool send = false;
 
 void NMI_Handler(void)
 {

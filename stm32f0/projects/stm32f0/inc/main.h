@@ -13,3 +13,5 @@ void generate_transmission_id(void);
 uint32_t get_random_number(void);
 void init_random_number(void);
 void ADC_interrupt_init(void);
+void deInit_random_number(void);
+
