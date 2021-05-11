@@ -35,18 +35,6 @@ void ADC_battery_init(void) {
 	ADC_ChannelConfig(ADC1, ADC_Channel_11, ADC_SampleTime_239_5Cycles);
 }
 
-
-//configure interrupt "ADC1_COMP_IRQHandler"
-void ADC_interrupt_init(void) {
-	
-	// Configure ADC ready interrupt
-	ADC_ClearITPendingBit(ADC1, ADC1_COMP_IRQn);
-	ADC_ITConfig(ADC1, ADC1_COMP_IRQn, ENABLE);
-	NVIC_EnableIRQ(ADC1_COMP_IRQn);
-	NVIC_SetPriority(ADC1_COMP_IRQn,0);
-}
-
-
 //start battery measurement, handle in ISR
 void battery_read_start(void) {
 	

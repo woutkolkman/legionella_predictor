@@ -10,7 +10,6 @@
 extern bool adc_battery_meas;
 
 void ADC_battery_init(void);
-void ADC_interrupt_init(void);
 void battery_read_start(void);
 uint16_t battery_read_sync(void);
 

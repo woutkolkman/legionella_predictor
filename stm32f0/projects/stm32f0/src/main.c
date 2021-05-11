@@ -10,19 +10,17 @@ struct DATA Temperatures;
 int main(void) {
 	
 	generate_transmission_id();
-	sensor_init();
+	ADC_init();
 	ADC_interrupt_init();
   TIM14_init();
-  TIM14_interrupt();
+  TIM14_interrupt_init();
 	
 	init_serial();
 	Serial_clearscreen();
 	init_LoRa();
 	print_parameters();
 	Green_led_init();
-	
-	STM_EVAL_LEDInit(LED3);
-	STM_EVAL_LEDInit(LED4);
+
 	
 	while (1) {
 		
@@ -108,6 +106,16 @@ void init_random_number() {
   ADC_Init(ADC1, &ADC_InitStructure);
   //enable internal channel
   ADC_TempSensorCmd(ENABLE);	
+}
+
+//configure interrupt "ADC1_COMP_IRQHandler"
+void ADC_interrupt_init(void) {
+	
+	// Configure ADC ready interrupt
+	ADC_ClearITPendingBit(ADC1, ADC1_COMP_IRQn);
+	ADC_ITConfig(ADC1, ADC1_COMP_IRQn, ENABLE);
+	NVIC_EnableIRQ(ADC1_COMP_IRQn);
+	NVIC_SetPriority(ADC1_COMP_IRQn,0);
 }
 
 void delay(const int d) {

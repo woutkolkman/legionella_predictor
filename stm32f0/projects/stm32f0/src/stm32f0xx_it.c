@@ -69,17 +69,13 @@ void USART1_IRQHandler(void) {
 void TIM14_IRQHandler(void) {
 	
   if (TIM_GetITStatus(TIM14, TIM_IT_Update) != RESET) { // wait a minute
-		Temperatures.Temperature[counter++] = measure_temperature();
-		if (counter == 60) {
-			temperature_read_start();
-		//ADC_battery_init();
-		//battery_read_start();
+		temperature_read_start(); 
+	//battery_read_start();
+		if (counter == 60) { // every hour
+			send = true; // if send = true --> send data (LoRa)
 			counter = 0;
 		}
     TIM_ClearITPendingBit(TIM14, TIM_IT_Update);
-		
-		//TODO, temperature_read_start() (hierboven) start een conversie en ADC interrupt behandeld de uitkomst
-		//start batterijmeting elk uur (counter tot 60) met onderstaande code, en roep daarna sensor_init() enzo weer aan
   }
 }
 
@@ -102,11 +98,8 @@ void ADC1_COMP_IRQHandler(void) {
 			}
 			//TODO transistor pin laagzetten
 			adc_battery_meas = false;
-			sensor_init();
 		} else {
-			//sensor measurement
-			Serial_println("Measuring temperatures...");
-			send = true; // if send = true --> send data (LoRa)
+			Temperatures.Temperature[counter++] = measure_temperature();
 		}
 	}
 }
