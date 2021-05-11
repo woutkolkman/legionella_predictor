@@ -34,12 +34,18 @@ void sensor_init(void) { // initialization for analog temperature sensor (LM35)
   
   // wait until ADC enabled
   while (ADC_GetFlagStatus(ADC1, ADC_FLAG_ADEN) == RESET);
+	
+	// configure channel 10 GPIOC I/O-pin 0
+	ADC_ChannelConfig(ADC1, ADC_Channel_10, ADC_SampleTime_239_5Cycles);
 }
 
 uint8_t measure_temperature(void) { // function to measure current temperature
 		
 	uint16_t adc;
 	uint8_t temperature;
+	
+	// start the first conversion
+	ADC_StartOfConversion(ADC1);	
 
 	// read ADC-value 
 	adc = ADC_GetConversionValue(ADC1);
@@ -53,26 +59,27 @@ uint8_t measure_temperature(void) { // function to measure current temperature
 void TIM14_init(void) {
 	
 	TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;
-
+	
   RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM14, ENABLE);
   
   TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up; 
-  TIM_TimeBaseStructure.TIM_Period      = 60000 - 1; 
+  TIM_TimeBaseStructure.TIM_Period      = 50 - 1; 
   TIM_TimeBaseStructure.TIM_Prescaler   = (uint16_t)((SystemCoreClock / 1000) - 1);
   
   // configure time base init
   TIM_TimeBaseInit(TIM14, &TIM_TimeBaseStructure);
 }
 
-void TIM14_interrupt_init(void) {
+void TIM14_interrupt(void) {
 	
 	NVIC_InitTypeDef NVIC_InitStructure;
-
-  NVIC_InitStructure.NVIC_IRQChannel         = TIM14_IRQn;
+	
+	NVIC_InitStructure.NVIC_IRQChannel         = TIM14_IRQn;
   NVIC_InitStructure.NVIC_IRQChannelPriority = 0;
   NVIC_InitStructure.NVIC_IRQChannelCmd      = ENABLE;
   NVIC_Init(&NVIC_InitStructure);
-   
-  TIM_ITConfig(TIM14, TIM_IT_Update, ENABLE); // enable TIM_ITConfig interrupt
+	
+	TIM_ITConfig(TIM14, TIM_IT_Update, ENABLE); // enable TIM_ITConfig interrupt
   TIM_Cmd(TIM14, ENABLE); // enable interrupt on TIM14
 }
+

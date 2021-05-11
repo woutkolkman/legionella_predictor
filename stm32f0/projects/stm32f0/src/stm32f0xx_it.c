@@ -1,32 +1,3 @@
-/**
-  ******************************************************************************
-  * @file    stm32f0xx_it.c 
-  * @author  MCD Application Team
-  * @version V1.0.0
-  * @date    23-March-2012
-  * @brief   Main Interrupt Service Routines.
-  *          This file provides template for all exceptions handler and 
-  *          peripherals interrupt service routine.
-  ******************************************************************************
-  * @attention
-  *
-  * <h2><center>&copy; COPYRIGHT 2012 STMicroelectronics</center></h2>
-  *
-  * Licensed under MCD-ST Liberty SW License Agreement V2, (the "License");
-  * You may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at:
-  *
-  *        http://www.st.com/software_license_agreement_liberty_v2
-  *
-  * Unless required by applicable law or agreed to in writing, software 
-  * distributed under the License is distributed on an "AS IS" BASIS, 
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  *
-  ******************************************************************************
-  */
-
 #define RX_BUFFER_SIZE 100
 #define NEXT_RX_WRITE_LOCATION ((Rx_write_location + 1) % RX_BUFFER_SIZE)
 
@@ -42,6 +13,7 @@ volatile uint8_t* Rx_buffer;
 volatile uint16_t Rx_write_location;
 extern uint16_t Rx_read_location;
 bool is_full;
+bool send = false;
 
 void NMI_Handler(void)
 {
@@ -67,13 +39,6 @@ void PendSV_Handler(void)
 void SysTick_Handler(void)
 {
 }
-
-/******************************************************************************/
-/*                 STM32F0xx Peripherals Interrupt Handlers                   */
-/*  Add here the Interrupt Handler for the used peripheral(s) (PPP), for the  */
-/*  available peripheral interrupt handler's name please refer to the startup */
-/*  file (startup_stm32f0xx.s).                                               */
-/******************************************************************************/
 
 //EBYTE LoRa, called when a millisecond has passed and Timer 3 is enabled
 void TIM3_IRQHandler(void) {
@@ -104,6 +69,7 @@ void TIM14_IRQHandler(void) {
 	
   if (TIM_GetITStatus(TIM14, TIM_IT_Update) != RESET) { // wait a minute
 		measure_temperature(); // measure temperature 
+		send = true;
     TIM_ClearITPendingBit(TIM14, TIM_IT_Update);
 		
 		//TODO, measure_temperature() (hierboven) start een conversie en ADC interrupt behandeld de uitkomst

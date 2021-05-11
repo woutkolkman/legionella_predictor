@@ -3,6 +3,9 @@
 #include "stm32f0_discovery.h"
 #include "lm35.h"
 #include "battery.h"
+#include "struct.h"
+
+struct DATA Temperatures;
 
 void delay(const int d) {
 	
@@ -17,58 +20,41 @@ void delay(const int d) {
 int main(void) {
 	
 	sensor_init();
-	TIM14_init();
-	TIM14_interrupt_init();
-	
-	// configure channel 10 GPIOC I/O-pin 0
-	ADC_ChannelConfig(ADC1, ADC_Channel_10, ADC_SampleTime_239_5Cycles);				//TODO dit hoort thuis in sensor_init()
-	
-	// start the first conversion
-	ADC_StartOfConversion(ADC1);		//TODO dit hoort thuis in measure_temperature()
-	
-	// Configure LED3 and LED4 on STM32F0-Discovery
-	//STM_EVAL_LEDInit(LED3);
-	//STM_EVAL_LEDInit(LED4);
 	generate_transmission_id();
+	TIM14_init();
+	TIM14_interrupt();
+	
 	init_serial();
 	Serial_clearscreen();
 	init_LoRa();
 	print_parameters();
 	Green_led_init();
-	Temperatures.Temperature = 10;
 	
-	while(1) {
-		uint8_t temp_print;
-		static bool up;
+	while (1) {
 		
-		//read temperature measurement should be added here!
-		//STM_EVAL_LEDToggle(LED3);
-		//STM_EVAL_LEDToggle(LED4);
+		int i;
 		
-		//Green_led_update(test_read_tempture());
-		//delay(SystemCoreClock/8/10);			//maybe this delay has to be gone, not sure about that, so keeping it.
-		
-		//temperature rising or falling (just to simulate that)
-		if(up) {
-			Temperatures.Temperature++;
-		} else {
-			Temperatures.Temperature--;
+		if (send) {
+			send_struct(&Temperatures, sizeof(Temperatures));
+			Serial_println("Temperatures: ");
+			for (i = 0; i < TEMPERATURE_SIZE; i++) {
+				Serial_putint(i);
+				Serial_print(" : ");
+				Serial_putint(Temperatures.Temperature[i]);
+				Serial_println(" degrees.");
+			}
+			Serial_print("Transmitter ID = ");
+			for(i = 0; i < TRANSMITTER_ID_SIZE; i++) {
+				Serial_putint(Temperatures.transmitter_ID[i]);
+			}
+			Serial_newLine();
+			Serial_print("Hour = ");
+			Serial_putintln(Temperatures.hour);
+			send = false;
+			if (send == false) {
+				Serial_println("Waiting for new data...");
+			}
 		}
-		if(Temperatures.Temperature <= 10) {
-			up = true;
-		}
-		if(Temperatures.Temperature >= 80) {
-			up = false;
-		}
-		
-		//sending the date and showing what is sent.
-		send_struct(&Temperatures, sizeof(Temperatures));
-		Serial_print("Sending ID: ");
-		for(temp_print = 0; temp_print < 8; temp_print++) {
-			Serial_putint(Temperatures.transmitter_ID[temp_print]);
-		}
-		Serial_print("Temp: ");Serial_putintln(Temperatures.Temperature);
-		timer_delay(MINUTE);	
 	}
 }
 
