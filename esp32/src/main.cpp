@@ -21,7 +21,7 @@ struct DATA {
 void setup_wifi(bool hotspot,char *ssid, char *password);
 
 // hotspot wifi credentials
-const char *hotspot_ssid = "legionella_predictor(tiemen)";
+const char *hotspot_ssid = "captive_portal_legionella_predictor(tiemen)";
 const char *hotspot_password = "zeer_geheim2021";
 
 // http post addresses
@@ -82,7 +82,8 @@ void setup() {
 }
 
 
-void loop() { 
+void loop() {
+  DNS_server.processNextRequest(); 
   interface_server.handleClient();
   delay(2);
 

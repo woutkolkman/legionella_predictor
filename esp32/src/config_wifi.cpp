@@ -3,6 +3,10 @@
 #include <Arduino.h>
 #include <WiFi.h>
 #include <WebServer.h>
+#include <DNSServer.h>
+
+// globals
+DNSServer DNS_server;
 
 // setup hotspot or connect to a network
 void setup_wifi(bool hotspot,char *ssid, char *password) {
@@ -18,6 +22,9 @@ void setup_wifi(bool hotspot,char *ssid, char *password) {
 
     // set status flag
     mode_is_hotspot = true;
+
+    // setup a capitive portal (it means start a automatic webpage when connected)
+    DNS_server.start(DNS_PORT, "*", IP);
   }
   else { // connect to a wifi network
     // setup wifi
