@@ -2,25 +2,17 @@
 #include "stm32f0_discovery.h"
 #include "lm35.h"
 
-void sensor_init(void) { // initialization for analog temperature sensor (LM35)
+void ADC_init(void) { 
 	
-	GPIO_InitTypeDef GPIO_InitStructure;
   ADC_InitTypeDef  ADC_InitStructure;
  
   RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADC1, ENABLE); // enable clk on ADC1
   
-  // GPIOC --> pin 0 configuration
-  RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOC, ENABLE);
-  GPIO_InitStructure.GPIO_Pin  = GPIO_Pin_0;
-  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AN;
-  GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
-  GPIO_Init(GPIOC, &GPIO_InitStructure);
-  
   /* configure the ADC conversion resolution, data alignment, external
   trigger and edge, scan direction and enable/disable the continuous mode
   using the ADC_Init() function. */
-  ADC_InitStructure.ADC_Resolution = ADC_Resolution_10b;
-  ADC_InitStructure.ADC_ContinuousConvMode = ENABLE;
+  ADC_InitStructure.ADC_Resolution = ADC_Resolution_12b;
+  ADC_InitStructure.ADC_ContinuousConvMode = DISABLE;
   ADC_InitStructure.ADC_ExternalTrigConvEdge = ADC_ExternalTrigConvEdge_None;    
   ADC_InitStructure.ADC_DataAlign = ADC_DataAlign_Right;
   ADC_InitStructure.ADC_ScanDirection = ADC_ScanDirection_Upward;
@@ -34,6 +26,12 @@ void sensor_init(void) { // initialization for analog temperature sensor (LM35)
   
   // wait until ADC enabled
   while (ADC_GetFlagStatus(ADC1, ADC_FLAG_ADEN) == RESET);
+	
+	// configure channel 10 GPIOC I/O-pin 0 (temperature sensor)
+	ADC_ChannelConfig(ADC1, ADC_Channel_10, ADC_SampleTime_239_5Cycles);
+	
+	// configure channel 11 GPIOC I/O-pin 1 (battery)
+//ADC_ChannelConfig(ADC1, ADC_Channel_11, ADC_SampleTime_239_5Cycles);
 }
 
 uint8_t measure_temperature(void) { // function to measure current temperature
@@ -44,20 +42,29 @@ uint8_t measure_temperature(void) { // function to measure current temperature
 	// read ADC-value 
 	adc = ADC_GetConversionValue(ADC1);
 	
+	// 12-bits to 10-bits
+	adc = adc / 4;
+	
 	// convert ADC-reading to temperature (degrees Celsius)
 	temperature = adc * 0.25;
 
 	return temperature;
 }
 
+void temperature_read_start(void) {
+	
+	// start the first conversion
+  ADC_StartOfConversion(ADC1);
+}
+
 void TIM14_init(void) {
 	
 	TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;
-
+	
   RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM14, ENABLE);
   
   TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up; 
-  TIM_TimeBaseStructure.TIM_Period      = 400 - 1; 
+  TIM_TimeBaseStructure.TIM_Period      = 1000 - 1; 
   TIM_TimeBaseStructure.TIM_Prescaler   = (uint16_t)((SystemCoreClock / 1000) - 1);
   
   // configure time base init
@@ -67,12 +74,13 @@ void TIM14_init(void) {
 void TIM14_interrupt_init(void) {
 	
 	NVIC_InitTypeDef NVIC_InitStructure;
-
-  NVIC_InitStructure.NVIC_IRQChannel         = TIM14_IRQn;
+	
+	NVIC_InitStructure.NVIC_IRQChannel         = TIM14_IRQn;
   NVIC_InitStructure.NVIC_IRQChannelPriority = 0;
   NVIC_InitStructure.NVIC_IRQChannelCmd      = ENABLE;
   NVIC_Init(&NVIC_InitStructure);
-   
-  TIM_ITConfig(TIM14, TIM_IT_Update, ENABLE); // enable TIM_ITConfig interrupt
+	
+	TIM_ITConfig(TIM14, TIM_IT_Update, ENABLE); // enable TIM_ITConfig interrupt
   TIM_Cmd(TIM14, ENABLE); // enable interrupt on TIM14
 }
+

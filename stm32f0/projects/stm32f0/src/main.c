@@ -1,25 +1,19 @@
 #include "main.h"
 #include "stm32f0xx.h"
+#include "stm32f0_discovery.h"
 #include "lm35.h"
+#include "battery.h"
 #include "struct.h"
 
 struct DATA Temperatures;
 
 int main(void) {
+	
 	generate_transmission_id();
-	sensor_init();	
+	ADC_init();
+	ADC_interrupt_init();
 	TIM14_init();
 	TIM14_interrupt_init();
-	
-	// configure channel 10 GPIOC I/O-pin 0
-	ADC_ChannelConfig(ADC1, ADC_Channel_10, ADC_SampleTime_239_5Cycles);
-	
-	// start the first conversion
-	ADC_StartOfConversion(ADC1);
-	
-	// Configure LED3 and LED4 on STM32F0-Discovery
-	//STM_EVAL_LEDInit(LED3);
-	//STM_EVAL_LEDInit(LED4);
 	
 	init_serial();
 	Serial_clearscreen();
@@ -46,9 +40,6 @@ int main(void) {
 			}
 			Serial_newLine();
 			send = false;
-			if (send == false) {
-				Serial_println("Waiting for new data...");
-			}
 		}
 	}
 }
@@ -118,6 +109,26 @@ void init_random_number() {
   ADC_Init(ADC1, &ADC_InitStructure);
   //enable internal channel
   ADC_TempSensorCmd(ENABLE);	
+}
+
+//configure interrupt "ADC1_COMP_IRQHandler"
+void ADC_interrupt_init(void) {
+	
+	// Configure ADC ready interrupt
+	ADC_ClearITPendingBit(ADC1, ADC1_COMP_IRQn);
+	ADC_ITConfig(ADC1, ADC1_COMP_IRQn, ENABLE);
+	NVIC_EnableIRQ(ADC1_COMP_IRQn);
+	NVIC_SetPriority(ADC1_COMP_IRQn,0);
+}
+
+void delay(const int d) {
+	
+	volatile int i;
+
+	for (i = d; i > 0; i--) { 
+		; 
+	}
+	return;
 }
 
 //deinitializes the ADC for the random numbers

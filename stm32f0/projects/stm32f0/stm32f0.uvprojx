@@ -337,7 +337,7 @@
               <MiscControls></MiscControls>
               <Define>USE_STDPERIPH_DRIVER, STM32F0XX</Define>
               <Undefine></Undefine>
-              <IncludePath>.\inc;..\..\libraries\CMSIS\Include;..\..\libraries\CMSIS\ST\STM32F0xx\Include;..\..\libraries\STM32F0xx_StdPeriph_Driver\inc;..\..\utilities\STM32F0-Discovery;D:\OneDrive\OneDrive - Windesheim Office365\Jaar 3\Semester 2\Periode 3\KBS IoT\Libraries</IncludePath>
+              <IncludePath>.\inc;..\..\libraries\CMSIS\Include;..\..\libraries\CMSIS\ST\STM32F0xx\Include;..\..\libraries\STM32F0xx_StdPeriph_Driver\inc;..\..\utilities\STM32F0-Discovery;D:\OneDrive\OneDrive - Windesheim Office365\Jaar 3\Semester 2\Periode 3\KBS IoT\Libraries;.\inc</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -471,6 +471,11 @@
               <FileName>lm35.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\src\lm35.c</FilePath>
+            </File>
+            <File>
+              <FileName>battery.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\battery.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1076,6 +1081,11 @@
               <FileName>lm35.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\src\lm35.c</FilePath>
+            </File>
+            <File>
+              <FileName>battery.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\battery.c</FilePath>
             </File>
           </Files>
         </Group>
