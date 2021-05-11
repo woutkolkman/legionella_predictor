@@ -2,7 +2,6 @@
 #define NEXT_RX_WRITE_LOCATION ((Rx_write_location + 1) % RX_BUFFER_SIZE)
 
 #include "stm32f0xx_it.h"
-<<<<<<< HEAD
 #include "lm35.h"
 #include "battery.h"
 #include "STM32F0_discovery.h"

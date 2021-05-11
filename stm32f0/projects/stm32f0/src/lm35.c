@@ -8,8 +8,6 @@ void ADC_init(void) {
  
   RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADC1, ENABLE); // enable clk on ADC1
   
-	RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOC, ENABLE);
-  
   /* configure the ADC conversion resolution, data alignment, external
   trigger and edge, scan direction and enable/disable the continuous mode
   using the ADC_Init() function. */
