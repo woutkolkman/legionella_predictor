@@ -11,9 +11,9 @@ int main(void) {
 	
 	generate_transmission_id();
 	sensor_init();
+	ADC_interrupt_init();
   TIM14_init();
   TIM14_interrupt();
-	ADC_interrupt_init();
 	
 	init_serial();
 	Serial_clearscreen();

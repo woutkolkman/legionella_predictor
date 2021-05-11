@@ -31,9 +31,6 @@ void ADC_battery_init(void) {
 	// wait until ADC enabled
 	while (ADC_GetFlagStatus(ADC1, ADC_FLAG_ADEN) == RESET);
 	
-	// Wait for the ADC to be ready!
-	while(!ADC_GetFlagStatus(ADC1, ADC_FLAG_ADRDY));
-	
 	// configure channel 11 GPIOC I/O-pin 1
 	ADC_ChannelConfig(ADC1, ADC_Channel_11, ADC_SampleTime_239_5Cycles);
 }

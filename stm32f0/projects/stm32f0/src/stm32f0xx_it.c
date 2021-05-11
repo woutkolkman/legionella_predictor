@@ -69,13 +69,11 @@ void USART1_IRQHandler(void) {
 void TIM14_IRQHandler(void) {
 	
   if (TIM_GetITStatus(TIM14, TIM_IT_Update) != RESET) { // wait a minute
-		counter++;
+		Temperatures.Temperature[counter++] = measure_temperature();
 		if (counter == 60) {
-			Temperatures.hour++;
+			temperature_read_start();
 		//ADC_battery_init();
 		//battery_read_start();
-			ADC_interrupt_init();
-		  temperature_read_start();
 			counter = 0;
 		}
     TIM_ClearITPendingBit(TIM14, TIM_IT_Update);
@@ -108,7 +106,6 @@ void ADC1_COMP_IRQHandler(void) {
 		} else {
 			//sensor measurement
 			Serial_println("Measuring temperatures...");
-			Temperatures.Temperature[counter] = measure_temperature();
 			send = true; // if send = true --> send data (LoRa)
 		}
 	}
