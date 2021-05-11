@@ -22,13 +22,16 @@ YOU MUST USE THE ACTUAL GPIO NUMBER
 #define PAYLOAD_SIZE 60  //* temperature values (http POST payload)
 #define POST_PAYLOAD_LEN ((POST_VALUE_LEN)*(PAYLOAD_SIZE))
 
-// globals
-extern WebServer interface_server;
+// globals	
+extern WebServer interface_server;	
+#define TRANSMITTER_ID_SIZE 8	
+#define TEMPERATURE_SIZE    60
 
 
 // function definitions 
 void LoRa_get_data(void);
-bool send_to_cloud();
+bool send_to_cloud(char* payload);
+void generate_http_post(char* payload);
 
 
 #endif
