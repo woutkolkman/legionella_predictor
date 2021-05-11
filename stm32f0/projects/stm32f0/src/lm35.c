@@ -20,7 +20,7 @@ void sensor_init(void) { // initialization for analog temperature sensor (LM35)
   trigger and edge, scan direction and enable/disable the continuous mode
   using the ADC_Init() function. */
   ADC_InitStructure.ADC_Resolution = ADC_Resolution_10b;
-  ADC_InitStructure.ADC_ContinuousConvMode = ENABLE;
+  ADC_InitStructure.ADC_ContinuousConvMode = DISABLE;
   ADC_InitStructure.ADC_ExternalTrigConvEdge = ADC_ExternalTrigConvEdge_None;    
   ADC_InitStructure.ADC_DataAlign = ADC_DataAlign_Right;
   ADC_InitStructure.ADC_ScanDirection = ADC_ScanDirection_Upward;
@@ -43,9 +43,6 @@ uint8_t measure_temperature(void) { // function to measure current temperature
 		
 	uint16_t adc;
 	uint8_t temperature;
-	
-	// start the first conversion
-	ADC_StartOfConversion(ADC1);	
 
 	// read ADC-value 
 	adc = ADC_GetConversionValue(ADC1);
@@ -54,6 +51,12 @@ uint8_t measure_temperature(void) { // function to measure current temperature
 	temperature = adc * 0.25;
 
 	return temperature;
+}
+
+void temperature_read_start(void) {
+	
+	// start the first conversion
+  ADC_StartOfConversion(ADC1);
 }
 
 void TIM14_init(void) {

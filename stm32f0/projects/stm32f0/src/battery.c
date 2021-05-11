@@ -9,7 +9,7 @@ void ADC_battery_init(void) {
 	
 	ADC_DeInit(ADC1);
 	STM_EVAL_LEDInit(LED4); //init battery-low LED
-//	ADC_VrefintCmd(ENABLE); //enable 1,8V internal reference voltage
+//ADC_VrefintCmd(ENABLE); //enable 1,8V internal reference voltage
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADC1, ENABLE); // enable clk on ADC1
 	
 	/* configure the ADC conversion resolution, data alignment, external

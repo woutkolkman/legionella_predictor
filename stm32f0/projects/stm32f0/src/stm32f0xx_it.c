@@ -7,6 +7,7 @@
 #include "STM32F0_discovery.h"
 #include "stdbool.h"
 #include "serial.h" //debug
+#include "struct.h"
 
 extern volatile unsigned long time_passed;
 volatile uint8_t* Rx_buffer;
@@ -14,6 +15,7 @@ volatile uint16_t Rx_write_location;
 extern uint16_t Rx_read_location;
 bool is_full;
 bool send = false;
+uint8_t counter = 0;
 
 void NMI_Handler(void)
 {
@@ -21,7 +23,6 @@ void NMI_Handler(void)
 
 void HardFault_Handler(void)
 {
-  /* Go to infinite loop when Hard Fault exception occurs */
   while (1)
   {
   }
@@ -68,32 +69,33 @@ void USART1_IRQHandler(void) {
 void TIM14_IRQHandler(void) {
 	
   if (TIM_GetITStatus(TIM14, TIM_IT_Update) != RESET) { // wait a minute
-		measure_temperature(); // measure temperature 
-		send = true;
+		counter++;
+		if (counter == 60) {
+			Temperatures.hour++;
+		//ADC_battery_init();
+		//battery_read_start();
+			ADC_interrupt_init();
+		  temperature_read_start();
+			counter = 0;
+		}
     TIM_ClearITPendingBit(TIM14, TIM_IT_Update);
 		
-		//TODO, measure_temperature() (hierboven) start een conversie en ADC interrupt behandeld de uitkomst
+		//TODO, temperature_read_start() (hierboven) start een conversie en ADC interrupt behandeld de uitkomst
 		//start batterijmeting elk uur (counter tot 60) met onderstaande code, en roep daarna sensor_init() enzo weer aan
-		/*ADC_battery_init();
-		ADC_interrupt_init();
-		battery_read_start();*/
   }
 }
 
 //ADC sample complete
 void ADC1_COMP_IRQHandler(void) {
 	
-	if(ADC_GetITStatus(ADC1, ADC1_COMP_IRQn) != RESET){
-		// Clear interrupt bit
+	if (ADC_GetITStatus(ADC1, ADC1_COMP_IRQn) != RESET) {
+		//clear interrupt bit
 		ADC_ClearITPendingBit(ADC1, ADC1_COMP_IRQn);
-		
-		
 		if (adc_battery_meas) {
 			//battery measurement
 			uint16_t val = ADC_GetConversionValue(ADC1);
 			Serial_print("battery: "); //debug
 			Serial_putintln(val); //debug
-			
 			//battery low? LED on, else off
 			if (val > BATTERY_THRESHOLD_VOLTAGE) {
 				STM_EVAL_LEDOff(LED4);
@@ -102,11 +104,12 @@ void ADC1_COMP_IRQHandler(void) {
 			}
 			//TODO transistor pin laagzetten
 			adc_battery_meas = false;
-//			sensor_init();
-			
+			sensor_init();
 		} else {
 			//sensor measurement
-			//TODO
+			Serial_println("Measuring temperatures...");
+			Temperatures.Temperature[counter] = measure_temperature();
+			send = true; // if send = true --> send data (LoRa)
 		}
 	}
 }

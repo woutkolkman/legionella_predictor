@@ -163,12 +163,12 @@
         <Ww>
           <count>0</count>
           <WinNumber>1</WinNumber>
-          <ItemText>adc_battery_meas</ItemText>
+          <ItemText>counter</ItemText>
         </Ww>
         <Ww>
           <count>1</count>
           <WinNumber>1</WinNumber>
-          <ItemText>val</ItemText>
+          <ItemText>counter</ItemText>
         </Ww>
         <Ww>
           <count>2</count>

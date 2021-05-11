@@ -7,28 +7,22 @@
 
 struct DATA Temperatures;
 
-void delay(const int d) {
-	
-	volatile int i;
-
-	for (i = d; i > 0; i--) { 
-		; 
-	}
-	return;
-}
-
 int main(void) {
 	
-	sensor_init();
 	generate_transmission_id();
-	TIM14_init();
-	TIM14_interrupt();
+	sensor_init();
+  TIM14_init();
+  TIM14_interrupt();
+	ADC_interrupt_init();
 	
 	init_serial();
 	Serial_clearscreen();
 	init_LoRa();
 	print_parameters();
 	Green_led_init();
+	
+	STM_EVAL_LEDInit(LED3);
+	STM_EVAL_LEDInit(LED4);
 	
 	while (1) {
 		
@@ -48,12 +42,7 @@ int main(void) {
 				Serial_putint(Temperatures.transmitter_ID[i]);
 			}
 			Serial_newLine();
-			Serial_print("Hour = ");
-			Serial_putintln(Temperatures.hour);
 			send = false;
-			if (send == false) {
-				Serial_println("Waiting for new data...");
-			}
 		}
 	}
 }
@@ -119,4 +108,14 @@ void init_random_number() {
   ADC_Init(ADC1, &ADC_InitStructure);
   //enable internal channel
   ADC_TempSensorCmd(ENABLE);	
+}
+
+void delay(const int d) {
+	
+	volatile int i;
+
+	for (i = d; i > 0; i--) { 
+		; 
+	}
+	return;
 }
