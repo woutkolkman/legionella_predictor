@@ -26,7 +26,6 @@ int main(void) {
 	init_LoRa();
 	print_parameters();
 	Green_led_init();
-	
 	while (1) {
 	
 		int i;
@@ -45,8 +44,6 @@ int main(void) {
 				Serial_putint(Temperatures.transmitter_ID[i]);
 			}
 			Serial_newLine();
-			Serial_print("Hour = ");
-			Serial_putintln(Temperatures.hour);
 			send = false;
 			if (send == false) {
 				Serial_println("Waiting for new data...");
@@ -58,9 +55,14 @@ int main(void) {
 //generates the transmission ID. Saves it in the struct
 void generate_transmission_id() {
 	uint8_t count;
+	uint8_t number;
 	init_random_number();
 	for(count = 0; count < 8; count++) {
-		Temperatures.transmitter_ID[count] = ((uint8_t) (get_random_number() % BYTE_MAX_NUMBER));
+		number = (uint8_t) (get_random_number() % MAX_TRANSMISSION_NUMBER);
+		if(number < '!') {
+			number = number + '!';
+		}
+		Temperatures.transmitter_ID[count] = number;
 	}
 	deInit_random_number();
 }
