@@ -28,9 +28,10 @@ int main(void) {
 	Green_led_init();
 	while (1) {
 	
-		int i;
+		
 		
 		if (send) {
+			uint8_t i;
 			send_struct(&Temperatures, sizeof(Temperatures));
 			Serial_println("Temperatures: ");
 			for (i = 0; i < TEMPERATURE_SIZE; i++) {
@@ -55,9 +56,10 @@ int main(void) {
 //generates the transmission ID. Saves it in the struct
 void generate_transmission_id() {
 	uint8_t count;
-	uint8_t number;
+	
 	init_random_number();
 	for(count = 0; count < 8; count++) {
+		uint8_t number;
 		number = (uint8_t) (get_random_number() % MAX_TRANSMISSION_NUMBER);
 		if(number < '!') {
 			number = number + '!';

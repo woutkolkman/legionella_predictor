@@ -163,7 +163,7 @@
         <Ww>
           <count>0</count>
           <WinNumber>1</WinNumber>
-          <ItemText>Temperatures.transmitter_ID</ItemText>
+          <ItemText>Temperatures.transmitter_ID,0x0A</ItemText>
         </Ww>
       </WatchWindow1>
       <MemoryWindow1>
