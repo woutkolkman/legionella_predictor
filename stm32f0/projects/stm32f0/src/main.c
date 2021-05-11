@@ -62,7 +62,7 @@ void generate_transmission_id() {
 		if(number < '!') {
 			number = number + '!';
 		}
-		Temperatures.transmitter_ID[count] = ((uint8_t) (get_random_number() % MAX_TRANSMISSION_NUMBER));
+		Temperatures.transmitter_ID[count] = number;
 	}
 	deInit_random_number();
 }
