@@ -60,27 +60,24 @@ void temperature_read_start(void) {
 void TIM14_init(void) {
 	
 	TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;
+	NVIC_InitTypeDef NVIC_InitStructure;
 	
   RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM14, ENABLE);
   
   TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up; 
-  TIM_TimeBaseStructure.TIM_Period      = 1000 - 1; 
+	TIM_TimeBaseStructure.TIM_Period      = 1000 - 1; // minute
+//TIM_TimeBaseStructure.TIM_Period      = 60000 - 1; // hour
   TIM_TimeBaseStructure.TIM_Prescaler   = (uint16_t)((SystemCoreClock / 1000) - 1);
-  
-  // configure time base init
-  TIM_TimeBaseInit(TIM14, &TIM_TimeBaseStructure);
-}
-
-void TIM14_interrupt_init(void) {
-	
-	NVIC_InitTypeDef NVIC_InitStructure;
 	
 	NVIC_InitStructure.NVIC_IRQChannel         = TIM14_IRQn;
   NVIC_InitStructure.NVIC_IRQChannelPriority = 0;
   NVIC_InitStructure.NVIC_IRQChannelCmd      = ENABLE;
   NVIC_Init(&NVIC_InitStructure);
-	
+  
+  // configure time base init
+  TIM_TimeBaseInit(TIM14, &TIM_TimeBaseStructure);
 	TIM_ITConfig(TIM14, TIM_IT_Update, ENABLE); // enable TIM_ITConfig interrupt
   TIM_Cmd(TIM14, ENABLE); // enable interrupt on TIM14
 }
+
 

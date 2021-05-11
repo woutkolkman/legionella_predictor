@@ -9,7 +9,6 @@ void ADC_init(void);
 uint8_t measure_temperature(void);
 void temperature_read_start(void);
 void TIM14_init(void);
-void TIM14_interrupt_init(void);
 
 // global variables
 extern bool send;

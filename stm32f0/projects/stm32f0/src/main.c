@@ -10,19 +10,17 @@ struct DATA Temperatures;
 int main(void) {
 	
 	generate_transmission_id();
+	TIM14_init();
 	ADC_init();
 	ADC_interrupt_init();
-	TIM14_init();
-	TIM14_interrupt_init();
 	
 	init_serial();
 	Serial_clearscreen();
 	init_LoRa();
 	print_parameters();
 	Green_led_init();
-	while (1) {
 	
-		
+	while (1) {
 		
 		if (send) {
 			uint8_t i;
