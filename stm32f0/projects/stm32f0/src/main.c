@@ -26,7 +26,6 @@ int main(void) {
 	init_LoRa();
 	print_parameters();
 	Green_led_init();
-	Temperatures.hour = 0;
 	while (1) {
 	
 		int i;
