@@ -3,7 +3,9 @@
 #include <Arduino.h>
 #include <WiFi.h>
 #include <WebServer.h>
+#include <ESPmDNS.h>
 #include <DNSServer.h>
+#include "main.h"
 
 // globals
 DNSServer DNS_server;
@@ -11,19 +13,21 @@ DNSServer DNS_server;
 // setup hotspot or connect to a network
 void setup_wifi(bool hotspot,char *ssid, char *password) {
  IPAddress IP;
+  // reset wifi to prevent errors
+  WiFi.disconnect();
+  WiFi.mode(WIFI_OFF);
+
   // decide to make a hotspot or connect to a network
   if(hotspot == true) { // make wifi hotspot
-    // setup a wifi access point
-    Serial.printf("Start a wifi accesspoint : %s \n",ssid);
+    // turn mode to Access Point
+    WiFi.mode(WIFI_AP);
+
+    // setup IP, gateway and mask
+    IP = IPAddress(192,168,1,1);
+    WiFi.softAPConfig(IP, IP, IPAddress(255,255,255,0));
     WiFi.softAP(ssid, password);
 
-    // get ip address of esp32
-    IP = WiFi.softAPIP();
-
-    // set status flag
-    mode_is_hotspot = true;
-
-    // setup a capitive portal (it means start a automatic webpage when connected)
+    // DNS give by every request theportal
     DNS_server.start(DNS_PORT, "*", IP);
   }
   else { // connect to a wifi network

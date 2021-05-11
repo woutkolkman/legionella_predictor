@@ -116,27 +116,39 @@ void homepage() {
   message += "<div class='info'>\n";
 	message += "<p>" + ((mode_is_hotspot == false) ? ("Device connected to network " + new_sidd) : ("Device in hotspot mode.")) + "</p>\n";
 	message += "</div>";
-
+  
   message += "<p>Click <a href='/scanwifi'><b>HERE</b></a> to enter wifi credentials.</p>\n";
   message += "<p>Click <a href='/configcloud'><b>HERE</b></a> to setup the cloud connection.</p>\n";
   message += webpage_tail;
 	interface_server.send(200, "text/html", message);
 }
 
+bool handleUrl(String path) {
+    if (path.endsWith("/")){
+         char chbuffer[64];
+         sprintf(chbuffer,"Hello ESP32");
+         interface_server.send(200,"text/plain",chbuffer);
+        return true;
+    }
+    return false;
+}
+
+String toStringIp(IPAddress ip) {
+    String res = "";
+    for (int i = 0; i < 3; i++) {
+        res += String((ip >> (8 * i)) & 0xFF) + ".";
+    }
+    res += String(((ip >> 8 * 3)) & 0xFF);
+    return res;
+}
+
 // generate page for invalid urls
 void page_not_found() {
- String message = "File Not Found\n\n";
-  message += "URI: ";
-  message += interface_server.uri();
-  message += "\nMethod: ";
-  message += (interface_server.method() == HTTP_GET) ? "GET" : "POST";
-  message += "\nArguments: ";
-  message += interface_server.args();
-  message += "\n";
-  for (uint8_t i = 0; i < interface_server.args(); i++) {
-    message += " " + interface_server.argName(i) + ": " + interface_server.arg(i) + "\n";
+  if (!handleUrl(interface_server.uri())) {
+    interface_server.sendHeader("Location", String("http://") + toStringIp(interface_server.client().localIP()), true);
+    interface_server.send(302, "text/plain", "");
+    interface_server.client().stop();
   }
-  interface_server.send(404, "text/plain", message);
 }
 
 // scan for networks and print them on webpage
