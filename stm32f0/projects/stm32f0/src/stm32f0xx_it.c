@@ -72,11 +72,9 @@ void USART1_IRQHandler(void) {
 void TIM14_IRQHandler(void) {
 	
   if (TIM_GetITStatus(TIM14, TIM_IT_Update) != RESET) { // wait a minute
-		STM_EVAL_LEDOff(LED4); // indication that temperatures are still being measured
 		temperature_read_start(); 
 	//battery_read_start();
-		if (counter == 60) { // increment counter until hour has passed 
-			STM_EVAL_LEDOn(LED4); // indication that temperatures have been sent 
+		if (counter == 60) { // increment counter until hour has passed  
 			send = true; // if send = true --> send data (LoRa)
 			counter = 0;
 		}
