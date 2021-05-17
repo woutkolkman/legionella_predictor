@@ -21,6 +21,8 @@ int main(void) {
 	print_parameters();
 	Green_led_init();
 	
+	STM_EVAL_LEDInit(LED4); // indication if temperatures have been sent (LoRa)
+
 	
 	while (1) {
 		
