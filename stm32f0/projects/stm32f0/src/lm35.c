@@ -1,6 +1,7 @@
 #include "stm32f0xx.h"
 #include "stm32f0_discovery.h"
 #include "lm35.h"
+#include "battery.h"
 
 void ADC_init(void) { 
 	
@@ -28,10 +29,10 @@ void ADC_init(void) {
   while (ADC_GetFlagStatus(ADC1, ADC_FLAG_ADEN) == RESET);
 	
 	// configure channel 10 GPIOC I/O-pin 0 (temperature sensor)
-	ADC_ChannelConfig(ADC1, ADC_Channel_10, ADC_SampleTime_239_5Cycles);
+  ADC_ChannelConfig(ADC1, ADC_Channel_10, ADC_SampleTime_239_5Cycles);
 	
 	// configure channel 11 GPIOC I/O-pin 1 (battery)
-//ADC_ChannelConfig(ADC1, ADC_Channel_11, ADC_SampleTime_239_5Cycles);
+  ADC_ChannelConfig(ADC1, ADC_Channel_11, ADC_SampleTime_239_5Cycles);
 }
 
 uint8_t measure_temperature(void) { // function to measure current temperature
@@ -53,6 +54,7 @@ uint8_t measure_temperature(void) { // function to measure current temperature
 
 void temperature_read_start(void) {
 	
+	adc_battery_meas = false;
 	// start the first conversion
   ADC_StartOfConversion(ADC1);
 }
@@ -65,7 +67,7 @@ void TIM14_init(void) {
   RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM14, ENABLE);
   
   TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up; 
-  TIM_TimeBaseStructure.TIM_Period      = 1000 - 1; 
+  TIM_TimeBaseStructure.TIM_Period      = 100 - 1; 
   TIM_TimeBaseStructure.TIM_Prescaler   = (uint16_t)((SystemCoreClock / 1000) - 1);
 	
 	NVIC_InitStructure.NVIC_IRQChannel         = TIM14_IRQn;

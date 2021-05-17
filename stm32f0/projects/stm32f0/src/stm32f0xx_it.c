@@ -1,16 +1,16 @@
-#define RX_BUFFER_SIZE 100
-#define NEXT_RX_WRITE_LOCATION ((Rx_write_location + 1) % RX_BUFFER_SIZE)
-
 #include "stm32f0xx_it.h"
 #include "lm35.h"
 #include "battery.h"
-#include "STM32F0_discovery.h"
+#include "stm32f0_discovery.h"
 #include "stdbool.h"
 #include "serial.h" //debug
 #include "stdbool.h"
 #include "lm35.h"
 #include "serial.h"
 #include "struct.h"
+
+#define RX_BUFFER_SIZE 100
+#define NEXT_RX_WRITE_LOCATION ((Rx_write_location + 1) % RX_BUFFER_SIZE)
 
 extern volatile unsigned long time_passed;
 volatile uint8_t* Rx_buffer;
@@ -73,7 +73,7 @@ void TIM14_IRQHandler(void) {
 	
   if (TIM_GetITStatus(TIM14, TIM_IT_Update) != RESET) { // wait a minute
 		temperature_read_start(); 
-	//battery_read_start();
+	  battery_read_start();
 		if (counter == 60) { // every hour
 			send = true; // if send = true --> send data (LoRa)
 			counter = 0;

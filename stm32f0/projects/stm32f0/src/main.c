@@ -20,6 +20,8 @@ int main(void) {
 	print_parameters();
 	Green_led_init();
 	
+	STM_EVAL_LEDInit(LED4); // battery indicator
+	
 	while (1) {
 	
 		int i;

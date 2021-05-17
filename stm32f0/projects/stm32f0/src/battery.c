@@ -2,7 +2,6 @@
 
 bool adc_battery_meas; //false --> sensor measurement
 
-
 void ADC_battery_init(void) {
 	
 	ADC_InitTypeDef  ADC_InitStructure;
