@@ -1,4 +1,6 @@
 #include "battery.h"
+#include "lm35.h"
+#include "struct.h"
 
 bool adc_battery_meas; //false --> sensor measurement
 
@@ -36,7 +38,7 @@ void ADC_battery_init(void) {
 
 //start battery measurement, handle in ISR
 void battery_read_start(void) {
-	
+
 	//TODO transistor pin hoogzetten
 	adc_battery_meas = true;
 	ADC_StartOfConversion(ADC1);

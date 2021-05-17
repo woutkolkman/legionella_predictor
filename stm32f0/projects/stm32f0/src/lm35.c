@@ -2,13 +2,22 @@
 #include "stm32f0_discovery.h"
 #include "lm35.h"
 #include "battery.h"
+#include "struct.h"
 
 void ADC_init(void) { 
 	
+	GPIO_InitTypeDef GPIO_InitStructure;
   ADC_InitTypeDef  ADC_InitStructure;
  
   RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADC1, ENABLE); // enable clk on ADC1
+  RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOC, ENABLE);
   
+	// configure PC0 + PC1 --> analog mode
+	GPIO_InitStructure.GPIO_Pin  = GPIO_Pin_0 | GPIO_Pin_1;
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AN;
+  GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
+  GPIO_Init(GPIOC, &GPIO_InitStructure);
+	
   /* configure the ADC conversion resolution, data alignment, external
   trigger and edge, scan direction and enable/disable the continuous mode
   using the ADC_Init() function. */
@@ -23,16 +32,7 @@ void ADC_init(void) {
   ADC_GetCalibrationFactor(ADC1);
 
   // activate the ADC peripheral using ADC_Cmd() function.
-  ADC_Cmd(ADC1, ENABLE);  
-  
-  // wait until ADC enabled
-  while (ADC_GetFlagStatus(ADC1, ADC_FLAG_ADEN) == RESET);
-	
-	// configure channel 10 GPIOC I/O-pin 0 (temperature sensor)
-  ADC_ChannelConfig(ADC1, ADC_Channel_10, ADC_SampleTime_239_5Cycles);
-	
-	// configure channel 11 GPIOC I/O-pin 1 (battery)
-  ADC_ChannelConfig(ADC1, ADC_Channel_11, ADC_SampleTime_239_5Cycles);
+  ADC_Cmd(ADC1, ENABLE);
 }
 
 uint8_t measure_temperature(void) { // function to measure current temperature
@@ -54,9 +54,23 @@ uint8_t measure_temperature(void) { // function to measure current temperature
 
 void temperature_read_start(void) {
 	
-	adc_battery_meas = false;
-	// start the first conversion
   ADC_StartOfConversion(ADC1);
+}
+
+void channel(uint8_t channel) {
+	
+	if (channel == CHANNEL_10) {
+		// configure channel (PC0)
+		counter++;
+	//ADC_ChannelConfig(ADC1, ADC_Channel_10, ADC_SampleTime_239_5Cycles);
+		ADC1->CHSELR |= ADC_CHSELR_CHSEL10; // select CH10
+	} else if (channel == CHANNEL_11) {
+		// configure channel (PC1)
+		adc_battery_meas = true;
+	//ADC_ChannelConfig(ADC1, ADC_Channel_11, ADC_SampleTime_239_5Cycles);
+		ADC1->CHSELR |= ADC_CHSELR_CHSEL11; // select CH11
+	}
+	ADC_StartOfConversion(ADC1);
 }
 
 void TIM14_init(void) {
