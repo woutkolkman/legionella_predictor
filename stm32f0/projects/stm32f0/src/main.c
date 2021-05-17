@@ -1,38 +1,36 @@
 #include "main.h"
 #include "stm32f0xx.h"
+#include "stm32f0_discovery.h"
 #include "lm35.h"
+#include "battery.h"
 #include "struct.h"
 
 struct DATA Temperatures;
 
 int main(void) {
+	
 	generate_transmission_id();
-	sensor_init();	
+	TIM2_init();
 	TIM14_init();
-	TIM14_interrupt_init();
+	ADC_init();
+	ADC_interrupt_init();
 	
-	// configure channel 10 GPIOC I/O-pin 0
-	ADC_ChannelConfig(ADC1, ADC_Channel_10, ADC_SampleTime_239_5Cycles);
-	
-	// start the first conversion
-	ADC_StartOfConversion(ADC1);
-	
-	// Configure LED3 and LED4 on STM32F0-Discovery
-	//STM_EVAL_LEDInit(LED3);
-	//STM_EVAL_LEDInit(LED4);
-	
+	init_red_led();
 	init_serial();
 	Serial_clearscreen();
 	init_LoRa();
 	print_parameters();
 	Green_led_init();
 	
-	while (1) {
+	STM_EVAL_LEDInit(LED4); // indication if temperatures are being measured (LoRa)
 	
-		int i;
+	while (1) {
 		
 		if (send) {
+			uint8_t i;
+			GPIO_SetBits(TRANSMISSION_BUSY_PORT, TRANSMISSION_BUSY_PIN);
 			send_struct(&Temperatures, sizeof(Temperatures));
+			GPIO_ResetBits(TRANSMISSION_BUSY_PORT, TRANSMISSION_BUSY_PIN);
 			Serial_println("Temperatures: ");
 			for (i = 0; i < TEMPERATURE_SIZE; i++) {
 				Serial_putint(i);
@@ -45,22 +43,24 @@ int main(void) {
 				Serial_putint(Temperatures.transmitter_ID[i]);
 			}
 			Serial_newLine();
-			Serial_print("Hour = ");
-			Serial_putintln(Temperatures.hour);
 			send = false;
-			if (send == false) {
-				Serial_println("Waiting for new data...");
-			}
 		}
 	}
 }
 
 //generates the transmission ID. Saves it in the struct
 void generate_transmission_id() {
+	
 	uint8_t count;
+	
 	init_random_number();
 	for(count = 0; count < 8; count++) {
-		Temperatures.transmitter_ID[count] = ((uint8_t) (get_random_number() % BYTE_MAX_NUMBER));
+		uint8_t number;
+		number = (uint8_t) (get_random_number() % MAX_TRANSMISSION_NUMBER);
+		if(number < '!') {
+			number = number + '!';
+		}
+		Temperatures.transmitter_ID[count] = number;
 	}
 	deInit_random_number();
 }
@@ -69,6 +69,7 @@ void generate_transmission_id() {
 //https://www.mikrocontroller.net/topic/358453
 //creates a random number by ADC values and calculations.
 uint32_t get_random_number(void) {
+	
 	uint8_t i;
 	
   // Enable ADCperipheral
@@ -96,6 +97,7 @@ uint32_t get_random_number(void) {
 
 //initializes the ADC for the random numbers.
 void init_random_number() {
+	
 	ADC_InitTypeDef ADC_InitStructure;
   //enable ADC1 clock
   RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADC1, ENABLE);
@@ -116,12 +118,34 @@ void init_random_number() {
   ADC_TempSensorCmd(ENABLE);	
 }
 
+//configure interrupt "ADC1_COMP_IRQHandler"
+void ADC_interrupt_init(void) {
+	
+	// Configure ADC ready interrupt
+	ADC_ClearITPendingBit(ADC1, ADC1_COMP_IRQn);
+	ADC_ITConfig(ADC1, ADC1_COMP_IRQn, ENABLE);
+	NVIC_EnableIRQ(ADC1_COMP_IRQn);
+	NVIC_SetPriority(ADC1_COMP_IRQn,0);
+}
+
 //deinitializes the ADC for the random numbers
 void deInit_random_number() {
+	
 	ADC_TempSensorCmd(DISABLE);
 	ADC_Cmd(ADC1, DISABLE);
 	ADC_DeInit(ADC1);
   RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADC1, DISABLE);
 	RCC_AHBPeriphClockCmd(RCC_AHBPeriph_CRC, DISABLE);
+}
+
+//initializes the red (transmission) led
+void init_red_led() {
+	GPIO_InitTypeDef GPIO_Initstructure;
 	
+	RCC_AHBPeriphClockCmd(RCC_AHBENR_GPIOBEN, ENABLE);
+	GPIO_Initstructure.GPIO_Mode = GPIO_Mode_OUT;
+	GPIO_Initstructure.GPIO_OType = GPIO_OType_PP;
+	GPIO_Initstructure.GPIO_Speed = GPIO_Speed_50MHz;
+	GPIO_Initstructure.GPIO_Pin = GPIO_Pin_7;
+	GPIO_Init(GPIOB, &GPIO_Initstructure);
 }

@@ -1,40 +1,16 @@
-/**
-  ******************************************************************************
-  * @file    stm32f0xx_it.c 
-  * @author  MCD Application Team
-  * @version V1.0.0
-  * @date    23-March-2012
-  * @brief   Main Interrupt Service Routines.
-  *          This file provides template for all exceptions handler and 
-  *          peripherals interrupt service routine.
-  ******************************************************************************
-  * @attention
-  *
-  * <h2><center>&copy; COPYRIGHT 2012 STMicroelectronics</center></h2>
-  *
-  * Licensed under MCD-ST Liberty SW License Agreement V2, (the "License");
-  * You may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at:
-  *
-  *        http://www.st.com/software_license_agreement_liberty_v2
-  *
-  * Unless required by applicable law or agreed to in writing, software 
-  * distributed under the License is distributed on an "AS IS" BASIS, 
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  *
-  ******************************************************************************
-  */
-
-#define RX_BUFFER_SIZE 100
-#define NEXT_RX_WRITE_LOCATION ((Rx_write_location + 1) % RX_BUFFER_SIZE)
-
 #include "stm32f0xx_it.h"
+#include "lm35.h"
+#include "battery.h"
+#include "stm32f0_discovery.h"
+#include "stdbool.h"
+#include "serial.h" //debug
 #include "stdbool.h"
 #include "lm35.h"
 #include "serial.h"
 #include "struct.h"
+
+#define RX_BUFFER_SIZE 100
+#define NEXT_RX_WRITE_LOCATION ((Rx_write_location + 1) % RX_BUFFER_SIZE)
 
 extern volatile unsigned long time_passed;
 volatile uint8_t* Rx_buffer;
@@ -43,6 +19,7 @@ extern uint16_t Rx_read_location;
 bool is_full;
 uint8_t counter = 0;
 bool send = false;
+bool blink = false;
 
 void NMI_Handler(void)
 {
@@ -50,7 +27,6 @@ void NMI_Handler(void)
 
 void HardFault_Handler(void)
 {
-  /* Go to infinite loop when Hard Fault exception occurs */
   while (1)
   {
   }
@@ -69,14 +45,7 @@ void SysTick_Handler(void)
 {
 }
 
-/******************************************************************************/
-/*                 STM32F0xx Peripherals Interrupt Handlers                   */
-/*  Add here the Interrupt Handler for the used peripheral(s) (PPP), for the  */
-/*  available peripheral interrupt handler's name please refer to the startup */
-/*  file (startup_stm32f0xx.s).                                               */
-/******************************************************************************/
-
-//called when a millisecond has passed and Timer 3 is enabled
+//EBYTE LoRa, called when a millisecond has passed and Timer 3 is enabled
 void TIM3_IRQHandler(void) {
 	time_passed++;
 	TIM_ClearITPendingBit(TIM3, TIM_IT_Update);
@@ -99,17 +68,55 @@ void USART1_IRQHandler(void) {
 		}
 	}
 }
+
+// timer to generate 1 second blink
+void TIM2_IRQHandler(void) {
 	
-void TIM14_IRQHandler(void) { // timer to measure temperature every minute
+	if (TIM_GetITStatus(TIM2, TIM_IT_Update) != RESET) {
+		if (blink) { // generate 1 second blink
+			STM_EVAL_LEDOff(LED4); // LED remains off until new temperature measurement
+		}
+		TIM_ClearITPendingBit(TIM2, TIM_IT_Update);
+	}
+}
+
+// timer to measure temperature every minute
+void TIM14_IRQHandler(void) {
 	
   if (TIM_GetITStatus(TIM14, TIM_IT_Update) != RESET) { // wait a minute
-		Temperatures.Temperature[counter++] = measure_temperature(); // sensor reads temperature
-		if (counter == TEMPERATURE_SIZE) { // if hour has passed
-			Temperatures.hour++; // increase time (hour)
-			send = true; // STM32 must send data to ESP32
-			counter = 0; // reset counter
+		temperature_read_start(); 
+	//battery_read_start();
+		blink = true; // keep blue LED off; no temperatures are being measured
+		if (counter == 60) { // increment counter until hour has passed  
+			send = true; // if send = true --> send data (LoRa)
+			counter = 0;
 		}
+		STM_EVAL_LEDOn(LED4); // toggle blue LED for 1 second once a minute
     TIM_ClearITPendingBit(TIM14, TIM_IT_Update);
   }
 }
 
+//ADC sample complete
+void ADC1_COMP_IRQHandler(void) {
+	
+	if (ADC_GetITStatus(ADC1, ADC1_COMP_IRQn) != RESET) {
+		//clear interrupt bit
+		ADC_ClearITPendingBit(ADC1, ADC1_COMP_IRQn);
+		if (adc_battery_meas) {
+			//battery measurement
+			uint16_t val = ADC_GetConversionValue(ADC1);
+			Serial_print("battery: "); //debug
+			Serial_putintln(val); //debug
+			//battery low? LED on, else off
+			if (val > BATTERY_THRESHOLD_VOLTAGE) {
+				STM_EVAL_LEDOff(LED4);
+			} else {
+				STM_EVAL_LEDOn(LED4);
+			}
+			//TODO transistor pin laagzetten
+			adc_battery_meas = false;
+		} else {
+			Temperatures.Temperature[counter++] = measure_temperature();
+		}
+	}
+}
