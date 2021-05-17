@@ -123,7 +123,7 @@ void homepage() {
 	interface_server.send(200, "text/html", message);
 }
 
-// go to hampage when a invalid url is entered or trigger captive portal system
+// go to homepage when a invalid url is entered or trigger captive portal system
 void page_not_found() {
   interface_server.sendHeader("Location", String("http://") + interface_server.client().localIP().toString(), true);
   interface_server.send(302, "text/plain", "");
