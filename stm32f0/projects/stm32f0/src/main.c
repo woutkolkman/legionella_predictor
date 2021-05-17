@@ -14,17 +14,21 @@ int main(void) {
 	ADC_init();
 	ADC_interrupt_init();
 	
+	init_red_led();
 	init_serial();
 	Serial_clearscreen();
 	init_LoRa();
 	print_parameters();
 	Green_led_init();
 	
+	
 	while (1) {
 		
 		if (send) {
 			uint8_t i;
+			GPIO_SetBits(TRANSMISSION_BUSY_PORT, TRANSMISSION_BUSY_PIN);
 			send_struct(&Temperatures, sizeof(Temperatures));
+			GPIO_ResetBits(TRANSMISSION_BUSY_PORT, TRANSMISSION_BUSY_PIN);
 			Serial_println("Temperatures: ");
 			for (i = 0; i < TEMPERATURE_SIZE; i++) {
 				Serial_putint(i);
@@ -119,16 +123,6 @@ void ADC_interrupt_init(void) {
 	NVIC_SetPriority(ADC1_COMP_IRQn,0);
 }
 
-void delay(const int d) {
-	
-	volatile int i;
-
-	for (i = d; i > 0; i--) { 
-		; 
-	}
-	return;
-}
-
 //deinitializes the ADC for the random numbers
 void deInit_random_number() {
 	ADC_TempSensorCmd(DISABLE);
@@ -137,4 +131,16 @@ void deInit_random_number() {
   RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADC1, DISABLE);
 	RCC_AHBPeriphClockCmd(RCC_AHBPeriph_CRC, DISABLE);
 	
+}
+
+//initializes the red (transmission) led
+void init_red_led() {
+	GPIO_InitTypeDef GPIO_Initstructure;
+	
+	RCC_AHBPeriphClockCmd(RCC_AHBENR_GPIOBEN, ENABLE);
+	GPIO_Initstructure.GPIO_Mode = GPIO_Mode_OUT;
+	GPIO_Initstructure.GPIO_OType = GPIO_OType_PP;
+	GPIO_Initstructure.GPIO_Speed = GPIO_Speed_50MHz;
+	GPIO_Initstructure.GPIO_Pin = GPIO_Pin_7;
+	GPIO_Init(GPIOB, &GPIO_Initstructure);
 }
