@@ -8,6 +8,9 @@
 // defines 
 #define MAX_TRANSMISSION_NUMBER ('~' + 1)
 #define BYTE_MAX_NUMBER 256
+#define TRANSMISSION_BUSY_PORT GPIOB
+#define TRANSMISSION_BUSY_PIN GPIO_Pin_7
+
 
 // function prototypes
 void generate_transmission_id(void);
@@ -15,4 +18,5 @@ uint32_t get_random_number(void);
 void init_random_number(void);
 void ADC_interrupt_init(void);
 void deInit_random_number(void);
+void init_red_led(void);
 
