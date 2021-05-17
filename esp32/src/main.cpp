@@ -158,7 +158,13 @@ bool LoRa_get_data() {
     // a parsed data--i've always had a hard time getting reliable data using
     // a parsing method
   if(Transceiver.get_struct(&Temperatures, sizeof(Temperatures))) { //if data is the right size, it's more certain the data is from this system.
-  result = true;
+    result = true;
+    for(int i = 0; i < TRANSMITTER_ID_SIZE; i++) {
+      if(Temperatures.transmitter_ID[i] < 33 || Temperatures.transmitter_ID[i] > 126) { 
+        result = false;
+        return result;
+      }
+    }  
     // dump out what was just received
     Serial.println("Temperatures: "); 
     for (int i = 0; i < TEMPERATURE_SIZE; i++) {
