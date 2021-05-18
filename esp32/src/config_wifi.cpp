@@ -44,7 +44,7 @@ void setup_wifi(bool hotspot,char *ssid, char *password) {
     IP = WiFi.localIP();
 
     // set status flag
-    mode_is_hotspot = false;
+    settings.mode_is_hotspot = false;
   }
 
   // print ip adress to serial

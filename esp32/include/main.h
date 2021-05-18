@@ -1,6 +1,7 @@
 #ifndef MAIN_H
 #define MAIN_H
 #include <WebServer.h>
+#include "remember_settings.h"
 
 // defines
 /*
@@ -19,15 +20,13 @@ YOU MUST USE THE ACTUAL GPIO NUMBER
 #define PAYLOAD_SIZE 60  //* temperature values (http POST payload)
 #define POST_PAYLOAD_LEN ((POST_VALUE_LEN)*(PAYLOAD_SIZE))
 
-// globals
-extern WebServer interface_server;
 #define TRANSMITTER_ID_SIZE 8
 #define TEMPERATURE_SIZE    60
 
-// globals	
-extern WebServer interface_server;	
-#define TRANSMITTER_ID_SIZE 8	
-#define TEMPERATURE_SIZE    60
+
+// globals
+extern WebServer interface_server;
+extern settings_t settings;
 
 // function definitions 
 void LoRa_get_data(void);

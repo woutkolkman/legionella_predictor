@@ -9,7 +9,6 @@
 
 String new_sidd = "";
 String new_password = "";
-bool mode_is_hotspot = true;
 
 // ----------- website html code fragments
 // standard webpage head
@@ -114,7 +113,7 @@ void homepage() {
 
   // show wifi status
   message += "<div class='info'>\n";
-	message += "<p>" + ((mode_is_hotspot == false) ? ("Device connected to network " + new_sidd) : ("Device in hotspot mode.")) + "</p>\n";
+	message += "<p>" + ((settings.mode_is_hotspot == false) ? ("Device connected to network " + new_sidd) : ("Device in hotspot mode.")) + "</p>\n";
 	message += "</div>";
 
   message += "<p>Click <a href='/scanwifi'><b>HERE</b></a> to enter wifi credentials.</p>\n";
@@ -171,7 +170,6 @@ void scan_networks() {
 void connect_to_network() {
  String message = "";
  bool connect_to_wifi = false;
- char char_sidd[80],char_password[80];
   // add head of webpage
   message += webpage_head;
 
@@ -193,9 +191,16 @@ void connect_to_network() {
   
   // if we get succesfull new wifi credentials
   if(connect_to_wifi == true) {
-    new_sidd.toCharArray(char_sidd,80);
-    new_password.toCharArray(char_password,80);
-    setup_wifi(false,char_sidd,char_password);
+    // convert strings to char array and update settings
+    new_sidd.toCharArray(settings.wifi_sidd,33);
+    new_password.toCharArray(settings.wifi_password,64);
+    settings.mode_is_hotspot = false;
+
+    // connect with wifi network
+    setup_wifi(settings.mode_is_hotspot,settings.wifi_sidd,settings.wifi_password);
+
+    // save settings to EEPROM
+    save_settings(&settings);
   }
 }
 
@@ -208,9 +213,12 @@ void config_cloud_page() {
   // check if submit button is pressed
   if(interface_server.hasArg("submit")) {
     // change cloud settings
-    strcpy(cloud_address, interface_server.arg("cloud_address").c_str());
-    strcpy(cloud_port, interface_server.arg("cloud_port").c_str());
-    strcpy(cloud_path, interface_server.arg("cloud_path").c_str());
+    strcpy(settings.cloud_address, interface_server.arg("cloud_address").c_str());
+    strcpy(settings.cloud_port, interface_server.arg("cloud_port").c_str());
+    strcpy(settings.cloud_path, interface_server.arg("cloud_path").c_str());
+
+    // save settings to EEPROM
+    save_settings(&settings);
 
     // give a message that cloud settings are changed
     message += "<div class='info'>\n";
@@ -221,9 +229,9 @@ void config_cloud_page() {
   // show current cloud settings
   message += "<table id='fancy'>\n";
   message += "<caption>Current cloud settings</caption>\n";
-  message += "<tr><th><b>Cloud adress : </b></th><th>"+ String(cloud_address) +"</th></tr>\n";
-  message += "<tr><th><b>Cloud port   : </b></th><th>"+ String(cloud_port) +"</th></tr>\n";
-  message += "<tr><th><b>Cloud path   : </b></th><th>"+ String(cloud_path) +"</th></tr>\n";
+  message += "<tr><th><b>Cloud adress : </b></th><th>"+ String(settings.cloud_address) +"</th></tr>\n";
+  message += "<tr><th><b>Cloud port   : </b></th><th>"+ String(settings.cloud_port) +"</th></tr>\n";
+  message += "<tr><th><b>Cloud path   : </b></th><th>"+ String(settings.cloud_path) +"</th></tr>\n";
   message += "</table>\n";
  
   // a form to change cloud settings

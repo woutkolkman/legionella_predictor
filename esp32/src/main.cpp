@@ -1,14 +1,15 @@
-// shape of code inspired by https://github.com/espressif/arduino-esp32/blob/master/libraries/WebServer/examples/HelloServer/HelloServer.ino
-#include "main.h"
 #include <Arduino.h>
 #include <WiFi.h>
 #include <WebServer.h>
+#include <HTTPClient.h>
+#include "main.h"
 #include "website.h"
 #include "config_wifi.h"
 #include "ebyte.h"
-#include <HTTPClient.h>
+#include "remember_settings.h"
 
-// set server to listen to port 80
+// --- globals
+settings_t settings;
 WebServer interface_server(80);
 EBYTE Transceiver(&Serial2, PIN_M0_, PIN_M1_, PIN_AX);
 
@@ -17,30 +18,30 @@ struct DATA {
   uint8_t Temperature[TEMPERATURE_SIZE];
 } Temperatures;
 
-void setup_wifi(bool hotspot,char *ssid, char *password);
-
-// hotspot wifi credentials
-const char *hotspot_ssid = "userstory_5L_test";
-const char *hotspot_password = "zeer_geheim2021";
-
-// http post addresses
-char cloud_address[80];
-char cloud_port[10];
-char cloud_path[80];
-
-
 // init the ESP32
 void setup() {
   //start USART (serial monitor)
   Serial.begin(115200);
 
-  // setup default cloud settings
-  strcpy(cloud_address, "http://145.44.235.205");
-  strcpy(cloud_port, "80");
-  strcpy(cloud_path,"/packet");
+  // load settings if EEPROM data is valid
+  Serial.print("Load settings : ");
+  if(check_config_signature()) {
+    Serial.println("load from EEPROM");
+    load_settings(&settings);
+  } 
+  else { // if the EEPROM data is not valid config data then write config data to EEPROM
+    Serial.println("bad signature use default settings.");
+    reset_settings(&settings);
+  }
+
+  // print inhoud
+  Serial.print("wifi_sidd = ");
+  Serial.println(settings.wifi_sidd);
+  Serial.print("widi_password = ");
+  Serial.println(settings.wifi_password);
 
   // start wifi hotspot
-  setup_wifi(true, (char *) hotspot_ssid,(char *) hotspot_password);
+  setup_wifi(settings.mode_is_hotspot, (char *) settings.wifi_sidd,(char *) settings.wifi_password);
 
   // add webpages
   interface_server.on("/",homepage);
@@ -61,7 +62,6 @@ void setup() {
   Transceiver.init();
 }
 
-
 void loop() {
   DNS_server.processNextRequest(); 
 
@@ -78,6 +78,13 @@ void loop() {
     send_to_cloud(&post_payload[0]);
   }
 
+  // reset settings when serial read a 'r'
+  if(Serial.available()) {
+    if(Serial.read() == 'r') {
+      Serial.println("EEPROM: go to default settings.");
+      reset_settings(&settings);
+    }
+  }
   //TODO WiFi reconnect wanneer verbinding is verloren
   /*if (!WiFi.isConnected()) {
     connect_to_network();
@@ -111,7 +118,7 @@ void generate_http_post(char* payload) {
 bool send_to_cloud(char* payload) {
 
   HTTPClient http;
-  int data_length = (strlen(cloud_address) + (strlen(cloud_port)+1/*:*/) + strlen(cloud_path));
+  int data_length = (strlen(settings.cloud_address) + (strlen(settings.cloud_port)+1/*:*/) + strlen(settings.cloud_path));
   char server_url[1+data_length];
   bool retval = false;
 
@@ -123,10 +130,10 @@ bool send_to_cloud(char* payload) {
   Serial.print("Data length: ");
   Serial.println(data_length);
   Serial.print("Sending to: ");
-  strcpy(server_url, cloud_address);
+  strcpy(server_url, settings.cloud_address);
   strcat(server_url, ":");
-  strcat(server_url, cloud_port);
-  strcat(server_url, cloud_path);
+  strcat(server_url, settings.cloud_port);
+  strcat(server_url, settings.cloud_path);
   Serial.write((uint8_t*) &server_url, sizeof(server_url));
   Serial.println();
   Serial.print("Payload: ");
