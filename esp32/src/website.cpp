@@ -113,7 +113,7 @@ void homepage() {
 
   // show wifi status
   message += "<div class='info'>\n";
-	message += "<p>" + ((settings.mode_is_hotspot == false) ? ("Device connected to network " + new_sidd) : ("Device in hotspot mode.")) + "</p>\n";
+	message += "<p>" + ((settings.mode_is_hotspot == false) ? ("Device connected to network " + String(settings.wifi_sidd)) : ("Device in hotspot mode.")) + "</p>\n";
 	message += "</div>";
 
   message += "<p>Click <a href='/scanwifi'><b>HERE</b></a> to enter wifi credentials.</p>\n";
