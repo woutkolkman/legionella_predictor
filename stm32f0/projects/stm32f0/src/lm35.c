@@ -5,6 +5,7 @@
 #include "struct.h"
 #include "main.h"
 
+
 void ADC_init(void) { 
 	
 	GPIO_InitTypeDef GPIO_InitStructure;
@@ -39,6 +40,7 @@ void ADC_init(void) {
 	while (ADC_GetFlagStatus(ADC1, ADC_FLAG_ADEN) == RESET);
 }
 
+
 uint8_t measure_temperature(void) { // function to measure current temperature
 		
 	uint16_t adc;
@@ -56,10 +58,12 @@ uint8_t measure_temperature(void) { // function to measure current temperature
 	return temperature;
 }
 
+
 void temperature_read_start(void) {
 	
   ADC_StartOfConversion(ADC1);
 }
+
 
 void channel(uint8_t pin) {
 	
@@ -83,6 +87,7 @@ void channel(uint8_t pin) {
 	ADC_StartOfConversion(ADC1);
 }
 
+
 void TIM14_init(void) {
 	
 	TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;
@@ -104,4 +109,3 @@ void TIM14_init(void) {
 	TIM_ITConfig(TIM14, TIM_IT_Update, ENABLE); // enable TIM_ITConfig interrupt
   TIM_Cmd(TIM14, ENABLE); // enable interrupt on TIM14
 }
-

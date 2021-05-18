@@ -46,11 +46,13 @@ void SysTick_Handler(void)
 {
 }
 
+
 //EBYTE LoRa, called when a millisecond has passed and Timer 3 is enabled
 void TIM3_IRQHandler(void) {
 	time_passed++;
 	TIM_ClearITPendingBit(TIM3, TIM_IT_Update);
 }
+
 
 //when data is received from LoRa
 void USART1_IRQHandler(void) { 
@@ -70,19 +72,21 @@ void USART1_IRQHandler(void) {
 	}
 }
 
+
 // timer to measure temperature every minute
 void TIM14_IRQHandler(void) {
 	
   if (TIM_GetITStatus(TIM14, TIM_IT_Update) != RESET) { // wait a minute
+		channel(CHANNEL_10);
 		if (counter == 60) { // every hour
 			adc_battery_meas = true;
 			send = true; // if send = true --> send data (LoRa)
 			counter = 0;
 		}
-		channel(CHANNEL_10);
     TIM_ClearITPendingBit(TIM14, TIM_IT_Update);
   }
 }
+
 
 //ADC sample complete
 void ADC1_COMP_IRQHandler(void) {

@@ -4,6 +4,7 @@
 
 bool adc_battery_meas; //false --> sensor measurement
 
+
 void ADC_battery_init(void) {
 	
 	ADC_InitTypeDef  ADC_InitStructure;
@@ -35,6 +36,7 @@ void ADC_battery_init(void) {
 	// configure channel 11 GPIOC I/O-pin 1
 	ADC_ChannelConfig(ADC1, ADC_Channel_11, ADC_SampleTime_239_5Cycles);
 }
+
 
 //start battery measurement, handle in ISR
 void battery_read_start(void) {

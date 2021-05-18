@@ -45,6 +45,7 @@ int main(void) {
 	}
 }
 
+
 //generates the transmission ID. Saves it in the struct
 void generate_transmission_id() {
 	uint8_t count;
@@ -84,6 +85,7 @@ uint32_t get_random_number(void) {
   return CRC_CalcCRC(0xBADA55E5);
 }
 
+
 //initializes the ADC for the random numbers.
 void init_random_number() {
 	ADC_InitTypeDef ADC_InitStructure;
@@ -106,6 +108,7 @@ void init_random_number() {
   ADC_TempSensorCmd(ENABLE);	
 }
 
+
 //configure interrupt "ADC1_COMP_IRQHandler"
 void ADC_interrupt_init(void) {
 	
@@ -116,15 +119,6 @@ void ADC_interrupt_init(void) {
 	NVIC_SetPriority(ADC1_COMP_IRQn,0);
 }
 
-void delay(const int d) {
-	
-	volatile int i;
-
-	for (i = d; i > 0; i--) { 
-		; 
-	}
-	return;
-}
 
 //deinitializes the ADC for the random numbers
 void deInit_random_number() {
