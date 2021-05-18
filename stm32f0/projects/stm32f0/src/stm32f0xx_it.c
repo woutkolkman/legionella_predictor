@@ -74,12 +74,12 @@ void USART1_IRQHandler(void) {
 void TIM14_IRQHandler(void) {
 	
   if (TIM_GetITStatus(TIM14, TIM_IT_Update) != RESET) { // wait a minute
-		channel();
 		if (counter == 60) { // every hour
 			adc_battery_meas = true;
 			send = true; // if send = true --> send data (LoRa)
 			counter = 0;
 		}
+		channel(CHANNEL_10);
     TIM_ClearITPendingBit(TIM14, TIM_IT_Update);
   }
 }
@@ -92,7 +92,8 @@ void ADC1_COMP_IRQHandler(void) {
 	if (ADC_GetITStatus(ADC1, ADC1_COMP_IRQn) != RESET) {
 		//clear interrupt bit
 		ADC_ClearITPendingBit(ADC1, ADC1_COMP_IRQn);
-		if (adc_battery_meas) {
+		
+		if (ADC1->CHSELR & ADC_CHSELR_CHSEL11) {
 			//battery measurement
 			val = ADC_GetConversionValue(ADC1);
 			Serial_print("battery: "); //debug
@@ -104,9 +105,14 @@ void ADC1_COMP_IRQHandler(void) {
 				STM_EVAL_LEDOn(LED4);
 			}
 			//TODO transistor pin laagzetten
-			adc_battery_meas = false;
+			
 		} else {
 			Temperatures.Temperature[counter++] = measure_temperature();
+		}
+		
+		if (adc_battery_meas) {
+			adc_battery_meas = false;
+			channel(CHANNEL_11);
 		}
 	}
 }

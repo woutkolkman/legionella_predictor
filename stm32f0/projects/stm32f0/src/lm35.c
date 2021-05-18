@@ -34,6 +34,9 @@ void ADC_init(void) {
 
   // activate the ADC peripheral using ADC_Cmd() function.
   ADC_Cmd(ADC1, ENABLE);
+	
+	// wait until ADC enabled
+	while (ADC_GetFlagStatus(ADC1, ADC_FLAG_ADEN) == RESET);
 }
 
 uint8_t measure_temperature(void) { // function to measure current temperature
@@ -58,20 +61,25 @@ void temperature_read_start(void) {
   ADC_StartOfConversion(ADC1);
 }
 
-void channel(void) {
+void channel(uint8_t pin) {
 	
-	if (!adc_battery_meas) {
+	uint32_t tmpreg = 0;
+	
+	ADC_StopOfConversion(ADC1);
+	
+	ADC1->CHSELR = 0; //no channel selected
+	
+	if (pin == CHANNEL_10) { //SENSOR
 		// configure channel (PC0)
-		ADC_ChannelConfig(ADC1, ADC_Channel_10, ADC_SampleTime_239_5Cycles);
 		ADC1->CHSELR |= ADC_CHSELR_CHSEL10; // select CH10
-		ADC1->CHSELR &= ~ADC_CHSELR_CHSEL11; // deselect CH11
-	} 
-	if (adc_battery_meas) {
+	} else { //BATTERY
 		// configure channel (PC1)
-		ADC_ChannelConfig(ADC1, ADC_Channel_11, ADC_SampleTime_239_5Cycles);
 		ADC1->CHSELR |= ADC_CHSELR_CHSEL11; // select CH11
-		ADC1->CHSELR &= ~ADC_CHSELR_CHSEL10; // deselect CH10
-	} 
+	}
+	tmpreg &= ~ADC_SMPR1_SMPR;
+  tmpreg |= (uint32_t)ADC_SampleTime_239_5Cycles;
+  ADC1->SMPR = tmpreg;
+	
 	ADC_StartOfConversion(ADC1);
 }
 
