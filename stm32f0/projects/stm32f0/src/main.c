@@ -10,6 +10,7 @@ struct DATA Temperatures;
 int main(void) {
 	
 	generate_transmission_id();
+	TIM2_init();
 	TIM14_init();
 	ADC_init();
 	ADC_interrupt_init();
@@ -53,6 +54,7 @@ int main(void) {
 
 //generates the transmission ID. Saves it in the struct
 void generate_transmission_id() {
+	
 	uint8_t count;
 	
 	init_random_number();
@@ -71,6 +73,7 @@ void generate_transmission_id() {
 //https://www.mikrocontroller.net/topic/358453
 //creates a random number by ADC values and calculations.
 uint32_t get_random_number(void) {
+	
 	uint8_t i;
 	
   // Enable ADCperipheral
@@ -98,6 +101,7 @@ uint32_t get_random_number(void) {
 
 //initializes the ADC for the random numbers.
 void init_random_number() {
+	
 	ADC_InitTypeDef ADC_InitStructure;
   //enable ADC1 clock
   RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADC1, ENABLE);
@@ -130,12 +134,12 @@ void ADC_interrupt_init(void) {
 
 //deinitializes the ADC for the random numbers
 void deInit_random_number() {
+	
 	ADC_TempSensorCmd(DISABLE);
 	ADC_Cmd(ADC1, DISABLE);
 	ADC_DeInit(ADC1);
   RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADC1, DISABLE);
 	RCC_AHBPeriphClockCmd(RCC_AHBPeriph_CRC, DISABLE);
-	
 }
 
 //initializes the red (transmission) led
