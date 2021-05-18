@@ -3,6 +3,7 @@
 #include "lm35.h"
 #include "battery.h"
 #include "struct.h"
+#include "main.h"
 
 void ADC_init(void) { 
 	
@@ -57,21 +58,20 @@ void temperature_read_start(void) {
   ADC_StartOfConversion(ADC1);
 }
 
-void channel(uint8_t channel) {
+void channel(void) {
 	
-	if (channel == CHANNEL_10) {
+	if (!adc_battery_meas) {
 		// configure channel (PC0)
 		ADC_ChannelConfig(ADC1, ADC_Channel_10, ADC_SampleTime_239_5Cycles);
 		ADC1->CHSELR |= ADC_CHSELR_CHSEL10; // select CH10
 		ADC1->CHSELR &= ~ADC_CHSELR_CHSEL11; // deselect CH11
-	} else if (channel == CHANNEL_11) {
+	} 
+	if (adc_battery_meas) {
 		// configure channel (PC1)
-		adc_battery_meas = true;
-		Temperatures.Temperature[counter++] = measure_temperature();
 		ADC_ChannelConfig(ADC1, ADC_Channel_11, ADC_SampleTime_239_5Cycles);
 		ADC1->CHSELR |= ADC_CHSELR_CHSEL11; // select CH11
 		ADC1->CHSELR &= ~ADC_CHSELR_CHSEL10; // deselect CH10
-	}
+	} 
 	ADC_StartOfConversion(ADC1);
 }
 

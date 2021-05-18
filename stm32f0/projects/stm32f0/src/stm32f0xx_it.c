@@ -74,9 +74,9 @@ void USART1_IRQHandler(void) {
 void TIM14_IRQHandler(void) {
 	
   if (TIM_GetITStatus(TIM14, TIM_IT_Update) != RESET) { // wait a minute
-		channel(CHANNEL_10); // select CH10 + CH11 for starting conversions
-		channel(CHANNEL_11);
+		channel();
 		if (counter == 60) { // every hour
+			adc_battery_meas = true;
 			send = true; // if send = true --> send data (LoRa)
 			counter = 0;
 		}
