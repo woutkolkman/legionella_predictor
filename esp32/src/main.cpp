@@ -73,9 +73,10 @@ void loop() {
   // if the transceiver serial is available, proces incoming data
   // you can also use Transceiver.available()
   if (Transceiver.available()) {
-    LoRa_get_data();
-    generate_http_post(&post_payload[0]);
-    send_to_cloud(&post_payload[0]);
+    if(LoRa_get_data()) {
+      generate_http_post(&post_payload[0]);
+      send_to_cloud(&post_payload[0]);
+    }
   }
 
   // reset settings when serial read a 'r'
@@ -159,24 +160,36 @@ bool send_to_cloud(char* payload) {
 }
 
 
-void LoRa_get_data() {
+bool LoRa_get_data() {
+  bool result;
   // i highly suggest you send data using structures and not
     // a parsed data--i've always had a hard time getting reliable data using
     // a parsing method
-  Transceiver.get_struct(&Temperatures, sizeof(Temperatures));
+  if(Transceiver.get_struct(&Temperatures, sizeof(Temperatures))) { //if data is the right size, it's more certain the data is from this system.
+    result = true;
+    for(int i = 0; i < TRANSMITTER_ID_SIZE; i++) {
+      if(Temperatures.transmitter_ID[i] < 33 || Temperatures.transmitter_ID[i] > 126) { 
+        result = false;
+        return result;
+      }
+    }  
+    // dump out what was just received
+    Serial.println("Temperatures: "); 
+    for (int i = 0; i < TEMPERATURE_SIZE; i++) {
+      Serial.print(i);
+      Serial.print(" : ");
+      Serial.print(Temperatures.Temperature[i]);
+      Serial.println(" degrees.");
+    }
 
-  // dump out what was just received
-  Serial.println("Temperatures: "); 
-  for (int i = 0; i < TEMPERATURE_SIZE; i++) {
-    Serial.print(i);
-    Serial.print(" : ");
-    Serial.print(Temperatures.Temperature[i]);
-    Serial.println(" degrees.");
+    Serial.print("transmitter_ID: ");
+    for (int i = 0; i < TRANSMITTER_ID_SIZE; i++) {
+      Serial.print(Temperatures.transmitter_ID[i]);
+      Serial.print(' ');
+    }
+  } else {
+    result = false;
   }
 
-  Serial.print("transmitter_ID: ");
-  for (int i = 0; i < TRANSMITTER_ID_SIZE; i++) {
-    Serial.print(Temperatures.transmitter_ID[i]);
-    Serial.print(' ');
-  }
+  return result;
 }

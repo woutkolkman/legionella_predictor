@@ -19,18 +19,22 @@ int main(void) {
 	init_serial();
 	Serial_clearscreen();
 	init_LoRa();
+	
 	print_parameters();
 	Green_led_init();
 	
-	STM_EVAL_LEDInit(LED4); // indication if temperatures are being measured (LoRa)
-	
+	STM_EVAL_LEDInit(LED4); // indication if temperatures have been sent (LoRa)
+
+	set_mode(MODE_PROGRAM);
 	while (1) {
 		
 		if (send) {
 			uint8_t i;
+			set_mode(MODE_NORMAL); //sets the LoRa module for transmission
 			GPIO_SetBits(TRANSMISSION_BUSY_PORT, TRANSMISSION_BUSY_PIN);
 			send_struct(&Temperatures, sizeof(Temperatures));
 			GPIO_ResetBits(TRANSMISSION_BUSY_PORT, TRANSMISSION_BUSY_PIN);
+			set_mode(MODE_PROGRAM); //sets the LoRa module for sleep mode to save energy
 			Serial_println("Temperatures: ");
 			for (i = 0; i < TEMPERATURE_SIZE; i++) {
 				Serial_putint(i);
