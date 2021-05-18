@@ -85,9 +85,8 @@ void TIM14_IRQHandler(void) {
 	
   if (TIM_GetITStatus(TIM14, TIM_IT_Update) != RESET) { // wait a minute
 		temperature_read_start(); 
-	//battery_read_start();
 		blink = true; // keep blue LED off; no temperatures are being measured
-		if (counter == 60) { // increment counter until hour has passed  
+		if (counter == TEMPERATURE_SIZE) { // increment counter until hour has passed  
 			send = true; // if send = true --> send data (LoRa)
 			counter = 0;
 		}

@@ -26,7 +26,10 @@ int main(void) {
 	STM_EVAL_LEDInit(LED4); // indication if temperatures have been sent (LoRa)
 
 	set_mode(MODE_PROGRAM);
+	
 	while (1) {
+		
+		PWR_EnterSleepMode(PWR_SLEEPEntry_WFI); // enter sleep mode --> interrupt handles functions
 		
 		if (send) {
 			uint8_t i;
@@ -144,6 +147,7 @@ void deInit_random_number() {
 
 //initializes the red (transmission) led
 void init_red_led() {
+	
 	GPIO_InitTypeDef GPIO_Initstructure;
 	
 	RCC_AHBPeriphClockCmd(RCC_AHBENR_GPIOBEN, ENABLE);

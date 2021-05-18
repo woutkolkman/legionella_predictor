@@ -16,4 +16,7 @@ extern bool send;
 extern uint8_t counter;
 extern bool blink;
 
+// defines
+#define TEMPERATURE_SIZE 60
+
 #endif // _LM35_H_
