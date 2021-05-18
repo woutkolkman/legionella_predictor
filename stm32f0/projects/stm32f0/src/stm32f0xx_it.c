@@ -20,6 +20,8 @@ bool is_full;
 uint8_t counter = 0;
 bool send = false;
 
+// https://topic.alibabacloud.com/a/the-same-problem-with-the-adc-multi-channel-conversion-results-in-stm32f0_8_8_31057786.html
+
 void NMI_Handler(void)
 {
 }
@@ -72,7 +74,7 @@ void USART1_IRQHandler(void) {
 void TIM14_IRQHandler(void) {
 	
   if (TIM_GetITStatus(TIM14, TIM_IT_Update) != RESET) { // wait a minute
-		channel(CHANNEL_10);
+		channel(CHANNEL_10); // select CH10 + CH11 for starting conversions
 		channel(CHANNEL_11);
 		if (counter == 60) { // every hour
 			send = true; // if send = true --> send data (LoRa)
@@ -92,7 +94,6 @@ void ADC1_COMP_IRQHandler(void) {
 		ADC_ClearITPendingBit(ADC1, ADC1_COMP_IRQn);
 		if (adc_battery_meas) {
 			//battery measurement
-			ADC1->CHSELR &= ~ADC_CHSELR_CHSEL10; // deselect CH10
 			val = ADC_GetConversionValue(ADC1);
 			Serial_print("battery: "); //debug
 			Serial_putintln(val); //debug
@@ -104,7 +105,6 @@ void ADC1_COMP_IRQHandler(void) {
 			}
 			//TODO transistor pin laagzetten
 			adc_battery_meas = false;
-			ADC1->CHSELR &= ~ADC_CHSELR_CHSEL11; // deselect CH11
 		} else {
 			Temperatures.Temperature[counter++] = measure_temperature();
 		}

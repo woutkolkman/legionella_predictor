@@ -8,7 +8,7 @@ void ADC_init(void) {
 	
 	GPIO_InitTypeDef GPIO_InitStructure;
   ADC_InitTypeDef  ADC_InitStructure;
- 
+	
   RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADC1, ENABLE); // enable clk on ADC1
   RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOC, ENABLE);
   
@@ -39,7 +39,7 @@ uint8_t measure_temperature(void) { // function to measure current temperature
 		
 	uint16_t adc;
 	uint8_t temperature;
-
+	
 	// read ADC-value 
 	adc = ADC_GetConversionValue(ADC1);
 	
@@ -61,14 +61,16 @@ void channel(uint8_t channel) {
 	
 	if (channel == CHANNEL_10) {
 		// configure channel (PC0)
-		counter++;
-	//ADC_ChannelConfig(ADC1, ADC_Channel_10, ADC_SampleTime_239_5Cycles);
+		ADC_ChannelConfig(ADC1, ADC_Channel_10, ADC_SampleTime_239_5Cycles);
 		ADC1->CHSELR |= ADC_CHSELR_CHSEL10; // select CH10
+		ADC1->CHSELR &= ~ADC_CHSELR_CHSEL11; // deselect CH11
 	} else if (channel == CHANNEL_11) {
 		// configure channel (PC1)
 		adc_battery_meas = true;
-	//ADC_ChannelConfig(ADC1, ADC_Channel_11, ADC_SampleTime_239_5Cycles);
+		Temperatures.Temperature[counter++] = measure_temperature();
+		ADC_ChannelConfig(ADC1, ADC_Channel_11, ADC_SampleTime_239_5Cycles);
 		ADC1->CHSELR |= ADC_CHSELR_CHSEL11; // select CH11
+		ADC1->CHSELR &= ~ADC_CHSELR_CHSEL10; // deselect CH10
 	}
 	ADC_StartOfConversion(ADC1);
 }
