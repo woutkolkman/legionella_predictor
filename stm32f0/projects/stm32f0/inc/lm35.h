@@ -9,7 +9,7 @@ void ADC_init(void);
 uint8_t measure_temperature(void);
 void temperature_read_start(void);
 void TIM14_init(void);
-void channel(uint8_t pin);
+void select_channel(uint8_t pin);
 
 // global variables
 extern bool send;

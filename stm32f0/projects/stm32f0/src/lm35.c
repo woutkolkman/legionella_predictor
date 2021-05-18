@@ -5,7 +5,6 @@
 #include "struct.h"
 #include "main.h"
 
-
 void ADC_init(void) { 
 	
 	GPIO_InitTypeDef GPIO_InitStructure;
@@ -58,31 +57,29 @@ uint8_t measure_temperature(void) { // function to measure current temperature
 	return temperature;
 }
 
-
-void temperature_read_start(void) {
+void temperature_read_start(void) { 
 	
   ADC_StartOfConversion(ADC1);
 }
 
-
-void channel(uint8_t pin) {
+void select_channel(uint8_t pin) { // function to select ADC-channel 10/11 (battery and sensor)
 	
 	uint32_t tmpreg = 0;
 	
 	ADC_StopOfConversion(ADC1);
 	
-	ADC1->CHSELR = 0; //no channel selected
+	ADC1->CHSELR = 0; // no channel selected
 	
-	if (pin == CHANNEL_10) { //SENSOR
+	if (pin == CHANNEL_10) { // temperature sensor
 		// configure channel (PC0)
 		ADC1->CHSELR |= ADC_CHSELR_CHSEL10; // select CH10
-	} else { //BATTERY
+	} else { // battery
 		// configure channel (PC1)
 		ADC1->CHSELR |= ADC_CHSELR_CHSEL11; // select CH11
 	}
-	tmpreg &= ~ADC_SMPR1_SMPR;
-  tmpreg |= (uint32_t)ADC_SampleTime_239_5Cycles;
-  ADC1->SMPR = tmpreg;
+	tmpreg &= ~ADC_SMPR1_SMPR; // clear the sampling time selection bits
+  tmpreg |= (uint32_t)ADC_SampleTime_239_5Cycles; // set the ADC sampling time register
+  ADC1->SMPR = tmpreg; // configure the ADC sample time register
 	
 	ADC_StartOfConversion(ADC1);
 }
@@ -97,6 +94,7 @@ void TIM14_init(void) {
   
   TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up; 
   TIM_TimeBaseStructure.TIM_Period      = 100 - 1; 
+//TIM_TimeBaseStructure.TIM_Period      = 60000 - 1; // hour
   TIM_TimeBaseStructure.TIM_Prescaler   = (uint16_t)((SystemCoreClock / 1000) - 1);
 	
 	NVIC_InitStructure.NVIC_IRQChannel         = TIM14_IRQn;

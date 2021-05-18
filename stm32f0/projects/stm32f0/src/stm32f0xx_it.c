@@ -20,8 +20,6 @@ bool is_full;
 uint8_t counter = 0;
 bool send = false;
 
-// https://topic.alibabacloud.com/a/the-same-problem-with-the-adc-multi-channel-conversion-results-in-stm32f0_8_8_31057786.html
-
 void NMI_Handler(void)
 {
 }
@@ -46,16 +44,12 @@ void SysTick_Handler(void)
 {
 }
 
-
-//EBYTE LoRa, called when a millisecond has passed and Timer 3 is enabled
-void TIM3_IRQHandler(void) {
+void TIM3_IRQHandler(void) { // EBYTE LoRa, called when a millisecond has passed and Timer 3 is enabled
 	time_passed++;
 	TIM_ClearITPendingBit(TIM3, TIM_IT_Update);
 }
 
-
-//when data is received from LoRa
-void USART1_IRQHandler(void) { 
+void USART1_IRQHandler(void) { // when data is received from LoRa
 
 	// Read Data Register not empty interrupt?
   if(USART1->ISR & USART_ISR_RXNE) {
@@ -72,14 +66,12 @@ void USART1_IRQHandler(void) {
 	}
 }
 
-
-// timer to measure temperature every minute
-void TIM14_IRQHandler(void) {
+void TIM14_IRQHandler(void) { // timer to measure temperature every minute
 	
   if (TIM_GetITStatus(TIM14, TIM_IT_Update) != RESET) { // wait a minute
-		channel(CHANNEL_10);
+		select_channel(CHANNEL_10); // select ADC-channel 10 for temperature measurements
 		if (counter == 60) { // every hour
-			adc_battery_meas = true;
+			adc_battery_meas = true; // check battery-voltage every hour
 			send = true; // if send = true --> send data (LoRa)
 			counter = 0;
 		}
@@ -87,36 +79,28 @@ void TIM14_IRQHandler(void) {
   }
 }
 
-
-//ADC sample complete
-void ADC1_COMP_IRQHandler(void) {
+void ADC1_COMP_IRQHandler(void) { // ADC sample complete
 	
-	uint16_t val;
+	uint16_t battery_value;
 	
 	if (ADC_GetITStatus(ADC1, ADC1_COMP_IRQn) != RESET) {
-		//clear interrupt bit
-		ADC_ClearITPendingBit(ADC1, ADC1_COMP_IRQn);
-		
-		if (ADC1->CHSELR & ADC_CHSELR_CHSEL11) {
-			//battery measurement
-			val = ADC_GetConversionValue(ADC1);
-			Serial_print("battery: "); //debug
-			Serial_putintln(val); //debug
-			//battery low? LED on, else off
-			if (val > BATTERY_THRESHOLD_VOLTAGE) {
+		ADC_ClearITPendingBit(ADC1, ADC1_COMP_IRQn); // clear interrupt bit
+		if (ADC1->CHSELR & ADC_CHSELR_CHSEL11) { // if ADC-channel 11 is selected --> battery measurement
+			battery_value = ADC_GetConversionValue(ADC1); // battery measurement
+			Serial_print("battery: "); // debug
+			Serial_putintln(battery_value); // debug
+			// battery low? LED on, else off
+			if (battery_value > BATTERY_THRESHOLD_VOLTAGE) {
 				STM_EVAL_LEDOff(LED4);
 			} else {
 				STM_EVAL_LEDOn(LED4);
 			}
-			//TODO transistor pin laagzetten
-			
 		} else {
-			Temperatures.Temperature[counter++] = measure_temperature();
+			Temperatures.Temperature[counter++] = measure_temperature(); // if ADC-channel 10 is selected --> 60 temperature measurements
 		}
-		
-		if (adc_battery_meas) {
+		if (adc_battery_meas) { // do battery measurement --> select ADC-channel 11
 			adc_battery_meas = false;
-			channel(CHANNEL_11);
+			select_channel(CHANNEL_11);
 		}
 	}
 }
