@@ -477,6 +477,11 @@
               <FileType>1</FileType>
               <FilePath>.\src\battery.c</FilePath>
             </File>
+            <File>
+              <FileName>se24lc512.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\se24lc512.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -1086,6 +1091,11 @@
               <FileName>battery.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\src\battery.c</FilePath>
+            </File>
+            <File>
+              <FileName>se24lc512.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\se24lc512.c</FilePath>
             </File>
           </Files>
         </Group>

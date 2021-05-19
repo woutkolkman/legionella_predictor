@@ -4,6 +4,8 @@
 #include "stdint.h"
 #include "stdbool.h"
 
+#define HOUR (60000 - 1)
+#define DEBUGTIME (500 - 1) //30 seconds
 // function prototypes
 void ADC_init(void);
 uint8_t measure_temperature(void);

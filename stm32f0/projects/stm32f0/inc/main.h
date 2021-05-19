@@ -4,12 +4,13 @@
 #include "usart.h"
 #include "stdlib.h"
 #include "green_led.h"
+#include "se24lc512.h"
 
 // defines 
 #define MAX_TRANSMISSION_NUMBER ('~' + 1)
 #define BYTE_MAX_NUMBER 256
 #define TRANSMISSION_BUSY_PORT GPIOB
-#define TRANSMISSION_BUSY_PIN GPIO_Pin_7
+#define TRANSMISSION_BUSY_PIN GPIO_Pin_5
 
 
 // function prototypes

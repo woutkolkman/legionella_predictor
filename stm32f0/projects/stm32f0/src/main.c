@@ -7,9 +7,31 @@
 
 struct DATA Temperatures;
 
+//#define CLEAREEPROM 1
+
 int main(void) {
+	uint16_t i;
+	bool generate;
+	uint8_t curdata;
+	I2C_Setup();
+	init_Timer_Delay();
+	#ifdef CLEAREEPROM
+	SE24LC512_Clear_transmitter_ID();
+	#endif
+	curdata = SE24LC512_ReadData(0x0000);
+	if(curdata < 33 || curdata > 126) {
+		generate_transmission_id();
+		for(i = 0; i < TRANSMITTER_ID_SIZE; i++) {
+			SE24LC512_WriteData(i, Temperatures.transmitter_ID[i]);
+		}
+		generate = true;
+	} else {
+		for(i = 0; i < TRANSMITTER_ID_SIZE; i++) {
+			Temperatures.transmitter_ID[i] = SE24LC512_ReadData(i);
+		}
+		generate = false;
+	}
 	
-	generate_transmission_id();
 	TIM2_init();
 	TIM14_init();
 	ADC_init();
@@ -20,11 +42,20 @@ int main(void) {
 	Serial_clearscreen();
 	init_LoRa();
 	
+	
 	print_parameters();
 	Green_led_init();
 	
 	STM_EVAL_LEDInit(LED4); // indication if temperatures have been sent (LoRa)
-
+	if(generate) {
+		Serial_println("generated ID");
+	} else {
+		Serial_println("Existing ID");
+	}
+	for(i = 0; i < TRANSMITTER_ID_SIZE; i++) {
+		Serial_putint(Temperatures.transmitter_ID[i]);
+		Serial_char(' ');
+	}
 	set_mode(MODE_PROGRAM);
 	while (1) {
 		
@@ -45,6 +76,7 @@ int main(void) {
 			Serial_print("Transmitter ID = ");
 			for(i = 0; i < TRANSMITTER_ID_SIZE; i++) {
 				Serial_putint(Temperatures.transmitter_ID[i]);
+				Serial_char(' ');
 			}
 			Serial_newLine();
 			send = false;
@@ -150,6 +182,6 @@ void init_red_led() {
 	GPIO_Initstructure.GPIO_Mode = GPIO_Mode_OUT;
 	GPIO_Initstructure.GPIO_OType = GPIO_OType_PP;
 	GPIO_Initstructure.GPIO_Speed = GPIO_Speed_50MHz;
-	GPIO_Initstructure.GPIO_Pin = GPIO_Pin_7;
+	GPIO_Initstructure.GPIO_Pin = TRANSMISSION_BUSY_PIN;
 	GPIO_Init(GPIOB, &GPIO_Initstructure);
 }

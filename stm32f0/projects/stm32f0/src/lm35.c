@@ -65,7 +65,7 @@ void TIM14_init(void) {
   RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM14, ENABLE);
   
   TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up; 
-	TIM_TimeBaseStructure.TIM_Period      = 60000 - 1; // hour
+	TIM_TimeBaseStructure.TIM_Period      = DEBUGTIME; // hour
   TIM_TimeBaseStructure.TIM_Prescaler   = (uint16_t)((SystemCoreClock / 1000) - 1);
 	
 	NVIC_InitStructure.NVIC_IRQChannel         = TIM14_IRQn;
