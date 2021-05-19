@@ -200,7 +200,7 @@ void connect_to_network() {
     setup_wifi(settings.mode_is_hotspot,settings.wifi_sidd,settings.wifi_password);
 
     // save settings to EEPROM
-    save_settings(&settings);
+    settings_save(&settings);
   }
 }
 
@@ -218,7 +218,7 @@ void config_cloud_page() {
     strcpy(settings.cloud_path, interface_server.arg("cloud_path").c_str());
 
     // save settings to EEPROM
-    save_settings(&settings);
+    settings_save(&settings);
 
     // give a message that cloud settings are changed
     message += "<div class='info'>\n";

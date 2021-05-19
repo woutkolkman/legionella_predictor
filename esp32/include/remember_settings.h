@@ -18,9 +18,9 @@ typedef struct { // needs to by under 512 bytes
 } settings_t; // size of settings 268 bytes
 
 // function definitions
-void reset_settings(settings_t *settings);
-void load_settings(settings_t *settings);
-void save_settings(settings_t *settings);
-bool check_config_signature();
+void settings_reset(settings_t *settings);
+void settings_load(settings_t *settings);
+void settings_save(settings_t *settings);
+bool settings_is_correct_signature();
 
 #endif

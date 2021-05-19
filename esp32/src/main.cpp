@@ -25,13 +25,13 @@ void setup() {
 
   // load settings if EEPROM data is valid
   Serial.print("Load settings : ");
-  if(check_config_signature()) {
+  if(settings_is_correct_signature()) {
     Serial.println("load from EEPROM");
-    load_settings(&settings);
+    settings_load(&settings);
   } 
   else { // if the EEPROM data is not valid config data then write config data to EEPROM
     Serial.println("bad signature use default settings.");
-    reset_settings(&settings);
+    settings_reset(&settings);
   }
 
   // print inhoud
@@ -83,7 +83,7 @@ void loop() {
   if(Serial.available()) {
     if(Serial.read() == 'r') {
       Serial.println("EEPROM: go to default settings.");
-      reset_settings(&settings);
+      settings_reset(&settings);
     }
   }
   //TODO WiFi reconnect wanneer verbinding is verloren
