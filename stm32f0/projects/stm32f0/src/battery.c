@@ -2,11 +2,9 @@
 #include "lm35.h"
 #include "struct.h"
 
-bool adc_battery_meas; //false --> sensor measurement
-
 
 //init transistor output pin
-void transistor_init(void) {
+void battery_transistor_init(void) {
 	
 	GPIO_InitTypeDef GPIO_InitStructure;
 	
@@ -22,7 +20,7 @@ void transistor_init(void) {
 
 
 //init battery-low LED
-void battery_LED_init(void) {
+void battery_led_init(void) {
 	
 	GPIO_InitTypeDef GPIO_InitStructure;  
 	
@@ -73,22 +71,23 @@ void timer3_deinit(void) {
 
 
 //turn LED-flashing on or off
-void battery_status(bool full) {
+void battery_status(uint16_t val) {
 	
-	static bool was_full;
+	static bool was_full = true;
 	
-	if (full) {
+	Serial_print("battery: "); //debug
+	Serial_putintln(val); //debug
+	
+	if (val > BATTERY_THRESHOLD_VOLTAGE) {
 		if (!was_full) {
 			timer3_deinit();
 		}
 		was_full = true;
-//		Serial_println("full"); // debug
 		
 	} else {
 		if (was_full) {
 			timer3_init();
 		}
 		was_full = false;
-//		Serial_println("not full"); // debug
 	}
 }

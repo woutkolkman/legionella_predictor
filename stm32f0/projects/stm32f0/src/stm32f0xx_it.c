@@ -19,6 +19,7 @@ extern uint16_t Rx_read_location;
 bool is_full;
 uint8_t counter = 0;
 bool send = false;
+bool adc_battery_meas; //false --> sensor measurement
 
 void NMI_Handler(void)
 {
@@ -43,10 +44,12 @@ void SysTick_Handler(void)
 {
 }
 
+
 void TIM1_BRK_UP_TRG_COM_IRQHandler(void) { // EBYTE LoRa, called when a millisecond has passed and Timer 1 is enabled
 	time_passed++;
 	TIM_ClearITPendingBit(TIM1, TIM_IT_Update);
 }
+
 
 void USART1_IRQHandler(void) { // when data is received from LoRa
 
@@ -65,6 +68,7 @@ void USART1_IRQHandler(void) { // when data is received from LoRa
 	}
 }
 
+
 void TIM14_IRQHandler(void) { // timer to measure temperature every minute
 	
   if (TIM_GetITStatus(TIM14, TIM_IT_Update) != RESET) { // wait a minute
@@ -79,6 +83,7 @@ void TIM14_IRQHandler(void) { // timer to measure temperature every minute
   }
 }
 
+
 void ADC1_COMP_IRQHandler(void) { // ADC sample complete
 	
 	if (ADC_GetITStatus(ADC1, ADC1_COMP_IRQn) != RESET) {
@@ -88,14 +93,12 @@ void ADC1_COMP_IRQHandler(void) { // ADC sample complete
 		if (ADC1->CHSELR & ADC_CHSELR_CHSEL11) {
 			//previous measurement from battery
 			uint16_t val = ADC_GetConversionValue(ADC1); // battery measurement
-			Serial_print("battery: "); // debug
-			Serial_putintln(val); // debug
 			
 			GPIOC->BSRR = GPIO_Pin_6; //disable transistor
 			adc_battery_meas = false;
 			
 			//battery low? flash LED, else LED off
-			battery_status(val > BATTERY_THRESHOLD_VOLTAGE);
+			battery_status(val);
 			
 		} else {
 			//previous measurement from sensor

@@ -11,8 +11,8 @@ int main(void) {
 	
 	generate_transmission_id();
 	TIM14_init();
-	battery_LED_init();
-	transistor_init();
+	battery_led_init();
+	battery_transistor_init();
 	ADC_init();
 	ADC_interrupt_init();
 	
@@ -120,6 +120,7 @@ void deInit_random_number() {
 }
 
 
+//initialize ADC for sensor and battery measurement
 void ADC_init(void) { 
 	
   ADC_InitTypeDef  ADC_InitStructure;
