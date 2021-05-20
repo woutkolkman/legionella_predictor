@@ -4,68 +4,49 @@
 #include "lm35.h"
 #include "battery.h"
 #include "struct.h"
+#include "transmitter_id.h"
+#include "transmission_led.h"
 
 struct DATA Temperatures;
 
-//#define CLEAREEPROM 1
+//#define CLEARTRANSMITTERID 0
 
 int main(void) {
-	uint16_t i;
-	bool generate;
-	uint8_t curdata;
+	
 	I2C_Setup();
-	init_Timer_Delay();
-	#ifdef CLEAREEPROM
-	SE24LC512_Clear_transmitter_ID();
+	#ifdef CLEARTRANSMITTERID
+	clear_transmitter_ID();
 	#endif
-	curdata = SE24LC512_ReadData(0x0000);
-	if(curdata < 33 || curdata > 126) {
-		generate_transmission_id();
-		for(i = 0; i < TRANSMITTER_ID_SIZE; i++) {
-			SE24LC512_WriteData(i, Temperatures.transmitter_ID[i]);
-		}
-		generate = true;
-	} else {
-		for(i = 0; i < TRANSMITTER_ID_SIZE; i++) {
-			Temperatures.transmitter_ID[i] = SE24LC512_ReadData(i);
-		}
-		generate = false;
-	}
+	make_transmitter_id();
 	
 	TIM2_init();
 	TIM14_init();
 	ADC_init();
 	ADC_interrupt_init();
 	
-	init_red_led();
+	init_transmission_led();
 	init_serial();
 	Serial_clearscreen();
 	init_LoRa();
-	
+	set_mode(MODE_PROGRAM);
 	
 	print_parameters();
+	print_transmitter_id();
 	Green_led_init();
 	
-	STM_EVAL_LEDInit(LED4); // indication if temperatures have been sent (LoRa)
-	if(generate) {
-		Serial_println("generated ID");
-	} else {
-		Serial_println("Existing ID");
-	}
-	for(i = 0; i < TRANSMITTER_ID_SIZE; i++) {
-		Serial_putint(Temperatures.transmitter_ID[i]);
-		Serial_char(' ');
-	}
-	set_mode(MODE_PROGRAM);
+	STM_EVAL_LEDInit(LED4); // indication if temperatures measurement is ongoing
+	
+	
 	while (1) {
 		
 		if (send) {
 			uint8_t i;
 			set_mode(MODE_NORMAL); //sets the LoRa module for transmission
-			GPIO_SetBits(TRANSMISSION_BUSY_PORT, TRANSMISSION_BUSY_PIN);
+			enable_transmission_led();
 			send_struct(&Temperatures, sizeof(Temperatures));
-			GPIO_ResetBits(TRANSMISSION_BUSY_PORT, TRANSMISSION_BUSY_PIN);
+			disable_transmission_led();
 			set_mode(MODE_PROGRAM); //sets the LoRa module for sleep mode to save energy
+			
 			Serial_println("Temperatures: ");
 			for (i = 0; i < TEMPERATURE_SIZE; i++) {
 				Serial_putint(i);
@@ -84,76 +65,6 @@ int main(void) {
 	}
 }
 
-//generates the transmission ID. Saves it in the struct
-void generate_transmission_id() {
-	
-	uint8_t count;
-	
-	init_random_number();
-	for(count = 0; count < 8; count++) {
-		uint8_t number;
-		number = (uint8_t) (get_random_number() % MAX_TRANSMISSION_NUMBER);
-		if(number < '!') {
-			number = number + '!';
-		}
-		Temperatures.transmitter_ID[count] = number;
-	}
-	deInit_random_number();
-}
-
-
-//https://www.mikrocontroller.net/topic/358453
-//creates a random number by ADC values and calculations.
-uint32_t get_random_number(void) {
-	
-	uint8_t i;
-	
-  // Enable ADCperipheral
-  ADC_Cmd(ADC1, ENABLE);
-  while (ADC_GetFlagStatus(ADC1, ADC_FLAG_ADEN) == RESET)
-    ;
-  ADC1->CHSELR = 0; //no channel selected
-  //Convert the ADC1 temperature sensor, user shortest sample time to generate most noise
-  ADC_ChannelConfig(ADC1, ADC_Channel_TempSensor, ADC_SampleTime_1_5Cycles);
-  // Enable CRC clock 
-  RCC_AHBPeriphClockCmd(RCC_AHBPeriph_CRC, ENABLE);
-  
-  for (i = 0; i < 8; i++) {
-    //Start ADC1 Software Conversion
-    ADC_StartOfConversion(ADC1);
-    //wait for conversion complete
-    while (!ADC_GetFlagStatus(ADC1, ADC_FLAG_EOC)) {
-    }
-    CRC_CalcCRC(ADC_GetConversionValue(ADC1));
-    //clear EOC flag
-    ADC_ClearFlag(ADC1, ADC_FLAG_EOC);
-  }
-  return CRC_CalcCRC(0xBADA55E5);
-}
-
-//initializes the ADC for the random numbers.
-void init_random_number() {
-	
-	ADC_InitTypeDef ADC_InitStructure;
-  //enable ADC1 clock
-  RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADC1, ENABLE);
-  // Initialize ADC 14MHz RC
-  RCC_ADCCLKConfig(RCC_ADCCLK_HSI14);
-  RCC_HSI14Cmd(ENABLE);
-  while (!RCC_GetFlagStatus(RCC_FLAG_HSI14RDY))
-    ;
-  ADC_DeInit(ADC1);
-  ADC_InitStructure.ADC_ContinuousConvMode = DISABLE;
-  ADC_InitStructure.ADC_DataAlign = ADC_DataAlign_Right;
-  ADC_InitStructure.ADC_Resolution = ADC_Resolution_12b;
-  ADC_InitStructure.ADC_ScanDirection = ADC_ScanDirection_Backward;
-  ADC_InitStructure.ADC_ExternalTrigConvEdge = ADC_ExternalTrigConvEdge_None;
-  ADC_InitStructure.ADC_ExternalTrigConv = ADC_ExternalTrigConv_T1_TRGO; //default
-  ADC_Init(ADC1, &ADC_InitStructure);
-  //enable internal channel
-  ADC_TempSensorCmd(ENABLE);	
-}
-
 //configure interrupt "ADC1_COMP_IRQHandler"
 void ADC_interrupt_init(void) {
 	
@@ -162,26 +73,4 @@ void ADC_interrupt_init(void) {
 	ADC_ITConfig(ADC1, ADC1_COMP_IRQn, ENABLE);
 	NVIC_EnableIRQ(ADC1_COMP_IRQn);
 	NVIC_SetPriority(ADC1_COMP_IRQn,0);
-}
-
-//deinitializes the ADC for the random numbers
-void deInit_random_number() {
-	
-	ADC_TempSensorCmd(DISABLE);
-	ADC_Cmd(ADC1, DISABLE);
-	ADC_DeInit(ADC1);
-  RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADC1, DISABLE);
-	RCC_AHBPeriphClockCmd(RCC_AHBPeriph_CRC, DISABLE);
-}
-
-//initializes the red (transmission) led
-void init_red_led() {
-	GPIO_InitTypeDef GPIO_Initstructure;
-	
-	RCC_AHBPeriphClockCmd(RCC_AHBENR_GPIOBEN, ENABLE);
-	GPIO_Initstructure.GPIO_Mode = GPIO_Mode_OUT;
-	GPIO_Initstructure.GPIO_OType = GPIO_OType_PP;
-	GPIO_Initstructure.GPIO_Speed = GPIO_Speed_50MHz;
-	GPIO_Initstructure.GPIO_Pin = TRANSMISSION_BUSY_PIN;
-	GPIO_Init(GPIOB, &GPIO_Initstructure);
 }

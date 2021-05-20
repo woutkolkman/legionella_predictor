@@ -14,15 +14,4 @@ struct DATA {
 
 extern struct DATA Temperatures;
 
-/*struct DATA {
-	uint8_t transmitter_ID;
-	unsigned long hour;
-	uint8_t Temperature;
-} MyData;*/
-
 #endif
-
-
-
-
-

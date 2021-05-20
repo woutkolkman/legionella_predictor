@@ -44,7 +44,6 @@ void    I2C_Setup( void );
 void    SE24LC512_WriteData(uint16_t addr, uint8_t data);
 void    SE24LC512_Clear(void);
 uint8_t SE24LC512_ReadData(uint16_t addr);
-void SE24LC512_Clear_transmitter_ID(void);
 
 // Convenience functions
 void BTHQ21605V_Puts(uint8_t *str);

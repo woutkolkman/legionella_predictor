@@ -3,7 +3,6 @@
  *****************************************************************************/
 #include "se24lc512.h"
 #include "EBYTE.h" //for the delay
-#include "struct.h" //for the size of transmitter ID
 // ----------------------------------------------------------------------------
 // Global variables
 // ----------------------------------------------------------------------------
@@ -94,7 +93,7 @@ void I2C_Setup(void)
   
   //(#) Enable the I2C using the I2C_Cmd() function.
   I2C_Cmd(I2C1, ENABLE);
-
+	init_Timer_Delay();
   //(#) Enable the DMA using the DMA_Cmd() function when using DMA mode in the 
   //    transfers.
 }
@@ -187,16 +186,6 @@ uint8_t SE24LC512_ReadData(uint16_t addr)
   
   return( data );
 }
-
-//clears the transmitter ID from the eeprom
-void SE24LC512_Clear_transmitter_ID() {
-	uint8_t i;
-	for(i = 0; i < TRANSMITTER_ID_SIZE; i++) {
-		SE24LC512_WriteData(i, 0x00);
-		timer_delay(5);
-	}
-}
-
 
 /**
   * @brief  This function writes up to 127 bytes data to the serial eeprom. 
