@@ -86,13 +86,17 @@ void Green_led_update_measure(bool led_on) {
 // update green led
 void Green_led_update() {
 	// set green led
-	if(green_led_status.rinse_indication & green_led_status.measure_indication) {
+	if(green_led_status.rinse_indication && green_led_status.measure_indication) {
 		// when 11
-	} else if(green_led_status.rinse_indication & green_led_status.measure_indication) {
+		Green_led_off();
+	} else if(!green_led_status.rinse_indication && green_led_status.measure_indication) {
 		// when 01
-	} else if(green_led_status.rinse_indication & green_led_status.measure_indication) {
-		// when 01
+		Green_led_on();
+	} else if(green_led_status.rinse_indication && !green_led_status.measure_indication) {
+		// when 10
+		Green_led_on();
 	} else {
 		// when 00
+		Green_led_off();
 	}
 }
