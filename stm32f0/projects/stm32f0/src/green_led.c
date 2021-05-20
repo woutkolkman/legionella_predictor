@@ -1,10 +1,11 @@
 #include "green_led.h"
 #include "stm32f0xx_gpio.h"
+#include <stdint.h>
 
 // private defines
 void Green_led_on(void);
 void Green_led_off(void);
-float difference(float a, float b);
+float difference(uint8_t a, uint8_t b);
 
 // setup the green led
 void Green_led_init(void) {
@@ -39,7 +40,7 @@ void Green_led_off(void) {
 
 
 // calcualte te difference of two numbers
-float difference(float a, float b) {
+float difference(uint8_t a, uint8_t b) {
 	if(a < b) {
 		return b-a;
 	}
@@ -49,10 +50,10 @@ float difference(float a, float b) {
 }
 
 // set green led on when temprature drops, else set green led off
-void Green_led_update(float temp) {
+void Green_led_update(uint8_t temp) {
  static float previous_temp;
 	// determine when a whassing happens
-	if( difference(previous_temp, temp) > TEMP_TRESHOLD && previous_temp > temp) {
+	if( difference(previous_temp, temp) >= TEMP_TRESHOLD && previous_temp > temp) {
 		// when wassing happens, turn green led on
 		Green_led_on();
 	}

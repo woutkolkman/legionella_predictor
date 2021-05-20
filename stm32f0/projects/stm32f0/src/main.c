@@ -27,6 +27,13 @@ int main(void) {
 
 	set_mode(MODE_PROGRAM);
 	while (1) {
+		// update green led who turns on when rinseing pipe
+		temperature_read_start();
+		Green_led_update(measure_temperature());
+		Serial_putint(measure_temperature());
+		Serial_newLine();
+
+		timer_delay(1000);
 		
 		if (send) {
 			uint8_t i;
