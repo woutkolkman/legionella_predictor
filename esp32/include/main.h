@@ -24,11 +24,6 @@ extern WebServer interface_server;
 #define TRANSMITTER_ID_SIZE 8
 #define TEMPERATURE_SIZE    60
 
-// globals	
-extern WebServer interface_server;	
-#define TRANSMITTER_ID_SIZE 8	
-#define TEMPERATURE_SIZE    60
-
 // function definitions 
 bool LoRa_get_data(void);
 bool send_to_cloud(char* payload);

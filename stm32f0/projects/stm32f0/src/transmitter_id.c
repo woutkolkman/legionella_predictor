@@ -1,6 +1,6 @@
 #include "transmitter_id.h"
 
-void generate_transmitter_id(void);
+void generate_transmitter_ID(void);
 uint32_t get_random_number(void);
 void init_random_number(void);
 void deInit_random_number(void);
@@ -14,6 +14,7 @@ void make_transmitter_ID() {
 	uint8_t curdata = SE24LC512_ReadData(ID_START_LOCATION);
 	if(curdata < '!' || curdata > '~') {
 		exist = false;
+		generate_transmitter_ID();
 		for(loc = ID_START_LOCATION; loc < TRANSMITTER_ID_SIZE; loc++) {
 			SE24LC512_WriteData(loc, Temperatures.transmitter_ID[loc]);
 		}

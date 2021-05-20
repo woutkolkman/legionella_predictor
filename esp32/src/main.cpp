@@ -76,6 +76,8 @@ void loop() {
     if(LoRa_get_data()) {
       generate_http_post(&post_payload[0]);
       send_to_cloud(&post_payload[0]);
+    } else {
+      Serial.println("Error in data");
     }
   }
 
@@ -163,26 +165,28 @@ bool LoRa_get_data() {
     for(int i = 0; i < TRANSMITTER_ID_SIZE; i++) {
       if(Temperatures.transmitter_ID[i] < 33 || Temperatures.transmitter_ID[i] > 126) { 
         result = false;
+        Serial.println("ID incorrect");
         return result;
       }
     }  
-    // dump out what was just received
-    Serial.println("Temperatures: "); 
-    for (int i = 0; i < TEMPERATURE_SIZE; i++) {
-      Serial.print(i);
-      Serial.print(" : ");
-      Serial.print(Temperatures.Temperature[i]);
-      Serial.println(" degrees.");
-    }
-
-    Serial.print("transmitter_ID: ");
-    for (int i = 0; i < TRANSMITTER_ID_SIZE; i++) {
-      Serial.print(Temperatures.transmitter_ID[i]);
-      Serial.print(' ');
-    }
+    
   } else {
+    Serial.println("Data size incorrect");
     result = false;
   }
+  // dump out what was just received
+  Serial.println("Temperatures: "); 
+  for (int i = 0; i < TEMPERATURE_SIZE; i++) {
+    Serial.print(i);
+    Serial.print(" : ");
+    Serial.print(Temperatures.Temperature[i]);
+    Serial.println(" degrees.");
+  }
 
+  Serial.print("transmitter_ID: ");
+  for (int i = 0; i < TRANSMITTER_ID_SIZE; i++) {
+    Serial.print(Temperatures.transmitter_ID[i]);
+    Serial.print(' ');
+  }
   return result;
 }

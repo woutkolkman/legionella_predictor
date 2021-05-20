@@ -28,14 +28,14 @@ int main(void) {
 	init_serial();
 	Serial_clearscreen();
 	init_LoRa();
-	set_mode(MODE_PROGRAM);
+	
 	
 	print_parameters();
 	print_transmitter_ID();
 	Green_led_init();
 	
 	STM_EVAL_LEDInit(LED4); // indication if temperatures measurement is ongoing
-	
+	set_mode(MODE_PROGRAM);
 	
 	while (1) {
 		
