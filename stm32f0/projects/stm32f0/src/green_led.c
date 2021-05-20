@@ -1,4 +1,5 @@
 #include "green_led.h"
+#include "stm32f0_discovery.h"
 #include "stm32f0xx_gpio.h"
 #include <stdint.h>
 #include <stdbool.h>
@@ -80,7 +81,14 @@ void Green_led_update_rinse(uint8_t temp) {
 }
 
 void Green_led_update_measure(bool led_on) {
-	green_led_status.measure_indication = false;
+	
+	green_led_status.measure_indication = true;
+	
+	if (green_led_status.measure_indication) {
+		STM_EVAL_LEDOn(LED3);
+	} else {
+		STM_EVAL_LEDOff(LED3);
+	}
 }
 
 // update green led
