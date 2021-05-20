@@ -71,12 +71,13 @@ void USART1_IRQHandler(void) { // when data is received from LoRa
 void TIM2_IRQHandler(void) { // timer to generate 1 second blink
 	
 	if (TIM_GetITStatus(TIM2, TIM_IT_Update) != RESET) {
+		TIM_ClearITPendingBit(TIM2, TIM_IT_Update);
+		
 		if (blink) { // generate 1 second blink
 			STM_EVAL_LEDOff(LED3); // LED remains off until new temperature measurement
-			TIM_Cmd(TIM2, ENABLE);
-			RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2, ENABLE);
-		} 
-		TIM_ClearITPendingBit(TIM2, TIM_IT_Update);
+			TIM_Cmd(TIM2, DISABLE);
+			RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2, DISABLE);
+		}
 	}
 }
 
@@ -84,15 +85,18 @@ void TIM14_IRQHandler(void) { // timer to measure temperature every minute
 	
   if (TIM_GetITStatus(TIM14, TIM_IT_Update) != RESET) { // wait a minute
 		TIM_ClearITPendingBit(TIM14, TIM_IT_Update);
+		
+		//start blink
 		blink = true;
-		TIM_Cmd(TIM2, DISABLE);
-		RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2, DISABLE);
+		RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2, ENABLE);
+		TIM_Cmd(TIM2, ENABLE);
+		STM_EVAL_LEDOn(LED3); // toggle blue LED for 1 second once a minute
+		
 		if (counter >= TEMPERATURE_SIZE) { // every hour
 			adc_battery_meas = true; // check battery-voltage every hour
 			send = true; // if send = true --> send data (LoRa)
 			counter = 0;
-		} 
-		STM_EVAL_LEDOn(LED3); // toggle blue LED for 1 second once a minute
+		}
 		select_channel(CHANNEL_10); // select ADC-channel 10 for temperature measurements
   }
 }
