@@ -54,7 +54,7 @@ void TIM14_init(void) {
 	TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;
 	NVIC_InitTypeDef NVIC_InitStructure;
 	
-  RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM14, ENABLE);
+	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM14, ENABLE);
   
   TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up; 
 	TIM_TimeBaseStructure.TIM_Period      = 60000 - 1;
@@ -68,7 +68,29 @@ void TIM14_init(void) {
   // configure time base init
   TIM_TimeBaseInit(TIM14, &TIM_TimeBaseStructure);
 	TIM_ITConfig(TIM14, TIM_IT_Update, ENABLE); // enable TIM_ITConfig interrupt
-  TIM_Cmd(TIM14, ENABLE); // enable interrupt on TIM14
+	TIM_Cmd(TIM14, ENABLE); // enable interrupt on TIM14
+}
+
+void TIM2_init(void) {
+	
+	TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;
+	NVIC_InitTypeDef NVIC_InitStructure;
+	
+	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2, ENABLE);
+	
+	TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up; 
+	TIM_TimeBaseStructure.TIM_Period      = 1000 - 1; // generate 1 second blink
+  TIM_TimeBaseStructure.TIM_Prescaler   = (uint16_t)((SystemCoreClock / 1000) - 1);
+	
+	NVIC_InitStructure.NVIC_IRQChannel         = TIM2_IRQn;
+  NVIC_InitStructure.NVIC_IRQChannelPriority = 0;
+  NVIC_InitStructure.NVIC_IRQChannelCmd      = ENABLE;
+  NVIC_Init(&NVIC_InitStructure);
+	
+	// configure time base init
+  TIM_TimeBaseInit(TIM2, &TIM_TimeBaseStructure);
+	TIM_ITConfig(TIM2, TIM_IT_Update, ENABLE); // enable TIM_ITConfig interrupt
+//TIM_Cmd(TIM2, ENABLE); // enable interrupt on TIM2
 }
 
 

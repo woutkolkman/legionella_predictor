@@ -10,6 +10,7 @@ struct DATA Temperatures;
 int main(void) {
 	
 	generate_transmission_id();
+	TIM2_init();
 	TIM14_init();
 	battery_led_init();
 	battery_transistor_init();
