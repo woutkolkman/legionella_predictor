@@ -69,11 +69,11 @@ void USART1_IRQHandler(void) { // when data is received from LoRa
 	}
 }
 
-void TIM2_IRQHandler(void) { // timer to generate 1 second blink
+void TIM2_IRQHandler(void) { // timer to generate 300 ms blink
 	
 	if (TIM_GetITStatus(TIM2, TIM_IT_Update) != RESET) {
 		TIM_ClearITPendingBit(TIM2, TIM_IT_Update);
-		if (blink) { // generate 1 second blink
+		if (blink) { // generate 300 ms blink
 			Green_led_update_measure(false); // LED remains off until new temperature measurement
 			Green_led_update();
 			TIM_Cmd(TIM2, DISABLE); 
