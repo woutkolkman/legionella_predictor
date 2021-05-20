@@ -8,6 +8,7 @@
 #include "lm35.h"
 #include "serial.h"
 #include "struct.h"
+#include "green_led.h"
 
 #define RX_BUFFER_SIZE 100
 #define NEXT_RX_WRITE_LOCATION ((Rx_write_location + 1) % RX_BUFFER_SIZE)
@@ -21,7 +22,6 @@ uint8_t counter = 0;
 bool send = false;
 bool adc_battery_meas; //false --> sensor measurement
 bool blink = false;
-bool LED_off = false;
 
 void NMI_Handler(void)
 {
@@ -74,7 +74,7 @@ void TIM2_IRQHandler(void) { // timer to generate 1 second blink
 	if (TIM_GetITStatus(TIM2, TIM_IT_Update) != RESET) {
 		TIM_ClearITPendingBit(TIM2, TIM_IT_Update);
 		if (blink) { // generate 1 second blink
-			LED_off = false; // LED remains off until new temperature measurement
+			Green_led_update_measure(false); // LED remains off until new temperature measurement
 			TIM_Cmd(TIM2, DISABLE); 
 			RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2, DISABLE);
 		}
@@ -88,7 +88,7 @@ void TIM14_IRQHandler(void) { // timer to measure temperature every minute
 		blink = true; // start blink (300 ms)
 		RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2, ENABLE);
 		TIM_Cmd(TIM2, ENABLE);
-		LED_off = true; // toggle blue LED for 1 second once a minute
+		Green_led_update_measure(true); // toggle blue LED for 300 ms once a minute
 		if (counter >= TEMPERATURE_SIZE) { // every hour
 			adc_battery_meas = true; // check battery-voltage every hour
 			send = true; // if send = true --> send data (LoRa)
