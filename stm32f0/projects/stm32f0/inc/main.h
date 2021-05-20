@@ -12,4 +12,11 @@
 
 // function prototypes
 
+void generate_transmission_id(void);
+uint32_t get_random_number(void);
+void init_random_number(void);
+void deInit_random_number(void);
+void init_red_led(void);
+void ADC_init(void);
+
 void ADC_interrupt_init(void);

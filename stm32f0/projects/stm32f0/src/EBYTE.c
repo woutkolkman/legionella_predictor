@@ -165,15 +165,15 @@ void init_buffer() {
 void init_Timer_Delay() {
 	TIM_TimeBaseInitTypeDef TIM_TimeBaseInitStructure;
 	
-	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3, ENABLE);
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_TIM1, ENABLE);
 	TIM_TimeBaseInitStructure.TIM_CounterMode = TIM_CounterMode_Up;
 	TIM_TimeBaseInitStructure.TIM_ClockDivision = TIM_CKD_DIV1;
-	TIM_TimeBaseInitStructure.TIM_Period = TIM3PERIOD;				//48000000 / 1000 / 48 = 1000 = 1ms
-	TIM_TimeBaseInitStructure.TIM_Prescaler = TIM3PRESCALE;
-	TIM_TimeBaseInit(TIM3, &TIM_TimeBaseInitStructure);
+	TIM_TimeBaseInitStructure.TIM_Period = TIM1PERIOD;				//48000000 / 1000 / 48 = 1000 = 1ms
+	TIM_TimeBaseInitStructure.TIM_Prescaler = TIM1PRESCALE;
+	TIM_TimeBaseInit(TIM1, &TIM_TimeBaseInitStructure);
 	
-	TIM_ITConfig(TIM3, TIM_IT_Update, ENABLE);
-	NVIC_EnableIRQ(TIM3_IRQn);
+	TIM_ITConfig(TIM1, TIM_IT_Update, ENABLE);
+	NVIC_EnableIRQ(TIM1_BRK_UP_TRG_COM_IRQn);
 }
 
 //checks whether Data is received through LoRa
@@ -219,7 +219,7 @@ void get_struct(const void* the_structure, uint16_t size) {
 void complete_task(unsigned long time_out) {
 	if(_AUX != -1) {
 		time_passed = 0;
-		TIM_Cmd(TIM3, ENABLE);
+		TIM_Cmd(TIM1, ENABLE);
 		while(GPIO_ReadInputDataBit(GPIOA, LORA_AUX_PIN) == Bit_RESET) {
 			if (time_passed > time_out) {
 				break;
@@ -229,7 +229,7 @@ void complete_task(unsigned long time_out) {
 		timer_delay(NO_AUX_DELAY);
 	}
 	timer_delay(MINIMUM_AFTER_AUX_DELAY);
-	TIM_Cmd(TIM3, DISABLE);
+	TIM_Cmd(TIM1, DISABLE);
 }
 
 //setting the lora module mode
@@ -595,11 +595,11 @@ uint8_t get_features() {
 //a simple delay function, goes to sleeping mode while the delay isn't finished yet
 void timer_delay(unsigned long delay_time) {
 	time_passed = 0;
-	TIM_Cmd(TIM3, ENABLE);
+	TIM_Cmd(TIM1, ENABLE);
 	while(time_passed < delay_time) {
 		PWR_EnterSleepMode(PWR_SLEEPEntry_WFI);
 	}
-	TIM_Cmd(TIM3, DISABLE);
+	TIM_Cmd(TIM1, DISABLE);
 }
 
 void read_bytes(uint8_t* buffer, uint8_t size) {
