@@ -10,7 +10,7 @@ struct DATA Temperatures;
 int main(void) {
 	
 	generate_transmission_id();
-	TIM2_init();
+	//TIM2_init();
 	TIM14_init();
 	ADC_init();
 	ADC_interrupt_init();

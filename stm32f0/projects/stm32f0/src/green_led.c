@@ -52,14 +52,20 @@ float difference(uint8_t a, uint8_t b) {
 // set green led on when temprature drops, else set green led off
 void Green_led_update(uint8_t temp) {
  static float previous_temp;
+ static int8_t delay = 0;
 	// determine when a whassing happens
 	if( difference(previous_temp, temp) >= TEMP_TRESHOLD && previous_temp > temp) {
 		// when wassing happens, turn green led on
 		Green_led_on();
 	}
 	else {
-		// else, turn green led off
-		Green_led_off();
+		// else if met delay turn green led off
+		delay++;
+		if(delay > DELAY_GREEN_TURNOFF) { 
+			// turn green led off
+			Green_led_off();
+			delay = 0;
+		}
 	}
 	
   // update previous_temp

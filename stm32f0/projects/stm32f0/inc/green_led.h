@@ -3,6 +3,7 @@
 #include <stdint.h>
 
 #define TEMP_TRESHOLD (1)
+#define DELAY_GREEN_TURNOFF (10)
 
 // public defines
 void Green_led_init(void);
