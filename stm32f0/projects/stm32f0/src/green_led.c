@@ -10,9 +10,9 @@ float difference(uint8_t a, uint8_t b);
 
 // private global variable
 struct {
-	bool measure_indication = false;
-	bool rinse_indication = false;
-} green_led_status;
+	bool measure_indication;
+	bool rinse_indication;
+} green_led_status = {false, false};
 
 // setup the green led
 void Green_led_init(void) {
