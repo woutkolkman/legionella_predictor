@@ -24,8 +24,8 @@
 #define RX_BUFFER_SIZE 100
 
 //Timer 3 for delay of 1 MS
-#define TIM3PERIOD (1000-1)
-#define TIM3PRESCALE 48
+#define TIM1PERIOD (1000-1)
+#define TIM1PRESCALE 48
 
 //delay defines
 #define NO_AUX_DELAY 1000
