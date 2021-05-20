@@ -6,6 +6,6 @@
 #define MAX_TRANSMISSION_NUMBER ('~' + 1)
 #define ID_START_LOCATION 0
 
-void make_transmitter_id(void);
+void make_transmitter_ID(void);
 void clear_transmitter_ID(void);
-void print_transmitter_id(void);
+void print_transmitter_ID(void);

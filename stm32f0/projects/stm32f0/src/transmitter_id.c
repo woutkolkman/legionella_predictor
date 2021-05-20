@@ -9,7 +9,7 @@ bool exist;
 
 
 //put an ID in the struct (whether it's existing or new)
-void make_transmitter_id() {
+void make_transmitter_ID() {
 	uint8_t loc;
 	uint8_t curdata = SE24LC512_ReadData(ID_START_LOCATION);
 	if(curdata < '!' || curdata > '~') {
@@ -26,7 +26,7 @@ void make_transmitter_id() {
 }
 
 //generates the transmission ID. Saves it in the struct
-void generate_transmitter_id() {
+void generate_transmitter_ID() {
 	
 	uint8_t count;
 	init_random_number();
@@ -114,7 +114,7 @@ void deInit_random_number() {
 }
 
 //print the current transmitter ID and whether it was new or not
-void print_transmitter_id() {
+void print_transmitter_ID() {
 	uint8_t loc;
 	if(exist) {
 		Serial_print("existing: ");

@@ -17,7 +17,7 @@ int main(void) {
 	#ifdef CLEARTRANSMITTERID
 	clear_transmitter_ID();
 	#endif
-	make_transmitter_id();
+	make_transmitter_ID();
 	
 	TIM2_init();
 	TIM14_init();
@@ -31,7 +31,7 @@ int main(void) {
 	set_mode(MODE_PROGRAM);
 	
 	print_parameters();
-	print_transmitter_id();
+	print_transmitter_ID();
 	Green_led_init();
 	
 	STM_EVAL_LEDInit(LED4); // indication if temperatures measurement is ongoing
