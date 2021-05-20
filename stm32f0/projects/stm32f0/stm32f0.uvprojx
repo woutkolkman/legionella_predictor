@@ -485,12 +485,12 @@
             <File>
               <FileName>transmitter_id.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\transmitter_id.c</FilePath>
+              <FilePath>.\src\transmitter_id.c</FilePath>
             </File>
             <File>
               <FileName>transmission_led.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\transmission_led.c</FilePath>
+              <FilePath>.\src\transmission_led.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1110,12 +1110,12 @@
             <File>
               <FileName>transmitter_id.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\transmitter_id.c</FilePath>
+              <FilePath>.\src\transmitter_id.c</FilePath>
             </File>
             <File>
               <FileName>transmission_led.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\transmission_led.c</FilePath>
+              <FilePath>.\src\transmission_led.c</FilePath>
             </File>
           </Files>
         </Group>
