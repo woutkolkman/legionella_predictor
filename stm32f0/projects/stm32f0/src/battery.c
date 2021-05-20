@@ -1,56 +1,92 @@
 #include "battery.h"
+#include "lm35.h"
+#include "struct.h"
 
-bool adc_battery_meas; //false --> sensor measurement
 
-
-void ADC_battery_init(void) {
+//init transistor output pin
+void battery_transistor_init(void) {
 	
-	ADC_InitTypeDef  ADC_InitStructure;
+	GPIO_InitTypeDef GPIO_InitStructure;
 	
-	ADC_DeInit(ADC1);
-	STM_EVAL_LEDInit(LED4); //init battery-low LED
-//ADC_VrefintCmd(ENABLE); //enable 1,8V internal reference voltage
-	RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADC1, ENABLE); // enable clk on ADC1
+	RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOC, ENABLE);
+	GPIO_InitStructure.GPIO_Pin   = GPIO_Pin_6;
+	GPIO_InitStructure.GPIO_Mode  = GPIO_Mode_OUT;
+	GPIO_InitStructure.GPIO_PuPd  = GPIO_PuPd_NOPULL;
+	GPIO_InitStructure.GPIO_OType = GPIO_OType_OD;
+	GPIO_Init(GPIOC, &GPIO_InitStructure);
 	
-	/* configure the ADC conversion resolution, data alignment, external
-	trigger and edge, scan direction and enable/disable the continuous mode
-	using the ADC_Init() function. */
-	ADC_InitStructure.ADC_Resolution = ADC_Resolution_12b;
-	ADC_InitStructure.ADC_ContinuousConvMode = DISABLE;
-	ADC_InitStructure.ADC_ExternalTrigConvEdge = ADC_ExternalTrigConvEdge_None;    
-	ADC_InitStructure.ADC_DataAlign = ADC_DataAlign_Right;
-	ADC_InitStructure.ADC_ScanDirection = ADC_ScanDirection_Upward;
-	ADC_Init(ADC1, &ADC_InitStructure);
-	
-	// calibrate ADC before enabling
-	ADC_GetCalibrationFactor(ADC1);
-	
-	// activate the ADC peripheral using ADC_Cmd() function.
-	ADC_Cmd(ADC1, ENABLE);
-	
-	// wait until ADC enabled
-	while (ADC_GetFlagStatus(ADC1, ADC_FLAG_ADEN) == RESET);
-	
-	// configure channel 11 GPIOC I/O-pin 1
-	ADC_ChannelConfig(ADC1, ADC_Channel_11, ADC_SampleTime_239_5Cycles);
-}
-
-//start battery measurement, handle in ISR
-void battery_read_start(void) {
-	
-	//TODO transistor pin hoogzetten
-	adc_battery_meas = true;
-	ADC_StartOfConversion(ADC1);
+	GPIOC->BSRR = GPIO_Pin_6; //block open drain
 }
 
 
-//busy wait read ADC
-uint16_t battery_read_sync(void) {
+//init battery-low LED
+void battery_led_init(void) {
 	
-	ADC_StartOfConversion(ADC1);
+	GPIO_InitTypeDef GPIO_InitStructure;  
 	
-	//wait until conversion ready
-	while (ADC_GetFlagStatus(ADC1, ADC_FLAG_EOC) == RESET);
+	RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOC, ENABLE);
+	GPIO_InitStructure.GPIO_Mode  = GPIO_Mode_AF;
+	GPIO_InitStructure.GPIO_Pin   = GPIO_Pin_8;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
+	GPIO_Init(GPIOC, &GPIO_InitStructure);
 	
-	return ADC_GetConversionValue(ADC1);
+	GPIO_PinAFConfig(GPIOC, GPIO_PinSource8, GPIO_AF_1);
+}
+
+
+//enable flashing battery-low LED
+void timer3_init(void) {
+	
+	TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;
+	TIM_OCInitTypeDef TIM_OCInitStructure;
+	
+	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3, ENABLE); //enable TIM3 clk
+	
+	TIM_TimeBaseStructure.TIM_ClockDivision = TIM_CKD_DIV1;
+	TIM_TimeBaseStructure.TIM_CounterMode   = TIM_CounterMode_Up;
+	TIM_TimeBaseStructure.TIM_Period        = 500 - 1;
+	TIM_TimeBaseStructure.TIM_Prescaler     = (SystemCoreClock / 1000) - 1;
+	TIM_TimeBaseInit(TIM3, &TIM_TimeBaseStructure);
+	
+	//channel 3 (BLUE LED)
+	TIM_OCInitStructure.TIM_OCMode      = TIM_OCMode_Toggle;
+	TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable;
+	TIM_OCInitStructure.TIM_Pulse       = 0;
+	TIM_OCInitStructure.TIM_OCPolarity  = TIM_OCPolarity_High;
+	
+	TIM_OC3Init(TIM3, &TIM_OCInitStructure); // channel for LED_BLUE
+	
+	TIM_Cmd(TIM3, ENABLE); // enable TIMx timer
+}
+
+
+//disable flashing battery-low LED
+void timer3_deinit(void) {
+
+	TIM_Cmd(TIM3, DISABLE);
+	TIM_DeInit(TIM3);
+	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3, DISABLE);
+	GPIOC->BRR = GPIO_Pin_8; //LED off
+}
+
+
+//turn LED-flashing on or off
+void battery_status(uint16_t val) {
+	
+	static bool was_full = true;
+	
+	Serial_print("battery: "); //debug
+	Serial_putintln(val); //debug
+	
+	if (val > BATTERY_THRESHOLD_VOLTAGE) {
+		if (!was_full) {
+			timer3_deinit();
+		}
+		was_full = true;	
+	} else {
+		if (was_full) {
+			timer3_init();
+		}
+		was_full = false;
+	}
 }

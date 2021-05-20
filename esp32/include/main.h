@@ -23,7 +23,6 @@ YOU MUST USE THE ACTUAL GPIO NUMBER
 #define TRANSMITTER_ID_SIZE 8
 #define TEMPERATURE_SIZE    60
 
-
 // globals
 extern WebServer interface_server;
 extern settings_t settings;
