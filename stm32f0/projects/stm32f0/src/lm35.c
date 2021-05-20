@@ -5,6 +5,8 @@
 #include "struct.h"
 #include "main.h"
 
+#define DEBUGTIME (250 - 1)
+#define HOUR (60000 - 1)
 uint8_t measure_temperature(void) { // function to measure current temperature
 		
 	uint16_t adc;
@@ -57,7 +59,7 @@ void TIM14_init(void) {
   RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM14, ENABLE);
   
   TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up; 
-	TIM_TimeBaseStructure.TIM_Period      = 60000 - 1;
+	TIM_TimeBaseStructure.TIM_Period      = DEBUGTIME;
 
   TIM_TimeBaseStructure.TIM_Prescaler   = (uint16_t)((SystemCoreClock / 1000) - 1);
 	
