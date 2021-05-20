@@ -25,6 +25,8 @@ int main(void) {
 	
 	while (1) {
 		
+		PWR_EnterSleepMode(PWR_SLEEPEntry_WFI); // let STM32 enter sleep mode --> let interrupt handle functions
+		
 		if (send) {
 			uint8_t i;
 			set_mode(MODE_NORMAL); //sets the LoRa module for transmission
