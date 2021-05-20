@@ -21,6 +21,7 @@ uint8_t counter = 0;
 bool send = false;
 bool adc_battery_meas; //false --> sensor measurement
 bool blink = false;
+bool LED_off = false;
 
 void NMI_Handler(void)
 {
@@ -73,7 +74,7 @@ void TIM2_IRQHandler(void) { // timer to generate 1 second blink
 	if (TIM_GetITStatus(TIM2, TIM_IT_Update) != RESET) {
 		TIM_ClearITPendingBit(TIM2, TIM_IT_Update);
 		if (blink) { // generate 1 second blink
-			STM_EVAL_LEDOff(LED3); // LED remains off until new temperature measurement
+			LED_off = false; // LED remains off until new temperature measurement
 			TIM_Cmd(TIM2, DISABLE); 
 			RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2, DISABLE);
 		}
@@ -84,11 +85,10 @@ void TIM14_IRQHandler(void) { // timer to measure temperature every minute
 	
   if (TIM_GetITStatus(TIM14, TIM_IT_Update) != RESET) { // wait a minute
 		TIM_ClearITPendingBit(TIM14, TIM_IT_Update);
-		//start blink
-		blink = true;
+		blink = true; // start blink (300 ms)
 		RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2, ENABLE);
 		TIM_Cmd(TIM2, ENABLE);
-		STM_EVAL_LEDOn(LED3); // toggle blue LED for 1 second once a minute
+		LED_off = true; // toggle blue LED for 1 second once a minute
 		if (counter >= TEMPERATURE_SIZE) { // every hour
 			adc_battery_meas = true; // check battery-voltage every hour
 			send = true; // if send = true --> send data (LoRa)
