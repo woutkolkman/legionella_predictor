@@ -30,7 +30,6 @@ int main(void) {
 		Green_led_update(measure_temperature());
 		Serial_putint(measure_temperature());
 		Serial_newLine();
-
 		timer_delay(1000);
 		
 		if (send) {
