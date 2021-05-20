@@ -80,7 +80,7 @@ void TIM2_init(void) {
 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2, ENABLE);
 	
 	TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up; 
-	TIM_TimeBaseStructure.TIM_Period      = 300 - 1; // generate 1 second blink
+	TIM_TimeBaseStructure.TIM_Period      = 300 - 1; // generate 300 ms blink
   TIM_TimeBaseStructure.TIM_Prescaler   = (uint16_t)((SystemCoreClock / 1000) - 1);
 	
 	NVIC_InitStructure.NVIC_IRQChannel         = TIM2_IRQn;
