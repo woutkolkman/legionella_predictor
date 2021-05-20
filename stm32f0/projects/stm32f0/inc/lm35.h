@@ -15,6 +15,7 @@ void select_channel(uint8_t pin);
 extern bool send;
 extern uint8_t counter;
 extern bool blink;
+extern bool LED_off;
 
 // defines
 #define CHANNEL_10 10
