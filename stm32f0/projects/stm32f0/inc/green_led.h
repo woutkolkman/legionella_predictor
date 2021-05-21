@@ -4,7 +4,7 @@
 #include <stdbool.h>
 
 #define TEMP_TRESHOLD (1)
-#define DELAY_GREEN_TURNOFF (10)
+#define DELAY_GREEN_TURNOFF (1)
 
 // public defines
 void Green_led_init(void);
