@@ -57,8 +57,8 @@ void TIM14_init(void) {
 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM14, ENABLE);
   
   TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up; 
-	//TIM_TimeBaseStructure.TIM_Period 			= 1000 - 1; // second
-	//TIM_TimeBaseStructure.TIM_Period 			= 5000 - 1; // 5 second
+//TIM_TimeBaseStructure.TIM_Period 			= 1000 - 1; // second
+//TIM_TimeBaseStructure.TIM_Period 			= 5000 - 1; // 5 seconds
 	TIM_TimeBaseStructure.TIM_Period      = 60000 - 1; // minute
   TIM_TimeBaseStructure.TIM_Prescaler   = (uint16_t)((SystemCoreClock / 1000) - 1);
 	
@@ -92,9 +92,8 @@ void TIM2_init(void) {
 	// configure time base init
   TIM_TimeBaseInit(TIM2, &TIM_TimeBaseStructure);
 	TIM_ITConfig(TIM2, TIM_IT_Update, ENABLE); // enable TIM_ITConfig interrupt
-//TIM_Cmd(TIM2, ENABLE); // enable interrupt on TIM2
 	
-	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2, DISABLE);
+	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2, DISABLE); 
 }
 
 

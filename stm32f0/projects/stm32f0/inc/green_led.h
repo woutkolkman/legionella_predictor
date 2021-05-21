@@ -9,7 +9,7 @@
 // public defines
 void Green_led_init(void);
 void Green_led_update(void);
-void Green_led_update_rinse(uint8_t);
+void Green_led_update_rinse(uint8_t temp);
 void Green_led_update_measure(bool);
 
 #endif

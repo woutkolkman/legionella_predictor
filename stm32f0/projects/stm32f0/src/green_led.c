@@ -34,21 +34,17 @@ void Green_led_init(void) {
   GPIOC->PUPDR &= ~GPIO_PUPDR_PUPDR9;
 }
 
-// turn green led on
-void Green_led_on(void) {
+void Green_led_on(void) { // turn green led on
 	// set green led high
 	GPIOC->BSRR = GPIO_BSRR_BS_9;
 }
 
-// turn green led off
-void Green_led_off(void) {
+void Green_led_off(void) { // turn green led off
 	// set green led low
 	GPIOC->BSRR = GPIO_BSRR_BR_9;
 }
 
-
-// calcualte te difference of two numbers
-float difference(uint8_t a, uint8_t b) {
+float difference(uint8_t a, uint8_t b) { // calcualte te difference of two numbers
 	if(a < b) {
 		return b-a;
 	}
@@ -57,13 +53,14 @@ float difference(uint8_t a, uint8_t b) {
 	}
 }
 
-// set green led on when temprature drops, else set green led off
-void Green_led_update_rinse(uint8_t temp) {
- static float previous_temp;
- static int8_t delay = 0;
-	// determine when a whassing happens
-	if( difference(previous_temp, temp) >= TEMP_TRESHOLD && previous_temp > temp) {
-		// when wassing happens, turn green led on
+void Green_led_update_rinse(uint8_t temp) { // set green led on when temprature drops, else set green led off
+ 
+	static float previous_temp;
+	static int8_t delay = 0;
+	
+	// determine when rinse happens
+	if(difference(previous_temp, temp) >= TEMP_TRESHOLD && previous_temp > temp) {
+		// when rinse happens, turn green led on
 		green_led_status.rinse_indication = true;
 	}
 	else {
@@ -75,12 +72,12 @@ void Green_led_update_rinse(uint8_t temp) {
 			delay = 0;
 		}
 	}
-	
   // update previous_temp
   previous_temp = temp;	
 }
 
-void Green_led_update_measure(bool led_on) {
+void Green_led_update_measure(bool led_on) { // determine if temperature has been measured
+	
 	if (led_on) {
 		green_led_status.measure_indication = true;
 	} else {
@@ -88,20 +85,15 @@ void Green_led_update_measure(bool led_on) {
 	}
 }
 
-// update green led
-void Green_led_update() {
-	// set green led
-	if(green_led_status.rinse_indication && green_led_status.measure_indication) {
-		// when 11
+void Green_led_update() { // update green led --> update led when temprature dropped / update led when measurement has taken place
+
+	if(green_led_status.rinse_indication && green_led_status.measure_indication) { // if temperature has been measured and temperature has dropped
 		Green_led_off();
-	} else if(!green_led_status.rinse_indication && green_led_status.measure_indication) {
-		// when 01
+	} else if(!green_led_status.rinse_indication && green_led_status.measure_indication) { // if temperature has been measured but temperature has not dropped
 		Green_led_on();
-	} else if(green_led_status.rinse_indication && !green_led_status.measure_indication) {
-		// when 10
+	} else if(green_led_status.rinse_indication && !green_led_status.measure_indication) { // if temperature has not been measured and temperature has been dropped
 		Green_led_on();
-	} else {
-		// when 00
+	} else { // in any other case 
 		Green_led_off();
 	}
 }
