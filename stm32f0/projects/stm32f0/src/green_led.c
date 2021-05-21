@@ -82,9 +82,9 @@ void Green_led_update_rinse(uint8_t temp) {
 
 void Green_led_update_measure(bool led_on) {
 	if (led_on) {
-		green_led_status.measure_indication = false;
-	} else {
 		green_led_status.measure_indication = true;
+	} else {
+		green_led_status.measure_indication = false;
 	}
 }
 

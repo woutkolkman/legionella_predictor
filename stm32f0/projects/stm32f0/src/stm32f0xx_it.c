@@ -74,11 +74,17 @@ void TIM2_IRQHandler(void) { // timer to generate 300 ms blink
 	if (TIM_GetITStatus(TIM2, TIM_IT_Update) != RESET) {
 		TIM_ClearITPendingBit(TIM2, TIM_IT_Update);
 		if (blink) { // generate 300 ms blink
+			// toggle led off
 			Green_led_update_measure(false); // LED remains off until new temperature measurement
 			Green_led_update();
+			//blink = false;
+			
 			TIM_Cmd(TIM2, DISABLE); 
 			RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2, DISABLE);
 		}
+		
+		// clear timer2 interupt
+		
 	}
 }
 
@@ -86,17 +92,21 @@ void TIM14_IRQHandler(void) { // timer to measure temperature every minute
  uint8_t current_temperature = measure_temperature();
   if (TIM_GetITStatus(TIM14, TIM_IT_Update) != RESET) { // wait a minute
 		TIM_ClearITPendingBit(TIM14, TIM_IT_Update);
+		// start blink
+		Green_led_update_measure(true); // toggle green LED on for 300 ms once a minute
 		blink = true; // start blink (300 ms)
 		RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2, ENABLE);
 		TIM_Cmd(TIM2, ENABLE);
-		Green_led_update_measure(true); // toggle blue LED for 300 ms once a minute
+
+		// update green led
 		Green_led_update();
-		Green_led_update_rinse(current_temperature); // decide if a water rinse is happening
-		if (counter >= TEMPERATURE_SIZE) { // every hour
+		
+		if (counter >= TEMPERATURE_SIZE) { // for every hour
 			adc_battery_meas = true; // check battery-voltage every hour
 			send = true; // if send = true --> send data (LoRa)
 			counter = 0;
 		}
+		
 		select_channel(CHANNEL_10); // select ADC-channel 10 for temperature measurements
   }
 }
