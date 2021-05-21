@@ -18,6 +18,8 @@ int main(void) {
 	clear_transmitter_ID();
 	#endif
 	make_transmitter_ID();
+	
+	TIM2_init();
 	TIM14_init();
 	battery_led_init();
 	battery_transistor_init();

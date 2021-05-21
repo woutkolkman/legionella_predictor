@@ -1,10 +1,19 @@
 #include "green_led.h"
+#include "stm32f0_discovery.h"
 #include "stm32f0xx_gpio.h"
+#include <stdint.h>
+#include <stdbool.h>
 
 // private defines
 void Green_led_on(void);
 void Green_led_off(void);
-float difference(float a, float b);
+float difference(uint8_t a, uint8_t b);
+
+// private global variable
+struct {
+	bool measure_indication;
+	bool rinse_indication;
+} green_led_status = {false, false};
 
 // setup the green led
 void Green_led_init(void) {
@@ -25,21 +34,17 @@ void Green_led_init(void) {
   GPIOC->PUPDR &= ~GPIO_PUPDR_PUPDR9;
 }
 
-// turn green led on
-void Green_led_on(void) {
+void Green_led_on(void) { // turn green led on
 	// set green led high
 	GPIOC->BSRR = GPIO_BSRR_BS_9;
 }
 
-// turn green led off
-void Green_led_off(void) {
+void Green_led_off(void) { // turn green led off
 	// set green led low
 	GPIOC->BSRR = GPIO_BSRR_BR_9;
 }
 
-
-// calcualte te difference of two numbers
-float difference(float a, float b) {
+float difference(uint8_t a, uint8_t b) { // calcualte te difference of two numbers
 	if(a < b) {
 		return b-a;
 	}
@@ -48,19 +53,47 @@ float difference(float a, float b) {
 	}
 }
 
-// set green led on when temprature drops, else set green led off
-void Green_led_update(float temp) {
- static float previous_temp;
-	// determine when a whassing happens
-	if( difference(previous_temp, temp) > TEMP_TRESHOLD && previous_temp > temp) {
-		// when wassing happens, turn green led on
-		Green_led_on();
+void Green_led_update_rinse(uint8_t temp) { // set green led on when temprature drops, else set green led off
+ 
+	static float previous_temp;
+	static int8_t delay = 0;
+	
+	// determine when rinse happens
+	if(difference(previous_temp, temp) >= TEMP_TRESHOLD && previous_temp > temp) {
+		// when rinse happens, turn green led on
+		green_led_status.rinse_indication = true;
 	}
 	else {
-		// else, turn green led off
-		Green_led_off();
+		// else if met delay turn green led off
+		delay++;
+		if(delay > DELAY_GREEN_TURNOFF) { 
+			// turn green led off
+			green_led_status.rinse_indication = false;
+			delay = 0;
+		}
 	}
-	
   // update previous_temp
   previous_temp = temp;	
+}
+
+void Green_led_update_measure(bool led_on) { // determine if temperature has been measured
+	
+	if (led_on) {
+		green_led_status.measure_indication = true;
+	} else {
+		green_led_status.measure_indication = false;
+	}
+}
+
+void Green_led_update() { // update green led --> update led when temprature dropped / update led when measurement has taken place
+
+	if(green_led_status.rinse_indication && green_led_status.measure_indication) { // if temperature has been measured and temperature has dropped
+		Green_led_off();
+	} else if(!green_led_status.rinse_indication && green_led_status.measure_indication) { // if temperature has been measured but temperature has not dropped
+		Green_led_on();
+	} else if(green_led_status.rinse_indication && !green_led_status.measure_indication) { // if temperature has not been measured and temperature has been dropped
+		Green_led_on();
+	} else { // in any other case 
+		Green_led_off();
+	}
 }
