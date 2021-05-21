@@ -89,7 +89,6 @@ void TIM2_IRQHandler(void) { // timer to generate 300 ms blink
 }
 
 void TIM14_IRQHandler(void) { // timer to measure temperature every minute
- uint8_t current_temperature = measure_temperature();
   if (TIM_GetITStatus(TIM14, TIM_IT_Update) != RESET) { // wait a minute
 		TIM_ClearITPendingBit(TIM14, TIM_IT_Update);
 		// start blink
@@ -97,7 +96,7 @@ void TIM14_IRQHandler(void) { // timer to measure temperature every minute
 		blink = true; // start blink (300 ms)
 		RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2, ENABLE);
 		TIM_Cmd(TIM2, ENABLE);
-
+		
 		// update green led
 		Green_led_update();
 		
@@ -129,6 +128,9 @@ void ADC1_COMP_IRQHandler(void) { // ADC sample complete
 		} else {
 			//previous measurement from sensor
 			Temperatures.Temperature[counter++] = measure_temperature(); // if ADC-channel 10 is selected --> 60 temperature measurements
+			
+			// update rinse led indication
+			Green_led_update_rinse(Temperatures.Temperature[counter-1]);
 		}
 		if (adc_battery_meas) { // do battery measurement --> select ADC-channel 11
 			GPIOC->BRR = GPIO_Pin_6; //enable transistor

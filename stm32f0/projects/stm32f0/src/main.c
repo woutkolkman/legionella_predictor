@@ -28,8 +28,8 @@ int main(void) {
 		// test code niet meer nodig
 		// update green led who turns on when rinseing pipe
 		temperature_read_start();
-		Green_led_update_rinse(measure_temperature());
-		Green_led_update();
+		//Green_led_update_rinse(measure_temperature());
+		//Green_led_update();
 		Serial_putint(measure_temperature());
 		Serial_newLine();
 		timer_delay(1000);
