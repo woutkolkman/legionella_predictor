@@ -173,7 +173,7 @@
         <Ww>
           <count>2</count>
           <WinNumber>1</WinNumber>
-          <ItemText>temperature</ItemText>
+          <ItemText>Temperatures.Temperature</ItemText>
         </Ww>
       </WatchWindow1>
       <MemoryWindow1>

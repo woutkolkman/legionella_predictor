@@ -55,6 +55,7 @@ void USART_init(void)
 	
 	// GPIOA Periph clock disable
   RCC->AHBENR &= ~RCC_AHBENR_GPIOAEN;
+	
 }
 
 void USART_putc(char c)
