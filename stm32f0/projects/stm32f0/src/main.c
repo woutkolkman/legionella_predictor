@@ -45,7 +45,6 @@ int main(void) {
 			set_mode(MODE_NORMAL); //sets the LoRa module for transmission
 			enable_transmission_led();
 			send_struct(&Temperatures, sizeof(Temperatures));
-			
 			disable_transmission_led();
 			set_mode(MODE_PROGRAM); //sets the LoRa module for sleep mode to save energy
 			Serial_println("Temperatures: ");
