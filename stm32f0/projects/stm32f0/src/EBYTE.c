@@ -597,11 +597,13 @@ uint8_t get_features() {
 //a simple delay function, goes to sleeping mode while the delay isn't finished yet
 void timer_delay(unsigned long delay_time) {
 	time_passed = 0;
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_TIM1, ENABLE);
 	TIM_Cmd(TIM1, ENABLE);
 	while(time_passed < delay_time) {
 		PWR_EnterSleepMode(PWR_SLEEPEntry_WFI);
 	}
 	TIM_Cmd(TIM1, DISABLE);
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_TIM1, DISABLE);
 }
 
 void read_bytes(uint8_t* buffer, uint8_t size) {

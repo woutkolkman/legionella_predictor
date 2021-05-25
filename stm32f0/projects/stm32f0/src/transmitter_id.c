@@ -24,6 +24,7 @@ void make_transmitter_ID() {
 			Temperatures.transmitter_ID[loc] = SE24LC512_ReadData(loc);
 		}
 	}
+	RCC_APB1PeriphClockCmd(RCC_APB1Periph_I2C1, DISABLE);
 }
 
 //generates the transmission ID. Saves it in the struct

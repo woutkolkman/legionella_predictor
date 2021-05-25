@@ -42,7 +42,6 @@ int main(void) {
 			uint8_t i;
 			set_mode(MODE_NORMAL); //sets the LoRa module for transmission
 			enable_transmission_led();
-			USART_enable();
 			send_struct(&Temperatures, sizeof(Temperatures));
 			
 			disable_transmission_led();
