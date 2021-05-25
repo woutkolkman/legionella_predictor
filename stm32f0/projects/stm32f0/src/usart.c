@@ -47,14 +47,14 @@ void USART_init(void)
   // When OVER8 = 0, BRR [3:0] = USARTDIV [3:0]
   USART1->BRR = 0x01A0;
 
-  // USART enable
-  // Receiver enable
-  // Transmitter enable
-  USART1->CR1 = USART_CR1_UE | USART_CR1_RE | USART_CR1_TE;
+  
 
   // Default value
   USART1->CR2 = 0;
   USART1->CR3 = 0; 
+	
+	// GPIOA Periph clock disable
+  RCC->AHBENR &= ~RCC_AHBENR_GPIOAEN;
 }
 
 void USART_putc(char c)
@@ -182,4 +182,13 @@ char *USART_itoa(int16_t i, char *p)
   return(p);
 }
 
+void USART_enable() {
+	
+	RCC->APB2ENR |= RCC_APB2ENR_USART1EN; 
+	
+}
+
+void USART_disable() {
+	RCC->APB2ENR &= ~RCC_APB2ENR_USART1EN; 
+}
 #endif

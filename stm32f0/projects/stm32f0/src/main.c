@@ -42,10 +42,11 @@ int main(void) {
 			uint8_t i;
 			set_mode(MODE_NORMAL); //sets the LoRa module for transmission
 			enable_transmission_led();
+			USART_enable();
 			send_struct(&Temperatures, sizeof(Temperatures));
+			
 			disable_transmission_led();
 			set_mode(MODE_PROGRAM); //sets the LoRa module for sleep mode to save energy
-			
 			Serial_println("Temperatures: ");
 			for (i = 0; i < TEMPERATURE_SIZE; i++) {
 				Serial_putint(i);
@@ -55,7 +56,7 @@ int main(void) {
 			}
 			Serial_print("Transmitter ID = ");
 			for(i = 0; i < TRANSMITTER_ID_SIZE; i++) {
-				Serial_putint(Temperatures.transmitter_ID[i]);
+				Serial_char(Temperatures.transmitter_ID[i]);
 				Serial_char(' ');
 			}
 			Serial_newLine();

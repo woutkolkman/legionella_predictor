@@ -201,11 +201,13 @@ void send_struct(const void* the_structure, uint16_t size) {
   uint16_t count = 0;
 	uint8_t *C_The_Structure = (uint8_t *) the_structure;
 	Tx_buffer = C_The_Structure;
+	USART_enable();
 	while (count < size) {
 	  USART_putc(Tx_buffer[count]);
 		count++;
 	}
 	complete_task(1000);
+	USART_disable();
 }
 
 //receiving / reading a struct from LoRa

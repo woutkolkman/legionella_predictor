@@ -130,7 +130,6 @@ void SE24LC512_WriteData(uint16_t addr, uint8_t data)
 	
 }
 
-
 /**
   * @brief  This function clears the entire EEPROM. 
   * @param  None
@@ -147,8 +146,6 @@ void SE24LC512_Clear(void)
 	SE24LC512_WriteData(0xFFFF, 0x00);
 	timer_delay(5);
 }
-
-
 
 /**
   * @brief  This function reads 8-bit data from the serial eeprom 24LC512.
@@ -186,19 +183,6 @@ uint8_t SE24LC512_ReadData(uint16_t addr)
   
   return( data );
 }
-
-/**
-  * @brief  This function writes up to 127 bytes data to the serial eeprom. 
-  * @param  addr: 16-bit address of eeprom where data is written. 
-  * @param  data_ptr: pointer to data to be written. 
-  * @param  lenght: number of bytes to be written (must be <= 127. 
-  * @retval None
-  */
-void SE24LC512_WritePage(uint16_t addr, uint8_t* data_ptr, uint8_t length)
-{
-	//not implemented yet
-}
-
 
 /**
   * @brief  This function checks a flag in the I2C1 Interrupt and Status 
