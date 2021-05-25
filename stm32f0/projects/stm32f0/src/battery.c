@@ -7,7 +7,7 @@
 void battery_transistor_init(void) {
 	
 	GPIO_InitTypeDef GPIO_InitStructure;
-	
+
 	RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOC, ENABLE);
 	GPIO_InitStructure.GPIO_Pin   = GPIO_Pin_6;
 	GPIO_InitStructure.GPIO_Mode  = GPIO_Mode_OUT;
@@ -90,3 +90,4 @@ void battery_status(uint16_t val) {
 		was_full = false;
 	}
 }
+
