@@ -1,4 +1,5 @@
 #include "stm32f0xx.h"
+#include "debugmode.h"
 
 #define TRANSMISSION_BUSY_PORT GPIOB
 #define TRANSMISSION_BUSY_PIN GPIO_Pin_5

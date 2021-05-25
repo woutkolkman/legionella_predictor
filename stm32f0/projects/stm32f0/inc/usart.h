@@ -5,6 +5,7 @@
 #define _USART_H_
 
 #include "stdint.h"
+#include "debugmode.h"
 
 /******************************************************************************
   Function prototypes

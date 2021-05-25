@@ -18,6 +18,7 @@
 #define _SERIALEEPROM_H_
 
 #include "stm32f0xx.h"
+#include "debugmode.h"
 
 // ----------------------------------------------------------------------------
 // Defines

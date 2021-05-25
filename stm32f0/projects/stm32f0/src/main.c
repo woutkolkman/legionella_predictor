@@ -10,7 +10,6 @@
 struct DATA Temperatures;
 
 //#define CLEARTRANSMITTERID 0
-
 int main(void) {
 	
 	I2C_Setup();
@@ -27,13 +26,17 @@ int main(void) {
 	ADC_interrupt_init();
 	
 	init_transmission_led();
+	#ifdef DEBUG
 	init_serial();
 	Serial_clearscreen();
+	#endif
 	init_LoRa();
 	set_mode(MODE_PROGRAM);
 
+	#ifdef DEBUG
 	print_parameters();
 	print_transmitter_ID();
+	#endif
 	Green_led_init();
 	
 	while (1) {
@@ -41,12 +44,15 @@ int main(void) {
 		PWR_EnterSleepMode(PWR_SLEEPEntry_WFI); // let STM32 enter sleep mode --> let interrupt handle functions
 		
 		if (send) {
+			#ifdef DEBUG
 			uint8_t i;
+			#endif
 			set_mode(MODE_NORMAL); //sets the LoRa module for transmission
 			enable_transmission_led();
 			send_struct(&Temperatures, sizeof(Temperatures));
 			disable_transmission_led();
 			set_mode(MODE_PROGRAM); //sets the LoRa module for sleep mode to save energy
+			#ifdef DEBUG
 			Serial_println("Temperatures: ");
 			for (i = 0; i < TEMPERATURE_SIZE; i++) {
 				Serial_putint(i);
@@ -60,6 +66,7 @@ int main(void) {
 				Serial_char(' ');
 			}
 			Serial_newLine();
+			#endif
 			send = false;
 		}
 	}

@@ -4,6 +4,7 @@
 #include "stm32f0xx.h"
 #include "stm32f0_discovery.h"
 #include "stdbool.h"
+#include "debugmode.h"
 #include "serial.h" //debug
 
 #define BATTERY_THRESHOLD_VOLTAGE 3140

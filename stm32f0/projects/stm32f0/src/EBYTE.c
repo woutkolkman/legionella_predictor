@@ -544,7 +544,9 @@ bool read_model_data() {
 	if (0xC3 != _Params[0]) {
 		uint8_t timeout;
 		for (timeout = 0; timeout < 5; timeout++){
+			#ifdef DEBUG
 			Serial_print("Trying: ");Serial_putintln(timeout);
+			#endif
 			_Params[0] = 0;
 			_Params[1] = 0;
 			_Params[2] = 0;

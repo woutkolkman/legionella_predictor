@@ -2,6 +2,7 @@
 #include "struct.h"
 #include "se24lc512.h"
 #include "EBYTE.h" //for the delay
+#include "debugmode.h"
 
 #define MAX_TRANSMISSION_NUMBER ('~' + 1)
 #define ID_START_LOCATION 0
