@@ -5,7 +5,7 @@
 #include "stdbool.h"
 
 #define HOUR (60000 - 1)
-#define DEBUGTIME (250 - 1) // 30 seconds
+#define DEBUGTIME (100 - 1) // 1 second
 
 // function prototypes
 uint8_t measure_temperature(void);
