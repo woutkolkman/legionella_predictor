@@ -106,9 +106,10 @@ void init_USART() {
 
 //initializes the GPIO pins for usart1
 void init_USART_GPIO() {
+	
 	GPIO_InitTypeDef GPIO_initStructure;
 	
-//RCC_AHBPeriphClockCmd(RCC_AHBENR_GPIOAEN, ENABLE); 	//periph clock enable
+	RCC_AHBPeriphClockCmd(RCC_AHBENR_GPIOAEN, ENABLE);
 	
 	//GPIO for UART
 	GPIO_initStructure.GPIO_Mode = GPIO_Mode_AF;
@@ -163,6 +164,7 @@ void init_buffer() {
 
 //initializes the timer used for delays
 void init_Timer_Delay() {
+	
 	TIM_TimeBaseInitTypeDef TIM_TimeBaseInitStructure;
 	
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_TIM1, ENABLE);
@@ -201,7 +203,6 @@ void send_struct(const void* the_structure, uint16_t size) {
   uint16_t count = 0;
 	uint8_t *C_The_Structure = (uint8_t *) the_structure;
 	Tx_buffer = C_The_Structure;
-	GPIOA_enable(); // enable GPIOA clk
 	USART_enable(); // enable USART1 clk 
 	while (count < size) {
 	  USART_putc(Tx_buffer[count]);
@@ -209,7 +210,6 @@ void send_struct(const void* the_structure, uint16_t size) {
 	}
 	complete_task(1000);
 	USART_disable(); // disable USART1 clk (not running)
-	GPIOA_disable(); // disable GPIOA clk (not running)
 }
 
 //receiving / reading a struct from LoRa

@@ -63,6 +63,7 @@ int main(void) {
 			}
 			Serial_newLine();
 			send = false;
+			GPIOA_disable(); // disable GPIOA clock when data has been sent (USART <-> LoRa)
 		}
 	}
 }
