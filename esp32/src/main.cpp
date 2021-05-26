@@ -30,14 +30,14 @@ void setup() {
     settings_load(&settings);
   } 
   else { // if the EEPROM data is not valid config data then write config data to EEPROM
-    Serial.println("bad signature use default settings.");
+    Serial.println("bad signature. Use default settings.");
     settings_reset(&settings);
   }
 
   // print inhoud
   Serial.print("wifi_sidd = ");
   Serial.println(settings.wifi_sidd);
-  Serial.print("widi_password = ");
+  Serial.print("wifi_password = ");
   Serial.println(settings.wifi_password);
 
   // start wifi hotspot
@@ -175,25 +175,26 @@ bool LoRa_get_data() {
         Serial.println("ID incorrect");
         return result;
       }
+      // dump out what was just received
+      Serial.println("Temperatures: "); 
+      for (int i = 0; i < TEMPERATURE_SIZE; i++) {
+        Serial.print(i);
+        Serial.print(" : ");
+        Serial.print(Temperatures.Temperature[i]);
+        Serial.println(" degrees.");
+      }
+
+      Serial.print("transmitter_ID: ");
+      for (int i = 0; i < TRANSMITTER_ID_SIZE; i++) {
+        Serial.print(Temperatures.transmitter_ID[i]);
+        Serial.print(' ');
+      }
     }  
     
   } else {
     Serial.println("Data size incorrect");
     result = false;
   }
-  // dump out what was just received
-  Serial.println("Temperatures: "); 
-  for (int i = 0; i < TEMPERATURE_SIZE; i++) {
-    Serial.print(i);
-    Serial.print(" : ");
-    Serial.print(Temperatures.Temperature[i]);
-    Serial.println(" degrees.");
-  }
-
-  Serial.print("transmitter_ID: ");
-  for (int i = 0; i < TRANSMITTER_ID_SIZE; i++) {
-    Serial.print(Temperatures.transmitter_ID[i]);
-    Serial.print(' ');
-  }
+  
   return result;
 }

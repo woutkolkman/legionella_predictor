@@ -2,7 +2,7 @@
 #include <string.h>
 #include "remember_settings.h"
 
-// reset settings to standaardt settings
+// reset settings to standard settings
 void settings_reset(settings_t *settings) {
     // default cloud settings
     strcpy(settings->cloud_address, "http://145.44.235.205");
