@@ -50,9 +50,11 @@ int main(void) {
 			uint8_t i;
 			#endif
 			set_mode(MODE_NORMAL); //sets the LoRa module for transmission
+			GPIOB_enable(); // enable GPIOB clk
 			enable_transmission_led();
 			send_struct(&Temperatures, sizeof(Temperatures));
 			disable_transmission_led();
+			GPIOB_disable(); // disable GPIOB clk (not running)
 			set_mode(MODE_PROGRAM); //sets the LoRa module for sleep mode to save energy
 			#ifdef DEBUG
 			Serial_println("Temperatures: ");
@@ -70,6 +72,7 @@ int main(void) {
 			Serial_newLine();
 			#endif
 			send = false;
+			GPIOA_disable(); // disable GPIOA clock when data has been sent (USART <-> LoRa)
 		}
 	}
 }

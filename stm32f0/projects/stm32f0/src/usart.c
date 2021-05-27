@@ -190,6 +190,19 @@ void USART_enable() {
 }
 
 void USART_disable() {
+	
 	RCC->APB2ENR &= ~RCC_APB2ENR_USART1EN; 
+}
+
+// enable GPIOA clk
+void GPIOA_enable(void) {
+	
+	RCC->AHBENR |= RCC_AHBENR_GPIOAEN;
+}
+
+// disable GPIOA clk (not running)
+void GPIOA_disable(void) {
+	
+	RCC->AHBENR &= ~RCC_AHBENR_GPIOAEN;
 }
 #endif

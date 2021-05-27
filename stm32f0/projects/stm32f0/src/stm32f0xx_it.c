@@ -91,8 +91,8 @@ void TIM14_IRQHandler(void) { // timer to measure temperature every minute
 		RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2, ENABLE);
 		TIM_Cmd(TIM2, ENABLE);
 		Green_led_update(); // update green led
-
 		if (counter >= TEMPERATURE_SIZE) { // for every hour
+			GPIOA_enable(); // enable GPIOA clock --> send data to gateway (USART <-> LoRa)
 			adc_battery_meas = true; // check battery-voltage every hour
 			send = true; // if send = true --> send data (LoRa)
 			counter = 0;

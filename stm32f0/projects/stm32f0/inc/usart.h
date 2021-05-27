@@ -20,5 +20,7 @@ void USART_clearscreen(void);
 char *USART_itoa(int16_t i, char *p);
 void USART_enable(void);
 void USART_disable(void);
+void GPIOA_enable(void);
+void GPIOA_disable(void);
 
 #endif // _USART_H_
