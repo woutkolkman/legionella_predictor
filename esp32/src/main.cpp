@@ -175,6 +175,7 @@ bool LoRa_get_data() {
         Serial.println("ID incorrect");
         return result;
       }
+    }
       // dump out what was just received
       Serial.println("Temperatures: "); 
       for (int i = 0; i < TEMPERATURE_SIZE; i++) {
@@ -189,7 +190,7 @@ bool LoRa_get_data() {
         Serial.print(Temperatures.transmitter_ID[i]);
         Serial.print(' ');
       }
-    }  
+    
     
   } else {
     Serial.println("Data size incorrect");
