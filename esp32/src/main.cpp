@@ -8,6 +8,7 @@
 #include "ebyte.h"
 #include "remember_settings.h"
 
+#define NDEBUG 1
 // --- globals
 settings_t settings;
 WebServer interface_server(80);
@@ -144,7 +145,7 @@ bool send_to_cloud(char* payload) {
 
   http.begin(server_url);  //Specify destination for HTTP request
   http.addHeader("Content-Type", "text/plain");  //Specify content-type header
-  int httpResponseCode = http.POST((uint8_t*) payload, POST_PAYLOAD_LEN); //Send the actual POST request
+  int httpResponseCode = http.POST((uint8_t*) payload, strlen((const char*)payload)); //Send the actual POST request
 
   if (httpResponseCode>0) {
     String response = http.getString(); //Get the response to the request

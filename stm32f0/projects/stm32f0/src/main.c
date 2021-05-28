@@ -9,7 +9,6 @@
 
 struct DATA Temperatures;
 
-#define DEBUG // zet aan voor debuggen
 //#define CLEARTRANSMITTERID 0
 
 int main(void) {
