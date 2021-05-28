@@ -3,7 +3,7 @@
 #include <stdbool.h>
 
 // defines
-#define CONFIG_SIGNATURE (0xBD)
+#define CONFIG_SIGNATURE (0xAB)
 
 // type defintions
 typedef struct { // needs to by under 512 bytes
