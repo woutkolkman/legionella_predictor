@@ -101,6 +101,7 @@ void TIM14_IRQHandler(void) { // timer to measure temperature every minute
   }
 }
 
+// Zie het kopje LoRa communicatie --> Temperatures in technisch ontwerp 
 void ADC1_COMP_IRQHandler(void) { // ADC sample complete
 	
 	if (ADC_GetITStatus(ADC1, ADC1_COMP_IRQn) != RESET) {

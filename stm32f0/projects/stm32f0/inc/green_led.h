@@ -1,10 +1,11 @@
 #ifndef GREEN_LED_H
 #define GREEN_LED_H
-#include <stdint.h>
-#include <stdbool.h>
+
+#include "stdint.h"
+#include "stdbool.h"
 #include "debugmode.h"
 
-#define TEMP_TRESHOLD (1)
+#define TEMP_TRESHOLD 			(4)
 #define DELAY_GREEN_TURNOFF (1)
 
 // public defines

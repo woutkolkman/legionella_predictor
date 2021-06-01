@@ -86,12 +86,11 @@ void ADC_interrupt_init(void) {
 	NVIC_SetPriority(ADC1_COMP_IRQn,0);
 }
 
-//initialize ADC for sensor and battery measurement
-void ADC_init(void) { 
+// Zie het kopje LoRa communicatie --> Temperatures in technisch ontwerp 
+void ADC_init(void) { // initialize ADC for sensor and battery measurement
 	
   ADC_InitTypeDef  ADC_InitStructure;
 	
-	//enable clocks
   RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADC1, ENABLE);
 	
   /* configure the ADC conversion resolution, data alignment, external

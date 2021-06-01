@@ -69,6 +69,8 @@ void TIM14_init(void) {
 	TIM_Cmd(TIM14, ENABLE); // enable interrupt on TIM14
 }
 
+
+// Zie het kopje Indiatie-LEDs --> Groene LED in technisch ontwerp 
 void TIM2_init(void) {
 	
 	TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;
