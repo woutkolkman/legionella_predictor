@@ -5,6 +5,7 @@
 #include "struct.h"
 #include "main.h"
 
+// Zie het kopje LM35 Temperatuursensor --> Proces in technisch ontwerp 
 uint8_t measure_temperature(void) { // function to measure current temperature
 		
 	uint16_t adc;
@@ -44,6 +45,7 @@ void select_channel(uint8_t pin) { // function to select ADC-channel 10/11 (batt
 	ADC_StartOfConversion(ADC1);
 }
 
+// Zie het kopje LM35 Temperatuursensor --> Proces in technisch ontwerp
 void TIM14_init(void) {
 	
 	TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;

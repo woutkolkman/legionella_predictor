@@ -1,8 +1,10 @@
 #include "green_led.h"
 #include "stm32f0_discovery.h"
 #include "stm32f0xx_gpio.h"
-#include <stdint.h>
-#include <stdbool.h>
+#include "stdint.h"
+#include "stdbool.h"
+
+// Zie het kopje Indiatie-LEDs --> Groene LED in technisch ontwerp 
 
 // private defines
 void Green_led_on(void);

@@ -117,7 +117,6 @@ void ADC1_COMP_IRQHandler(void) { // ADC sample complete
 			//battery low? flash LED, else LED off
 			battery_status(val);
 		} else {
-			//previous measurement from sensor
 			Temperatures.Temperature[counter++] = measure_temperature(); // if ADC-channel 10 is selected --> 60 temperature measurements
 			Green_led_update_rinse(Temperatures.Temperature[counter-1]); // update rinse green led indication
 		}

@@ -1,5 +1,7 @@
 #include "transmission_led.h"
 
+// Zie het kopje Indiatie-LEDs --> Rode LED in technisch ontwerp 
+
 //initializes the red (transmission) led
 void init_transmission_led() {
 	

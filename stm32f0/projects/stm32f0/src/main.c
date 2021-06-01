@@ -50,8 +50,8 @@ int main(void) {
 			#endif
 			set_mode(MODE_NORMAL); //sets the LoRa module for transmission
 			GPIOB_enable(); // enable GPIOB clk
-			enable_transmission_led();
-			send_struct(&Temperatures, sizeof(Temperatures));
+			enable_transmission_led(); 
+			send_struct(&Temperatures, sizeof(Temperatures)); // zie het kopje LM35 Temperatuursensor --> Proces in technisch ontwerp 
 			disable_transmission_led();
 			GPIOB_disable(); // disable GPIOB clk (not running)
 			set_mode(MODE_PROGRAM); //sets the LoRa module for sleep mode to save energy
