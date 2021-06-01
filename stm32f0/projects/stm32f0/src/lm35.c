@@ -22,11 +22,6 @@ uint8_t measure_temperature(void) { // function to measure current temperature
 	return temperature;
 }
 
-void temperature_read_start(void) { 
-	
-  ADC_StartOfConversion(ADC1);
-}
-
 void select_channel(uint8_t pin) { // function to select ADC-channel 10/11 (battery and sensor)
 	
 	uint32_t tmpreg = 0;
