@@ -183,25 +183,27 @@ char *USART_itoa(int16_t i, char *p)
   return(p);
 }
 
+// Zie kopje Energiezuinigheid --> USART CLOCK in technisch ontwerp
 void USART_enable() {
 	
 	RCC->APB2ENR |= RCC_APB2ENR_USART1EN; 
 	
 }
 
+// Zie kopje Energiezuinigheid --> USART CLOCK in technisch ontwerp
 void USART_disable() {
 	
 	RCC->APB2ENR &= ~RCC_APB2ENR_USART1EN; 
 }
 
-// enable GPIOA clk
-void GPIOA_enable(void) {
+// Zie kopje Energiezuinigheid --> GPIO-A in technisch ontwerp
+void GPIOA_enable(void) { // enable GPIOA clk
 	
 	RCC->AHBENR |= RCC_AHBENR_GPIOAEN;
 }
 
-// disable GPIOA clk (not running)
-void GPIOA_disable(void) {
+// Zie kopje Energiezuinigheid --> GPIO-A in technisch ontwerp
+void GPIOA_disable(void) { // disable GPIOA clk (not running)
 	
 	RCC->AHBENR &= ~RCC_AHBENR_GPIOAEN;
 }

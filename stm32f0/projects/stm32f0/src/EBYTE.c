@@ -3,9 +3,9 @@
 // ----------------------------------------------------------------------------
 #include <EBYTE.h>
 
+// Zie kopje LoRa communicatie --> Initialisatie --> STM32 in technisch ontwerp
 
-//global variables. Putting them in the 'EBYTE.h' files gives 'multiply defined' errors. 
-
+// global variables. putting them in the 'EBYTE.h' files gives 'multiply defined' errors. 
 uint16_t Rx_read_location;
 uint8_t *Tx_buffer;
 
@@ -196,8 +196,7 @@ uint8_t get_byte() {
 	return result;
 }
 
-//sends a struct through LoRa
-void send_struct(const void* the_structure, uint16_t size) {
+void send_struct(const void* the_structure, uint16_t size) { // sends a struct through LoRa
   uint16_t count = 0;
 	uint8_t *C_The_Structure = (uint8_t *) the_structure;
 	Tx_buffer = C_The_Structure;
@@ -234,8 +233,8 @@ void complete_task(unsigned long time_out) {
 	TIM_Cmd(TIM1, DISABLE);
 }
 
-//setting the lora module mode
-void set_mode(uint8_t mode) {
+// Zie kopje Energiezuinigheid --> LoRa modules in technisch ontwerp
+void set_mode(uint8_t mode) { //setting the lora module mode
 	timer_delay(PIN_RECOVER);
 	switch(mode) {
 		case MODE_NORMAL:

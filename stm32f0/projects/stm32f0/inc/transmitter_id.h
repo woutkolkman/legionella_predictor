@@ -10,3 +10,8 @@
 void make_transmitter_ID(void);
 void clear_transmitter_ID(void);
 void print_transmitter_ID(void);
+void generate_transmitter_ID(void);
+uint32_t get_random_number(void);
+void init_random_number(void);
+void deInit_random_number(void);
+

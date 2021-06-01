@@ -10,6 +10,7 @@
 struct DATA Temperatures;
 
 //#define CLEARTRANSMITTERID 0
+#define DEBUG
 
 int main(void) {
 	
@@ -42,13 +43,14 @@ int main(void) {
 	
 	while (1) {
 		
+		// Zie kopje Energiezuinigheid --> SLEEP-MODUS in technisch ontwerp
 		PWR_EnterSleepMode(PWR_SLEEPEntry_WFI); // let STM32 enter sleep mode --> let interrupt handle functions
 		
 		if (send) {
 			#ifdef DEBUG
 			uint8_t i;
 			#endif
-			set_mode(MODE_NORMAL); //sets the LoRa module for transmission
+			set_mode(MODE_NORMAL); // sets the LoRa module for transmission
 			GPIOB_enable(); // enable GPIOB clk
 			enable_transmission_led(); 
 			send_struct(&Temperatures, sizeof(Temperatures)); // zie het kopje LM35 Temperatuursensor --> Proces in technisch ontwerp 
@@ -76,8 +78,8 @@ int main(void) {
 	}
 }
 
-//configure interrupt "ADC1_COMP_IRQHandler"
-void ADC_interrupt_init(void) {
+// Zie het kopje LoRa communicatie --> Temperatures in technisch ontwerp 
+void ADC_interrupt_init(void) { // configure interrupt "ADC1_COMP_IRQHandler"
 	
 	// Configure ADC ready interrupt
 	ADC_ClearITPendingBit(ADC1, ADC1_COMP_IRQn);

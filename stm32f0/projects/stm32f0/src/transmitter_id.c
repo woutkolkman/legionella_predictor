@@ -1,15 +1,11 @@
 #include "transmitter_id.h"
 
-void generate_transmitter_ID(void);
-uint32_t get_random_number(void);
-void init_random_number(void);
-void deInit_random_number(void);
+// Zie kopje LoRa communicatie --> Transmitter ID in het technisch ontwerp
 
+// global variables
 bool exist;
 
-
-//put an ID in the struct (whether it's existing or new)
-void make_transmitter_ID() {
+void make_transmitter_ID() { // put an ID in the struct (whether it's existing or new)
 	uint8_t loc;
 	uint8_t curdata = SE24LC512_ReadData(ID_START_LOCATION);
 	if(curdata < '!' || curdata > '~') {
@@ -24,6 +20,7 @@ void make_transmitter_ID() {
 			Temperatures.transmitter_ID[loc] = SE24LC512_ReadData(loc);
 		}
 	}
+	// Zie kopje Energiezuinigheid --> EEPROM in technisch ontwerp
 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_I2C1, DISABLE);
 }
 
