@@ -34,10 +34,17 @@ void setup_wifi(bool hotspot,char *ssid, char *password) {
     // setup wifi
     WiFi.mode(WIFI_STA); // mode = station mode
     WiFi.begin(ssid, password); // initialize WiFi using networkname + password
-
     while (WiFi.status() != WL_CONNECTED) { // wait while connected has not been made yet
-      Serial.print(".");
+      Serial.print('.');
       delay(1000);
+      if(Serial.available()) {
+        if(Serial.read() == 'r') {
+          Serial.println("EEPROM: go to default settings.");
+          settings_reset(&settings);
+          setup_wifi(settings.mode_is_hotspot, (char *) settings.wifi_sidd,(char *) settings.wifi_password);
+          return;
+        }
+      }
     }
     
     // get ip adress of esp32
