@@ -1,6 +1,6 @@
 #include "transmission_led.h"
 
-// Zie het kopje Indiatie-LEDs --> Rode LED in technisch ontwerp 
+/* Zie het kopje Indiatie-LEDs --> Rode LED in technisch ontwerp */
 
 //initializes the red (transmission) led
 void init_transmission_led() {
@@ -30,14 +30,16 @@ void disable_transmission_led() {
 	GPIO_ResetBits(TRANSMISSION_BUSY_PORT, TRANSMISSION_BUSY_PIN);
 }
 
-// Zie kopje Energiezuinigheid --> GPIO-B in technisch ontwerp
-void GPIOB_enable(void) { // enable GPIOB clk
+/* Zie het kopje Energiezuinigheid --> GPIO-B in technisch ontwerp */
+// enable GPIOB clk
+void GPIOB_enable(void) { 
 	
 	RCC->AHBENR |= RCC_AHBENR_GPIOBEN;
 }
 
-// Zie kopje Energiezuinigheid --> GPIO-B in technisch ontwerp
-void GPIOB_disable(void) { // disable GPIOB clk (not running)
+/* Zie het kopje Energiezuinigheid --> GPIO-B in technisch ontwerp */
+// disable GPIOB clk (not running)
+void GPIOB_disable(void) { 
 	
 	RCC->AHBENR &= ~RCC_AHBENR_GPIOBEN;
 }

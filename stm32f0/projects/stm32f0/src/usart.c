@@ -1,12 +1,7 @@
-/******************************************************************************
- * File           : USART driver implementation file
- *****************************************************************************/
 #include "stm32f0xx.h"
 #include "usart.h"
 
-// ----------------------------------------------------------------------------
-// Global variables
-// ----------------------------------------------------------------------------
+// global variables
 volatile char rx_buffer;
 
 // comment the following line to test on the laptop instead of on the STM32
@@ -183,27 +178,29 @@ char *USART_itoa(int16_t i, char *p)
   return(p);
 }
 
-// Zie kopje Energiezuinigheid --> USART CLOCK in technisch ontwerp
+/* Zie het kopje Energiezuinigheid --> USART CLOCK in technisch ontwerp */
 void USART_enable() {
 	
 	RCC->APB2ENR |= RCC_APB2ENR_USART1EN; 
 	
 }
 
-// Zie kopje Energiezuinigheid --> USART CLOCK in technisch ontwerp
+/* Zie het kopje Energiezuinigheid --> USART CLOCK in technisch ontwerp */
 void USART_disable() {
 	
 	RCC->APB2ENR &= ~RCC_APB2ENR_USART1EN; 
 }
 
-// Zie kopje Energiezuinigheid --> GPIO-A in technisch ontwerp
-void GPIOA_enable(void) { // enable GPIOA clk
+/* Zie het kopje Energiezuinigheid --> GPIO-A in technisch ontwerp */
+// enable GPIOA clk
+void GPIOA_enable(void) { 
 	
 	RCC->AHBENR |= RCC_AHBENR_GPIOAEN;
 }
 
-// Zie kopje Energiezuinigheid --> GPIO-A in technisch ontwerp
-void GPIOA_disable(void) { // disable GPIOA clk (not running)
+/* Zie het kopje Energiezuinigheid --> GPIO-A in technisch ontwerp */
+// disable GPIOA clk (not running)
+void GPIOA_disable(void) { 
 	
 	RCC->AHBENR &= ~RCC_AHBENR_GPIOAEN;
 }

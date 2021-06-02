@@ -4,7 +4,7 @@
 #include "stdint.h"
 #include "stdbool.h"
 
-// Zie het kopje Indiatie-LEDs --> Groene LED in technisch ontwerp 
+/* Zie het kopje Indiatie-LEDs --> Groene LED in technisch ontwerp */
 
 // private defines
 void Green_led_on(void);
@@ -46,7 +46,8 @@ void Green_led_off(void) { // turn green led off
 	GPIOC->BSRR = GPIO_BSRR_BR_9;
 }
 
-float difference(uint8_t a, uint8_t b) { // calcualte te difference of two numbers
+ // calcualte te difference of two numbers
+float difference(uint8_t a, uint8_t b) {
 	if(a < b) {
 		return b-a;
 	}
@@ -55,7 +56,8 @@ float difference(uint8_t a, uint8_t b) { // calcualte te difference of two numbe
 	}
 }
 
-void Green_led_update_rinse(uint8_t temp) { // set green led on when temprature drops, else set green led off
+// set green led on when temprature drops, else set green led off
+void Green_led_update_rinse(uint8_t temp) { 
  
 	static float previous_temp;
 	static int8_t delay = 0;
@@ -78,7 +80,8 @@ void Green_led_update_rinse(uint8_t temp) { // set green led on when temprature 
   previous_temp = temp;	
 }
 
-void Green_led_update_measure(bool led_on) { // determine if temperature has been measured
+// determine if temperature has been measured
+void Green_led_update_measure(bool led_on) { 
 	
 	if (led_on) {
 		green_led_status.measure_indication = true;
@@ -87,7 +90,8 @@ void Green_led_update_measure(bool led_on) { // determine if temperature has bee
 	}
 }
 
-void Green_led_update() { // update green led --> update led when temprature dropped / update led when measurement has taken place
+// update green led --> update led when temprature dropped / update led when measurement has taken place
+void Green_led_update() { 
 
 	if(green_led_status.rinse_indication && green_led_status.measure_indication) { // if temperature has been measured and temperature has dropped
 		Green_led_off();

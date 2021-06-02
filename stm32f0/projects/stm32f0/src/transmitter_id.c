@@ -1,6 +1,6 @@
 #include "transmitter_id.h"
 
-// Zie kopje LoRa communicatie --> Transmitter ID in het technisch ontwerp
+/* Zie het kopje LoRa communicatie --> Transmitter ID in het technisch ontwerp */
 
 // global variables
 bool exist;

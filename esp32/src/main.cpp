@@ -14,6 +14,7 @@ settings_t settings;
 WebServer interface_server(80);
 EBYTE Transceiver(&Serial2, PIN_M0_, PIN_M1_, PIN_AX);
 
+/* Zie LoRa communicatie --> Temperatures in technisch ontwerp */
 struct DATA {
   uint8_t transmitter_ID[TRANSMITTER_ID_SIZE];
   uint8_t Temperature[TEMPERATURE_SIZE];
@@ -163,6 +164,7 @@ bool send_to_cloud(char* payload) {
 }
 
 
+/* Zie het kopje LoRa communicatie --> Proces --> Ontvangen (ESP32) in technisch ontwerp */
 bool LoRa_get_data() {
   bool result;
   // i highly suggest you send data using structures and not

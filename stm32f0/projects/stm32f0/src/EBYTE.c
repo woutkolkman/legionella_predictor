@@ -3,7 +3,7 @@
 // ----------------------------------------------------------------------------
 #include <EBYTE.h>
 
-// Zie kopje LoRa communicatie --> Initialisatie --> STM32 in technisch ontwerp
+/* Zie het kopje LoRa communicatie --> Initialisatie --> STM32 in technisch ontwerp */
 
 // global variables. putting them in the 'EBYTE.h' files gives 'multiply defined' errors. 
 uint16_t Rx_read_location;
@@ -161,6 +161,7 @@ void init_buffer() {
 	}
 }
 
+/* Zie het kopje LoRa communicatie --> Proces --> STM32 delay in technisch ontwerp */
 //initializes the timer used for delays
 void init_Timer_Delay() {
 	TIM_TimeBaseInitTypeDef TIM_TimeBaseInitStructure;
@@ -395,6 +396,7 @@ void build_option_byte() {
 	_Options = ((_Option_transmission & 0xFF) << 7) | ((_Option_pullup & 0xFF) << 6) | ((_Option_wakeup & 0xFF) << 3) | ((_Option_FEC & 0xFF) << 2) | (_Option_power & 0x03);
 }
 
+/* Zie het kopje LoRa communicatie --> Proces --> Busy in technisch ontwerp */
 //checking whether the LoRa module is busy doing something
 bool get_aux() {
 	return GPIO_ReadInputDataBit(GPIOA, LORA_AUX_PIN);

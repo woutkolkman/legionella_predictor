@@ -5,8 +5,9 @@
 #include "struct.h"
 #include "main.h"
 
-// Zie het kopje LM35 Temperatuursensor --> Proces in technisch ontwerp 
-uint8_t measure_temperature(void) { // function to measure current temperature
+/* Zie het kopje LM35 Temperatuursensor --> Proces in technisch ontwerp */
+// function to measure current temperature
+uint8_t measure_temperature(void) { 
 		
 	uint16_t adc;
 	uint8_t temperature;
@@ -23,7 +24,9 @@ uint8_t measure_temperature(void) { // function to measure current temperature
 	return temperature;
 }
 
-void select_channel(uint8_t pin) { // function to select ADC-channel 10/11 (battery and sensor)
+/* Zie het kopje Elektronisch schema sensor-systeem -> Temperatuursensor en batterij in technisch ontwerp */
+// function to select ADC-channel 10/11 (battery and sensor)
+void select_channel(uint8_t pin) { 
 	
 	uint32_t tmpreg = 0;
 	
@@ -45,7 +48,8 @@ void select_channel(uint8_t pin) { // function to select ADC-channel 10/11 (batt
 	ADC_StartOfConversion(ADC1);
 }
 
-// Zie het kopje LM35 Temperatuursensor --> Proces in technisch ontwerp
+/* Zie het kopje LM35 Temperatuursensor --> Proces in technisch ontwerp */
+// timer to measure temperature every minute 
 void TIM14_init(void) {
 	
 	TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;
@@ -70,7 +74,8 @@ void TIM14_init(void) {
 }
 
 
-// Zie het kopje Indiatie-LEDs --> Groene LED in technisch ontwerp 
+/* Zie het kopje Indiatie-LEDs --> Groene LED in technisch ontwerp */
+// timer to make green LED light up for 300 ms (washing)
 void TIM2_init(void) {
 	
 	TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;

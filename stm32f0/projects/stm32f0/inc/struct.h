@@ -6,7 +6,7 @@
 #define TEMPERATURE_SIZE 		60
 #define TRANSMITTER_ID_SIZE 8
 
-// Zie LoRa communicatie --> Temperatures in technisch ontwerp
+/* Zie het kopje LoRa communicatie --> Temperatures in technisch ontwerp */
 struct DATA {
 	uint8_t transmitter_ID[TRANSMITTER_ID_SIZE];
 	uint8_t Temperature[TEMPERATURE_SIZE];

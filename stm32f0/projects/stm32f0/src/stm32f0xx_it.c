@@ -46,13 +46,14 @@ void SysTick_Handler(void)
 {
 }
 
-
-void TIM1_BRK_UP_TRG_COM_IRQHandler(void) { // EBYTE LoRa, called when a millisecond has passed and Timer 1 is enabled
+// EBYTE LoRa, called when a millisecond has passed and Timer 1 is enabled
+void TIM1_BRK_UP_TRG_COM_IRQHandler(void) { 
 	time_passed++;
 	TIM_ClearITPendingBit(TIM1, TIM_IT_Update);
 }
 
-void USART1_IRQHandler(void) { // when data is received from LoRa
+// when data is received from LoRa
+void USART1_IRQHandler(void) { 
 
 	// Read Data Register not empty interrupt?
   if(USART1->ISR & USART_ISR_RXNE) {
@@ -69,7 +70,9 @@ void USART1_IRQHandler(void) { // when data is received from LoRa
 	}
 }
 
-void TIM2_IRQHandler(void) { // timer to generate 300 ms blink
+/* Zie het kopje Indicatie-LEDs --> Groene LED in technisch ontwerp */
+// timer to generate 300 ms blink
+void TIM2_IRQHandler(void) { 
 	
 	if (TIM_GetITStatus(TIM2, TIM_IT_Update) != RESET) {
 		TIM_ClearITPendingBit(TIM2, TIM_IT_Update);
@@ -82,7 +85,12 @@ void TIM2_IRQHandler(void) { // timer to generate 300 ms blink
 	}
 }
 
-void TIM14_IRQHandler(void) { // timer to measure temperature every minute
+/* Zie het kopje LoRa communicatie --> Temperatures in technisch ontwerp 
+	 Zie het kopje Indicatie-LEDs --> Groene LED in technisch ontwerp
+	 Zie het kopje Energiezuinigheid --> GPIO-A CLOCK in technisch ontwerp 
+	 Zie het kopje Elektronisch schema sensor-systeem -> Temperatuursensor en batterij in technisch ontwerp */
+// timer to measure temperature every minute
+void TIM14_IRQHandler(void) { 
   
 	if (TIM_GetITStatus(TIM14, TIM_IT_Update) != RESET) { // wait a minute
 		TIM_ClearITPendingBit(TIM14, TIM_IT_Update);
@@ -101,8 +109,10 @@ void TIM14_IRQHandler(void) { // timer to measure temperature every minute
   }
 }
 
-// Zie het kopje LoRa communicatie --> Temperatures in technisch ontwerp 
-void ADC1_COMP_IRQHandler(void) { // ADC sample complete
+/* Zie het kopje LoRa communicatie --> Temperatures in technisch ontwerp 
+	 Zie het kopje Elektronisch schema sensor-systeem -> Temperatuursensor en batterij in technisch ontwerp */
+// ADC sample complete
+void ADC1_COMP_IRQHandler(void) { 
 	
 	if (ADC_GetITStatus(ADC1, ADC1_COMP_IRQn) != RESET) {
 		//clear interrupt bit

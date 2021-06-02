@@ -2,7 +2,7 @@
 #include "lm35.h"
 #include "struct.h"
 
-
+/* Zie Elektronisch schema sensor-systeem --> transistor in technisch ontwerp */
 //init transistor output pin
 void battery_transistor_init(void) {
 	
@@ -19,6 +19,7 @@ void battery_transistor_init(void) {
 }
 
 
+/* Zie Indicatie-LEDs --> Blauwe LED in technisch ontwerp */
 //init battery-low LED
 void battery_led_init(void) {
 	
@@ -33,7 +34,7 @@ void battery_led_init(void) {
 	GPIO_PinAFConfig(GPIOC, GPIO_PinSource8, GPIO_AF_1);
 }
 
-
+/* Zie Indicatie-LEDs --> Blauwe LED in technisch ontwerp */
 //enable flashing battery-low LED
 void timer3_init(void) {
 	
@@ -59,7 +60,7 @@ void timer3_init(void) {
 	TIM_Cmd(TIM3, ENABLE); // enable TIMx timer
 }
 
-
+/* Zie Indicatie-LEDs --> Blauwe LED in technisch ontwerp */
 //disable flashing battery-low LED
 void timer3_deinit(void) {
 
@@ -69,7 +70,7 @@ void timer3_deinit(void) {
 	GPIOC->BRR = GPIO_Pin_8; //LED off
 }
 
-
+/* Zie Indicatie-LEDs --> Blauwe LED in technisch ontwerp */
 //turn LED-flashing on or off
 void battery_status(uint16_t val) {
 	

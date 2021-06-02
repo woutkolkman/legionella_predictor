@@ -38,6 +38,8 @@
 #include <EBYTE.h>
 #include <Stream.h>
 
+/* Zie LoRa communicatie --> ESP32 in technisch ontwerp */
+
 #if ARDUINO >= 100
 #include "Arduino.h"
 #else
@@ -485,7 +487,7 @@ void EBYTE::build_option_byte() {
 	_Options = ((_Option_trans & 0xFF) << 7) | ((_Option_pullup & 0xFF) << 6) | ((_Option_wakeup & 0xFF) << 3) | ((_Option_FEC & 0xFF) << 2) | (_Option_power&0b11);
 }
 
-
+/* Zie het kopje LoRa communicatie --> Proces --> Busy in technisch ontwerp */
 bool EBYTE::get_aux() {
 	return digitalRead(_AUX);
 }

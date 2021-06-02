@@ -43,7 +43,7 @@ int main(void) {
 	
 	while (1) {
 		
-		// Zie kopje Energiezuinigheid --> SLEEP-MODUS in technisch ontwerp
+		/* Zie het kopjeEnergiezuinigheid --> SLEEP-MODUS in technisch ontwerp */
 		PWR_EnterSleepMode(PWR_SLEEPEntry_WFI); // let STM32 enter sleep mode --> let interrupt handle functions
 		
 		if (send) {
@@ -53,7 +53,8 @@ int main(void) {
 			set_mode(MODE_NORMAL); // sets the LoRa module for transmission
 			GPIOB_enable(); // enable GPIOB clk
 			enable_transmission_led(); 
-			send_struct(&Temperatures, sizeof(Temperatures)); // zie het kopje LM35 Temperatuursensor --> Proces in technisch ontwerp 
+			send_struct(&Temperatures, sizeof(Temperatures)); /* Zie het kopje LM35 Temperatuursensor --> Proces in technisch ontwerp 
+																													 Zie het kopje LoRa communicatie --> Proces --> Verzenden (STM32) in technisch ontwerp */
 			disable_transmission_led();
 			GPIOB_disable(); // disable GPIOB clk (not running)
 			set_mode(MODE_PROGRAM); //sets the LoRa module for sleep mode to save energy
@@ -78,8 +79,10 @@ int main(void) {
 	}
 }
 
-// Zie het kopje LoRa communicatie --> Temperatures in technisch ontwerp 
-void ADC_interrupt_init(void) { // configure interrupt "ADC1_COMP_IRQHandler"
+/* Zie het kopje LoRa communicatie --> Temperatures in technisch ontwerp 
+	 Zie het kopje Elektronisch schema sensor-systeem -> Temperatuursensor en batterij in technisch ontwerp */
+// configure interrupt "ADC1_COMP_IRQHandler"
+void ADC_interrupt_init(void) { 
 	
 	// Configure ADC ready interrupt
 	ADC_ClearITPendingBit(ADC1, ADC1_COMP_IRQn);
@@ -88,8 +91,10 @@ void ADC_interrupt_init(void) { // configure interrupt "ADC1_COMP_IRQHandler"
 	NVIC_SetPriority(ADC1_COMP_IRQn,0);
 }
 
-// Zie het kopje LoRa communicatie --> Temperatures in technisch ontwerp 
-void ADC_init(void) { // initialize ADC for sensor and battery measurement
+/* Zie het kopje LoRa communicatie --> Temperatures in technisch ontwerp 
+	 Zie het kopje Elektronisch schema sensor-systeem -> Temperatuursensor en batterij in technisch ontwerp */ 
+// initialize ADC for sensor and battery measurement
+void ADC_init(void) { 
 	
   ADC_InitTypeDef  ADC_InitStructure;
 	
