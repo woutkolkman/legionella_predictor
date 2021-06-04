@@ -10,7 +10,7 @@ void settings_reset(settings_t *settings) {
     strcpy(settings->cloud_path,"/packet");
 
     // default wifi settings
-    strcpy(settings->wifi_sidd,"Legionella Predictor Gateway");
+    strcpy(settings->wifi_sidd,"Legionella Predictor GateStef");
     strcpy(settings->wifi_password, "zeer_geheim2021");
     settings->mode_is_hotspot = true;
 

@@ -8,13 +8,11 @@
 #include "ebyte.h"
 #include "remember_settings.h"
 
-#define NDEBUG 1
 // --- globals
 settings_t settings;
 WebServer interface_server(80);
 EBYTE Transceiver(&Serial2, PIN_M0_, PIN_M1_, PIN_AX);
 
-/* Zie LoRa communicatie --> Temperatures in technisch ontwerp */
 struct DATA {
   uint8_t transmitter_ID[TRANSMITTER_ID_SIZE];
   uint8_t Temperature[TEMPERATURE_SIZE];
@@ -26,9 +24,8 @@ void setup() {
   Serial.begin(115200);
 
   // load settings if EEPROM data is valid
-  Serial.print("Load settings : ");
+  Serial.println("Load last known settings:");
   if(settings_is_correct_signature()) {
-    Serial.println("load from EEPROM");
     settings_load(&settings);
   } 
   else { // if the EEPROM data is not valid config data then write config data to EEPROM
@@ -58,7 +55,7 @@ void setup() {
 
   //initialisation of LoRa
   Serial2.begin(9600);
-  Serial.println("Starting Reader");
+  Serial.println("Starting Transmitter");
 
   // this init will set the pinModes for you
   Transceiver.init();
@@ -78,15 +75,13 @@ void loop() {
     if(LoRa_get_data()) {
       generate_http_post(&post_payload[0]);
       send_to_cloud(&post_payload[0]);
-    } else {
-      Serial.println("Error in data");
     }
   }
 
   // reset settings when serial read a 'r'
   if(Serial.available()) {
     if(Serial.read() == 'r') {
-      Serial.println("EEPROM: go to default settings.");
+      Serial.println("Default hotspot mode.");
       settings_reset(&settings);
     }
   }
@@ -163,8 +158,8 @@ bool send_to_cloud(char* payload) {
   return retval;
 }
 
-
-/* Zie het kopje LoRa communicatie --> Proces --> Ontvangen (ESP32) in technisch ontwerp */
+//get the data from the LoRa module via USART
+//https://github.com/KrisKasprzak/EBYTE
 bool LoRa_get_data() {
   bool result;
   // i highly suggest you send data using structures and not
@@ -172,31 +167,13 @@ bool LoRa_get_data() {
     // a parsing method
   if(Transceiver.get_struct(&Temperatures, sizeof(Temperatures))) { //if data is the right size, it's more certain the data is from this system.
     result = true;
-    for(int i = 0; i < TRANSMITTER_ID_SIZE; i++) {
+    for(int i = 0; i < TRANSMITTER_ID_SIZE; i++) {  //if transmitter ID is valid, thing can be sent. Otherwise it's not valid and can cause problems in the cloud
       if(Temperatures.transmitter_ID[i] < 33 || Temperatures.transmitter_ID[i] > 126) { 
         result = false;
-        Serial.println("ID incorrect");
         return result;
       }
     }
-      // dump out what was just received
-      Serial.println("Temperatures: "); 
-      for (int i = 0; i < TEMPERATURE_SIZE; i++) {
-        Serial.print(i);
-        Serial.print(" : ");
-        Serial.print(Temperatures.Temperature[i]);
-        Serial.println(" degrees.");
-      }
-
-      Serial.print("transmitter_ID: ");
-      for (int i = 0; i < TRANSMITTER_ID_SIZE; i++) {
-        Serial.print(Temperatures.transmitter_ID[i]);
-        Serial.print(' ');
-      }
-    
-    
   } else {
-    Serial.println("Data size incorrect");
     result = false;
   }
   
