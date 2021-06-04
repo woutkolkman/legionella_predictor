@@ -197,7 +197,7 @@ uint8_t get_byte() {
 	return result;
 }
 
-/* Zie LoRa communicatie --> Proces --> STM32 (verzenden) in technisch ontwerp */
+/* Zie LoRa communicatie --> Proces --> Verzenden (STM32) in technisch ontwerp */
 void send_struct(const void* the_structure, uint16_t size) { // sends a struct through LoRa
   uint16_t count = 0;
 	uint8_t *C_The_Structure = (uint8_t *) the_structure;
