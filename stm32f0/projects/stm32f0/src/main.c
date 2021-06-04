@@ -43,7 +43,7 @@ int main(void) {
 	
 	while (1) {
 		
-		/* Zie het kopjeEnergiezuinigheid --> SLEEP-MODUS in technisch ontwerp */
+		/* Zie het kopje Energiezuinigheid --> Sleep-modus in technisch ontwerp */
 		PWR_EnterSleepMode(PWR_SLEEPEntry_WFI); // let STM32 enter sleep mode --> let interrupt handle functions
 		
 		if (send) {

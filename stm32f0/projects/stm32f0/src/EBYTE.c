@@ -197,6 +197,7 @@ uint8_t get_byte() {
 	return result;
 }
 
+/* Zie LoRa communicatie --> Proces --> Verzenden (STM32) in technisch ontwerp */
 void send_struct(const void* the_structure, uint16_t size) { // sends a struct through LoRa
   uint16_t count = 0;
 	uint8_t *C_The_Structure = (uint8_t *) the_structure;
@@ -597,6 +598,7 @@ method to get module version (undocumented as to the value)
 uint8_t get_features() {
 	return _Features;
 }
+/* Zie LoRa communicatie --> Proces --> STM32 delay in technisch ontwerp */
 //a simple delay function, goes to sleeping mode while the delay isn't finished yet
 void timer_delay(unsigned long delay_time) {
 	time_passed = 0;
