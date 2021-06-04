@@ -4,7 +4,6 @@
 #include "usart.h"
 #include "stdlib.h"
 #include "green_led.h"
-#include "debugmode.h"
 
 // defines 
 #define BYTE_MAX_NUMBER 256

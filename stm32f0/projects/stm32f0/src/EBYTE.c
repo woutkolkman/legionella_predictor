@@ -71,7 +71,10 @@ bool init_LoRa() {
 
 //initializes the pinouts of M0, M1 and AUX (Rx and Tx will be in usart)
 void init_LoRa_GPIO() {
+	
 	GPIO_InitTypeDef GPIO_initStructure;
+	
+	RCC_AHBPeriphClockCmd(RCC_AHBENR_GPIOAEN, ENABLE);
 	
 	GPIO_initStructure.GPIO_Mode = GPIO_Mode_OUT;
 	GPIO_initStructure.GPIO_Pin = (LORA_M0_PIN | LORA_M1_PIN);
@@ -84,6 +87,7 @@ void init_LoRa_GPIO() {
 
 //initializes USART1
 void init_USART() {
+	
 	USART_InitTypeDef USART_Initstructure;
 	init_USART_GPIO();
 	
@@ -106,6 +110,7 @@ void init_USART() {
 
 //initializes the GPIO pins for usart1
 void init_USART_GPIO() {
+	
 	GPIO_InitTypeDef GPIO_initStructure;
 	
 	RCC_AHBPeriphClockCmd(RCC_AHBENR_GPIOAEN, ENABLE); 	//periph clock enable
@@ -427,7 +432,7 @@ void save_parameters(uint8_t val) {
 method to print parameters, this can be called anytime after init(), because init gets parameters
 and any method updates the variables
 */
-void print_parameters() {
+void print_parameters() { 
 
 	_Parity_bit = (_Speed & 0XC0) >> 6;
 	_UART_data_rate = (_Speed & 0X38) >> 3;
@@ -438,31 +443,6 @@ void print_parameters() {
 	_Option_wakeup = (_Options & 0X38) >> 3;
 	_Option_FEC = (_Options & 0X07) >> 2;
 	_Option_power = (_Options & 0X03);
-
-	Serial_println("----------------------------------------");
-	Serial_print("Model no.: ");  Serial_putintln(_Model);
-	Serial_print("Version  : ");  Serial_putintln(_Version);
-	Serial_print("Features : ");  Serial_putintln(_Features);
-	Serial_println(" ");
-	Serial_print("Mode : ");  Serial_putintln(_Save);
-	Serial_print("AddH : ");  Serial_putintln(_Address_High);
-	Serial_print("AddL : ");  Serial_putintln(_Address_low);
-	Serial_print("Sped : ");  Serial_putintln(_Speed);
-	Serial_print("Chan : ");  Serial_putintln(_Channel);
-	Serial_print("Optn : ");  Serial_putintln(_Options);
-	Serial_print("Addr : ");  Serial_putintln(get_address());
-	Serial_println(" ");
-	Serial_print("SpeedParityBit    : ");  Serial_putintln(_Parity_bit);
-	Serial_print("SpeedUARTDataRate : ");  Serial_putintln(_UART_data_rate);
-	Serial_print("SpeedAirDataRate  : ");  Serial_putintln(_Air_data_rate);
-	Serial_print("OptionTrans       : ");  Serial_putintln(_Option_transmission);
-	Serial_print("OptionPullup      : ");  Serial_putintln(_Option_pullup);
-	Serial_print("OptionWakeup      : ");  Serial_putintln(_Option_wakeup);
-	Serial_print("OptionFEC         : ");  Serial_putintln(_Option_FEC);
-	Serial_print("OptionPower       : ");  Serial_putintln(_Option_power);
-
-	Serial_println("----------------------------------------");
-
 }
 
 //reading parameters 

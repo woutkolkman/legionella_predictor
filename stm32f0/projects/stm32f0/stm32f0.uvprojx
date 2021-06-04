@@ -463,11 +463,6 @@
               <FilePath>.\src\EBYTE.c</FilePath>
             </File>
             <File>
-              <FileName>serial.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\src\serial.c</FilePath>
-            </File>
-            <File>
               <FileName>lm35.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\src\lm35.c</FilePath>
@@ -1188,11 +1183,6 @@
                   </Cads>
                 </FileArmAds>
               </FileOption>
-            </File>
-            <File>
-              <FileName>serial.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\src\serial.c</FilePath>
             </File>
             <File>
               <FileName>lm35.c</FileName>
