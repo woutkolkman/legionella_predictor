@@ -1,3 +1,4 @@
+/* zie kopje "Uitleg individuele componenten>ESP32 (gateway)>Wifi" in technisch ontwerp */
 #include "config_wifi.h"
 #include "website.h"
 #include <Arduino.h>
@@ -28,6 +29,7 @@ void setup_wifi(bool hotspot,char *ssid, char *password) {
     WiFi.softAP(ssid, password);
 
     // DNS give by every request theportal
+    /* zie kopje "Uitleg individuele componenten>ESP32 (gateway)>captive portal" in technisch ontwerp */
     DNS_server.start(DNS_PORT, "*", IP);
   }
   else { // connect to a wifi network
@@ -57,4 +59,4 @@ void setup_wifi(bool hotspot,char *ssid, char *password) {
   // print ip adress to serial
   Serial.print("\nIP address of ESP32 : ");
   Serial.println(IP);
-}
+} 
