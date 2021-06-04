@@ -10,7 +10,6 @@
 struct DATA Temperatures;
 
 //#define CLEARTRANSMITTERID 0
-#define DEBUG
 
 int main(void) {
 	
@@ -28,17 +27,8 @@ int main(void) {
 	ADC_interrupt_init();
 	
 	init_transmission_led();
-	#ifdef DEBUG
-	init_serial();
-	Serial_clearscreen();
-	#endif
 	init_LoRa();
 	set_mode(MODE_PROGRAM);
-
-	#ifdef DEBUG
-	print_parameters();
-	print_transmitter_ID();
-	#endif
 	Green_led_init();
 	
 	while (1) {
@@ -47,9 +37,6 @@ int main(void) {
 		PWR_EnterSleepMode(PWR_SLEEPEntry_WFI); // let STM32 enter sleep mode --> let interrupt handle functions
 		
 		if (send) {
-			#ifdef DEBUG
-			uint8_t i;
-			#endif
 			set_mode(MODE_NORMAL); // sets the LoRa module for transmission
 			GPIOB_enable(); // enable GPIOB clk
 			enable_transmission_led(); 
@@ -58,21 +45,6 @@ int main(void) {
 			disable_transmission_led();
 			GPIOB_disable(); // disable GPIOB clk (not running)
 			set_mode(MODE_PROGRAM); //sets the LoRa module for sleep mode to save energy
-			#ifdef DEBUG
-			Serial_println("Temperatures: ");
-			for (i = 0; i < TEMPERATURE_SIZE; i++) {
-				Serial_putint(i);
-				Serial_print(" : ");
-				Serial_putint(Temperatures.Temperature[i]);
-				Serial_println(" degrees.");
-			}
-			Serial_print("Transmitter ID = ");
-			for(i = 0; i < TRANSMITTER_ID_SIZE; i++) {
-				Serial_char(Temperatures.transmitter_ID[i]);
-				Serial_char(' ');
-			}
-			Serial_newLine();
-			#endif
 			send = false;
 			GPIOA_disable(); // disable GPIOA clock when data has been sent (USART <-> LoRa)
 		}

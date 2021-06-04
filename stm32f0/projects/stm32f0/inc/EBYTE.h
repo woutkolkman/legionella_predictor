@@ -10,8 +10,6 @@
 #include "usart.h"
 #include "stm32f0xx.h"
 #include "stm32f0_discovery.h"
-#include "debugmode.h"
-#include "serial.h"
 
 // ----------------------------------------------------------------------------
 // GPIO Pin Defines
@@ -176,7 +174,7 @@ to react, some say only 10 ms, but I've found it can be much lonnger, I'm using
 	void send_struct(const void *the_structure, uint16_t size_);
 	
 	// mehod to print parameters
-	void print_parameters(void);
+	void print_parameters(void); 
 	
 	// parameters are set above but NOT saved, here's how you save parameters
 	// notion here is you can set several but save once as opposed to saving on each parameter change

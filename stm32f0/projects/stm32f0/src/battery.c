@@ -76,11 +76,6 @@ void battery_status(uint16_t val) {
 	
 	static bool was_full = true;
 	
-	#ifdef DEBUG
-	Serial_print("battery: "); //debug
-	Serial_putintln(val); //debug
-	#endif
-	
 	if (val > BATTERY_THRESHOLD_VOLTAGE) {
 		if (!was_full) {
 			timer3_deinit();

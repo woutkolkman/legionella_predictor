@@ -3,10 +3,8 @@
 #include "battery.h"
 #include "stm32f0_discovery.h"
 #include "stdbool.h"
-#include "serial.h" //debug
 #include "stdbool.h"
 #include "lm35.h"
-#include "serial.h"
 #include "struct.h"
 #include "green_led.h"
 

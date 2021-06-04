@@ -3,7 +3,6 @@
 
 #include "stdint.h"
 #include "stdbool.h"
-#include "debugmode.h"
 
 #define HOUR (60000 - 1)
 #define DEBUGTIME (250 - 1) // 30 seconds
