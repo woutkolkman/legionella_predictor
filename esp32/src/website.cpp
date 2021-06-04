@@ -1,3 +1,4 @@
+/* zie kopje "Uitleg individuele componenten>ESP32 (gateway)>Webserver op ESP32" in technisch ontwerp */
 #include <Arduino.h>
 #include "website.h"
 #include <stdbool.h>
@@ -123,13 +124,15 @@ void homepage() {
 }
 
 // go to homepage when a invalid url is entered or trigger captive portal system
+/* zie kopje "Uitleg individuele componenten>ESP32 (gateway)>captive portal" in technisch ontwerp */
 void page_not_found() {
   interface_server.sendHeader("Location", String("http://") + interface_server.client().localIP().toString(), true);
   interface_server.send(302, "text/plain", "");
   interface_server.client().stop();
 }
 
-// scan for networks and print them on webpage
+// scan for networks and print them on webpage and user interface for setup wifi
+/* zie kopje "Uitleg individuele componenten>ESP32 (gateway)>instellingen" in technisch ontwerp */
 void scan_networks() {
  String message = "";
   message += webpage_head;
@@ -167,6 +170,7 @@ void scan_networks() {
 }
 
 // connect to a wifi network when wifi credentials are given
+/* zie kopje "Uitleg individuele componenten>ESP32 (gateway)>instellingen" in technisch ontwerp */
 void connect_to_network() {
  String message = "";
  bool connect_to_wifi = false;
@@ -205,6 +209,7 @@ void connect_to_network() {
 }
 
 // generate webpage for setup cloud settings
+/* zie kopje "Uitleg individuele componenten>ESP32 (gateway)>instellingen" in technisch ontwerp */
 void config_cloud_page() {
  String message = ""; 
   // add html head 
