@@ -30,14 +30,14 @@ void disable_transmission_led() {
 	GPIO_ResetBits(TRANSMISSION_BUSY_PORT, TRANSMISSION_BUSY_PIN);
 }
 
-/* Zie het kopje Energiezuinigheid --> GPIO-B in technisch ontwerp */
+/* Zie het kopje Energiezuinigheid --> GPIO-B CLOCK in technisch ontwerp */
 // enable GPIOB clk
 void GPIOB_enable(void) { 
 	
 	RCC->AHBENR |= RCC_AHBENR_GPIOBEN;
 }
 
-/* Zie het kopje Energiezuinigheid --> GPIO-B in technisch ontwerp */
+/* Zie het kopje Energiezuinigheid --> GPIO-B CLOCK in technisch ontwerp */
 // disable GPIOB clk (not running)
 void GPIOB_disable(void) { 
 	

@@ -191,14 +191,14 @@ void USART_disable() {
 	RCC->APB2ENR &= ~RCC_APB2ENR_USART1EN; 
 }
 
-/* Zie het kopje Energiezuinigheid --> GPIO-A in technisch ontwerp */
+/* Zie het kopje Energiezuinigheid --> GPIO-A CLOCK in technisch ontwerp */
 // enable GPIOA clk
 void GPIOA_enable(void) { 
 	
 	RCC->AHBENR |= RCC_AHBENR_GPIOAEN;
 }
 
-/* Zie het kopje Energiezuinigheid --> GPIO-A in technisch ontwerp */
+/* Zie het kopje Energiezuinigheid --> GPIO-A CLOCK in technisch ontwerp */
 // disable GPIOA clk (not running)
 void GPIOA_disable(void) { 
 	
