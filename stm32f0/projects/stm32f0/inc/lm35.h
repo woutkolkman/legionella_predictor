@@ -3,10 +3,12 @@
 
 #include "stdint.h"
 #include "stdbool.h"
-#include "debugmode.h"
 
-#define HOUR (60000 - 1)
-#define DEBUGTIME (250 - 1) // 30 seconds
+// defines
+#define MINUTE 					 (60000 - 1)
+#define THREE_HUNDRED_MS (300 - 1)
+#define CHANNEL_10 			 10
+#define CHANNEL_11 			 11
 
 // function prototypes
 uint8_t measure_temperature(void);
@@ -18,9 +20,5 @@ void select_channel(uint8_t pin);
 extern bool send;
 extern uint8_t counter;
 extern bool blink;
-
-// defines
-#define CHANNEL_10 10
-#define CHANNEL_11 11
 
 #endif // _LM35_H_
