@@ -1,6 +1,4 @@
 /* zie kopje "Uitleg individuele componenten>ESP32 (gateway)>EEPROM" in technisch ontwerp */
-#include <EEPROM.h>
-#include <string.h>
 #include "remember_settings.h"
 
 // reset settings to standard settings

@@ -1,12 +1,4 @@
-#include <Arduino.h>
-#include <WiFi.h>
-#include <WebServer.h>
-#include <HTTPClient.h>
 #include "main.h"
-#include "website.h"
-#include "config_wifi.h"
-#include "ebyte.h"
-#include "remember_settings.h"
 
 // --- globals
 settings_t settings;
@@ -85,10 +77,6 @@ void loop() {
       settings_reset(&settings);
     }
   }
-  //TODO WiFi reconnect wanneer verbinding is verloren
-  /*if (!WiFi.isConnected()) {
-    connect_to_network();
-  }*/
 }
 
 

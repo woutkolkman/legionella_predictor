@@ -1,6 +1,12 @@
 #ifndef WEBSITE_H
 #define WEBSITE_H
 #include <stdbool.h>
+#include <Arduino.h>
+#include <iostream>
+#include <string>
+#include "main.h"
+#include "config_wifi.h"
+#include <WebServer.h>
 
 // function defintions
 void homepage();

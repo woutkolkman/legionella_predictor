@@ -1,12 +1,5 @@
 /* zie kopje "Uitleg individuele componenten>ESP32 (gateway)>Wifi" in technisch ontwerp */
 #include "config_wifi.h"
-#include "website.h"
-#include <Arduino.h>
-#include <WiFi.h>
-#include <WebServer.h>
-#include <ESPmDNS.h>
-#include <DNSServer.h>
-#include "main.h"
 
 // globals
 DNSServer DNS_server;

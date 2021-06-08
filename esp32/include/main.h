@@ -1,6 +1,14 @@
 #ifndef MAIN_H
 #define MAIN_H
 #include <WebServer.h>
+#include <Arduino.h>
+#include <WiFi.h>
+#include <WebServer.h>
+#include <HTTPClient.h>
+#include "remember_settings.h"
+#include "website.h"
+#include "config_wifi.h"
+#include "ebyte.h"
 #include "remember_settings.h"
 
 // defines

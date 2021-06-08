@@ -1,6 +1,8 @@
 /* zie kopje "Uitleg individuele componenten>ESP32 (gateway)>EEPROM" in technisch ontwerp */
 #ifndef REMEMBER_SETTINGS_H
 #define REMEMBER_SETTINGS_H
+#include <EEPROM.h>
+#include <string.h>
 #include <stdbool.h>
 
 // defines

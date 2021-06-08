@@ -1,12 +1,5 @@
 /* zie kopje "Uitleg individuele componenten>ESP32 (gateway)>Webserver op ESP32" in technisch ontwerp */
-#include <Arduino.h>
 #include "website.h"
-#include <stdbool.h>
-#include <iostream>
-#include <string>
-#include "main.h"
-#include "config_wifi.h"
-#include <WebServer.h>
 
 String new_sidd = "";
 String new_password = "";
