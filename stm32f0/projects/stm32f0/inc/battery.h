@@ -9,7 +9,7 @@
 #include "struct.h"
 
 #define BATTERY_THRESHOLD_VOLTAGE 3140
-#define FIVEHUNDRED_MS					  (500 - 1)
+#define FIVE_HUNDRED_MS					  (500 - 1)
 
 void battery_transistor_init(void);
 void battery_led_init(void);
