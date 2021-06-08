@@ -6,6 +6,14 @@
 #endif 
 
 #include "stm32f0xx.h"
+#include "lm35.h"
+#include "battery.h"
+#include "stm32f0_discovery.h"
+#include "stdbool.h"
+#include "lm35.h"
+#include "struct.h"
+#include "green_led.h"
+#include "usart.h"
 
 void NMI_Handler(void);
 void HardFault_Handler(void);

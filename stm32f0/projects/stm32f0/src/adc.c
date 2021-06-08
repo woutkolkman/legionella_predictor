@@ -1,6 +1,5 @@
 #include "adc.h"
 
-
 /* Zie het kopje LoRa communicatie --> Temperatures in technisch ontwerp 
 	 Zie het kopje Elektronisch schema sensor-systeem -> Temperatuursensor en batterij in technisch ontwerp */
 // configure interrupt "ADC1_COMP_IRQHandler"

@@ -1,10 +1,10 @@
 #ifndef _LM35_H_
 #define _LM35_H_
 
+#include "stm32f0xx.h"
 #include "stdint.h"
 #include "stdbool.h"
 #include "adc.h"
-
 
 // defines
 #define MINUTE 					 (60000 - 1)

@@ -1,6 +1,4 @@
 #include "battery.h"
-#include "lm35.h"
-#include "struct.h"
 
 /* Zie Elektronisch schema sensor-systeem --> transistor in technisch ontwerp */
 //init transistor output pin
@@ -45,7 +43,7 @@ void timer3_init(void) {
 	
 	TIM_TimeBaseStructure.TIM_ClockDivision = TIM_CKD_DIV1;
 	TIM_TimeBaseStructure.TIM_CounterMode   = TIM_CounterMode_Up;
-	TIM_TimeBaseStructure.TIM_Period        = 500 - 1;
+	TIM_TimeBaseStructure.TIM_Period        = FIVE_HUNDRED_MS;
 	TIM_TimeBaseStructure.TIM_Prescaler     = (SystemCoreClock / 1000) - 1;
 	TIM_TimeBaseInit(TIM3, &TIM_TimeBaseStructure);
 	
