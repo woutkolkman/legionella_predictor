@@ -60,7 +60,7 @@ void Green_led_update_rinse(uint8_t temp) {
 	static int8_t delay = 0;
 	
 	// determine when rinse happens
-	if(difference(previous_temp, temp) >= TEMP_TRESHOLD && previous_temp > temp) {
+	if(difference(previous_temp, temp) >= TEMP_THRESHOLD && previous_temp > temp) {
 		// when rinse happens, turn green led on
 		green_led_status.rinse_indication = true;
 	}

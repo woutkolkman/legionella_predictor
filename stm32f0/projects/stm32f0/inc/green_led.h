@@ -7,7 +7,7 @@
 #include "stm32f0xx_gpio.h"
 #include "stdint.h"
 
-#define TEMP_TRESHOLD 			(4)
+#define TEMP_THRESHOLD 			(4)
 #define DELAY_GREEN_TURNOFF (1)
 
 // public defines
