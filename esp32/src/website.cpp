@@ -114,7 +114,7 @@ void homepage() {
 
   // show wifi status
   message += "<div class='info'>\n";
-	message += "<p>" + ((settings.mode_is_hotspot == false) ? ("Device connected to network " + String(settings.wifi_sidd)) : ("Device in hotspot mode.")) + "</p>\n";
+	message += "<p>" + ((!settings.mode_is_hotspot) ? ("Device connected to network " + String(settings.wifi_sidd)) : ("Device in hotspot mode.")) + "</p>\n";
 	message += "</div>";
 
   message += "<p>Click <a href='/scanwifi'><b>HERE</b></a> to enter wifi credentials.</p>\n";
@@ -194,7 +194,7 @@ void connect_to_network() {
   interface_server.send(404, "text/html", message);
   
   // if we get succesfull new wifi credentials
-  if(connect_to_wifi == true) {
+  if(connect_to_wifi) {
     // convert strings to char array and update settings
     new_sidd.toCharArray(settings.wifi_sidd,33);
     new_password.toCharArray(settings.wifi_password,64);

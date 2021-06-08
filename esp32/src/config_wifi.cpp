@@ -41,7 +41,7 @@ void setup_wifi(bool hotspot,char *ssid, char *password) {
       delay(1000);
       if(Serial.available()) {
         if(Serial.read() == 'r') {
-          Serial.println("EEPROM: go to default settings.");
+          Serial.println("Default hotspot mode.");
           settings_reset(&settings);
           setup_wifi(settings.mode_is_hotspot, (char *) settings.wifi_sidd,(char *) settings.wifi_password);
           return;

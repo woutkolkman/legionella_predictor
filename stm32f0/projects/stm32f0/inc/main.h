@@ -4,11 +4,16 @@
 #include "usart.h"
 #include "stdlib.h"
 #include "green_led.h"
-#include "debugmode.h"
+#include "lm35.h"
+#include "battery.h"
+#include "adc.h"
+#include "struct.h"
+#include "transmitter_id.h"
+#include "transmission_led.h"
 
-// defines 
-#define BYTE_MAX_NUMBER 256
-
-// function prototypes
-void ADC_init(void);
-void ADC_interrupt_init(void);
+//defines
+// ******************************************
+// when CLEARTRANSMITTERID is commented, existing transmitter ID will be used (if available)
+// when CLEARTRANSMITTERID is not commented, a new transmitter ID will be generated after reset
+// ******************************************
+//#define CLEARTRANSMITTERID 0

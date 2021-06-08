@@ -3,7 +3,6 @@
 
 #include "stdint.h"
 #include "stdbool.h"
-#include "debugmode.h"
 
 #define TEMP_TRESHOLD 			(4)
 #define DELAY_GREEN_TURNOFF (1)

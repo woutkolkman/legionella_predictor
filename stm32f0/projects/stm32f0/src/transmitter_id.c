@@ -111,18 +111,3 @@ void deInit_random_number() {
   RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADC1, DISABLE);
 	RCC_AHBPeriphClockCmd(RCC_AHBPeriph_CRC, DISABLE);
 }
-
-//print the current transmitter ID and whether it was new or not
-void print_transmitter_ID() {
-	uint8_t loc;
-	if(exist) {
-		Serial_print("existing: ");
-	} else {
-		Serial_print("New: ");
-	}
-	for(loc = 0; loc < TRANSMITTER_ID_SIZE; loc++) {
-		Serial_putint(Temperatures.transmitter_ID[loc]);
-		Serial_print(" ");
-	}
-	Serial_newLine();
-}
