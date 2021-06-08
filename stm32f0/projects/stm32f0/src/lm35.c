@@ -1,6 +1,4 @@
-#include "stm32f0xx.h"
 #include "lm35.h"
-
 
 /* Zie het kopje LM35 Temperatuursensor --> Proces in technisch ontwerp */
 // function to measure current temperature
