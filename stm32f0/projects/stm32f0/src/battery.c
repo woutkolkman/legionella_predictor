@@ -1,6 +1,4 @@
 #include "battery.h"
-#include "lm35.h"
-#include "struct.h"
 
 /* Zie Elektronisch schema sensor-systeem --> transistor in technisch ontwerp */
 //init transistor output pin

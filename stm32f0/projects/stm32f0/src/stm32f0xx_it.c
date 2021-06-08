@@ -1,13 +1,4 @@
 #include "stm32f0xx_it.h"
-#include "lm35.h"
-#include "battery.h"
-#include "stm32f0_discovery.h"
-#include "stdbool.h"
-#include "stdbool.h"
-#include "lm35.h"
-#include "struct.h"
-#include "green_led.h"
-#include "usart.h"
 
 // global variables
 extern volatile unsigned long time_passed;

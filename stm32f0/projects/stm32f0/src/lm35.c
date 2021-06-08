@@ -1,6 +1,4 @@
-#include "stm32f0xx.h"
 #include "lm35.h"
-
 
 /* Zie het kopje LM35 Temperatuursensor --> Proces in technisch ontwerp */
 // function to measure current temperature
@@ -32,7 +30,8 @@ void TIM14_init(void) {
 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM14, ENABLE);
   
   TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up; 
-	TIM_TimeBaseStructure.TIM_Period      = MINUTE; 
+//TIM_TimeBaseStructure.TIM_Period      = MINUTE; 
+	TIM_TimeBaseStructure.TIM_Period			= 250 - 1;
   TIM_TimeBaseStructure.TIM_Prescaler   = (uint16_t)((SystemCoreClock / 1000) - 1);
 	
 	NVIC_InitStructure.NVIC_IRQChannel         = TIM14_IRQn;

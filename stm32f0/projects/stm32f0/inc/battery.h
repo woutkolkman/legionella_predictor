@@ -3,8 +3,10 @@
 
 #include "stm32f0xx.h"
 #include "stm32f0_discovery.h"
-#include "adc.h"
 #include "stdbool.h"
+#include "adc.h"
+#include "lm35.h"
+#include "struct.h"
 
 #define BATTERY_THRESHOLD_VOLTAGE 3140
 

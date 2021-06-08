@@ -3,6 +3,9 @@
 
 #include "stdint.h"
 #include "stdbool.h"
+#include "stm32f0_discovery.h"
+#include "stm32f0xx_gpio.h"
+#include "stdint.h"
 
 #define TEMP_TRESHOLD 			(4)
 #define DELAY_GREEN_TURNOFF (1)
