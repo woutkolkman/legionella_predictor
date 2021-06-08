@@ -101,8 +101,6 @@ void init_USART() {
 	USART_DMACmd(USART1, USART_DMAReq_Tx, ENABLE);
 	#else
 	USART_Cmd(USART1, ENABLE);
-	USART_ITConfig(USART1, USART_IT_RXNE, ENABLE);
-	NVIC_EnableIRQ(USART1_IRQn);
 	USART_disable();
 	#endif
 	

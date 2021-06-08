@@ -7,6 +7,7 @@
 #include "lm35.h"
 #include "struct.h"
 #include "green_led.h"
+#include "usart.h"
 
 #define RX_BUFFER_SIZE 100
 #define NEXT_RX_WRITE_LOCATION ((Rx_write_location + 1) % RX_BUFFER_SIZE)
@@ -48,24 +49,6 @@ void SysTick_Handler(void)
 void TIM1_BRK_UP_TRG_COM_IRQHandler(void) { 
 	time_passed++;
 	TIM_ClearITPendingBit(TIM1, TIM_IT_Update);
-}
-
-// when data is received from LoRa
-void USART1_IRQHandler(void) { 
-
-	// Read Data Register not empty interrupt?
-  if(USART1->ISR & USART_ISR_RXNE) {
-		if(NEXT_RX_WRITE_LOCATION == Rx_read_location) { //last location of the buffer will be filled, setting bool to let it know it's is_full.
-			Rx_buffer[Rx_write_location] = USART1->RDR;
-			Rx_write_location = NEXT_RX_WRITE_LOCATION;
-			is_full = true;
-		} else if (Rx_write_location == Rx_read_location && is_full) { //the buffer is full, but a new character is there, throw away this character as there is no space left
-			USART1->RDR; //throw away data, no space left
-		} else {	//Just add the received data to the buffer, everything is fine
-			Rx_buffer[Rx_write_location] = USART1->RDR;
-			Rx_write_location = NEXT_RX_WRITE_LOCATION;
-		}
-	}
 }
 
 /* Zie het kopje Indicatie-LEDs --> Groene LED in technisch ontwerp */

@@ -1,16 +1,6 @@
 #include "main.h"
-#include "stm32f0xx.h"
-#include "stm32f0_discovery.h"
-#include "lm35.h"
-#include "battery.h"
-#include "adc.h"
-#include "struct.h"
-#include "transmitter_id.h"
-#include "transmission_led.h"
 
 struct DATA Temperatures;
-
-//#define CLEARTRANSMITTERID 0
 
 int main(void) {
 	
@@ -40,10 +30,10 @@ int main(void) {
 		if (send) {
 			set_mode(MODE_NORMAL); // sets the LoRa module for transmission
 			GPIOB_enable(); // enable GPIOB clk
-			enable_transmission_led(); 
+			transmission_led_cmd(true); 
 			send_struct(&Temperatures, sizeof(Temperatures)); /* Zie het kopje LM35 Temperatuursensor --> Proces in technisch ontwerp 
 																													 Zie het kopje LoRa communicatie --> Proces --> Verzenden (STM32) in technisch ontwerp */
-			disable_transmission_led();
+			transmission_led_cmd(false);
 			GPIOB_disable(); // disable GPIOB clk (not running)
 			set_mode(MODE_PROGRAM); //sets the LoRa module for sleep mode to save energy
 			send = false;

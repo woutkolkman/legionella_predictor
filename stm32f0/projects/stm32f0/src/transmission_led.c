@@ -18,16 +18,13 @@ void init_transmission_led() {
 	RCC_AHBPeriphClockCmd(RCC_AHBENR_GPIOBEN, DISABLE);
 }
 
-//enables the red transmission led
-void enable_transmission_led() {
-	
-	GPIO_SetBits(TRANSMISSION_BUSY_PORT, TRANSMISSION_BUSY_PIN);
-}
-
-//disables the red transmission led
-void disable_transmission_led() {
-	
-	GPIO_ResetBits(TRANSMISSION_BUSY_PORT, TRANSMISSION_BUSY_PIN);
+//enables or disables the red transmission led
+void transmission_led_cmd(bool led_on) {
+	if(led_on) {
+		GPIO_SetBits(TRANSMISSION_BUSY_PORT, TRANSMISSION_BUSY_PIN);
+	} else {
+		GPIO_ResetBits(TRANSMISSION_BUSY_PORT, TRANSMISSION_BUSY_PIN);
+	}
 }
 
 /* Zie het kopje Energiezuinigheid --> GPIO-B clock in technisch ontwerp */
