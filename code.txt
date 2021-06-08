@@ -20,7 +20,7 @@ stm32f0/projects/stm32f0/src/EBYTE.c alleen void init_LoRa_GPIO(), void init_USA
 esp32/src/main.cpp
 esp32/src/remember_settings.cpp 
 esp32/src/website.cpp 
-esp32/config_wifi.cpp 
+esp32/src/config_wifi.cpp 
 
 [cad] 
 # alle bestanden in cad zelf gemaakt 
