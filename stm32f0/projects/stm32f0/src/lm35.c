@@ -1,9 +1,6 @@
 #include "stm32f0xx.h"
-#include "stm32f0_discovery.h"
 #include "lm35.h"
-#include "battery.h"
-#include "struct.h"
-#include "main.h"
+
 
 /* Zie het kopje LM35 Temperatuursensor --> Proces in technisch ontwerp */
 // function to measure current temperature
@@ -24,29 +21,6 @@ uint8_t measure_temperature(void) {
 	return temperature;
 }
 
-/* Zie het kopje Elektronisch schema sensor-systeem -> Temperatuursensor en batterij in technisch ontwerp */
-// function to select ADC-channel 10/11 (battery and sensor)
-void select_channel(uint8_t pin) { 
-	
-	uint32_t tmpreg = 0;
-	
-	ADC_StopOfConversion(ADC1);
-	
-	ADC1->CHSELR = 0; // no channel selected
-	
-	if (pin == CHANNEL_10) { // temperature sensor
-		// configure channel (PC0)
-		ADC1->CHSELR |= ADC_CHSELR_CHSEL10; // select CH10
-	} else { // battery
-		// configure channel (PC1)
-		ADC1->CHSELR |= ADC_CHSELR_CHSEL11; // select CH11
-	}
-	tmpreg &= ~ADC_SMPR1_SMPR; // clear the sampling time selection bits
-  tmpreg |= (uint32_t)ADC_SampleTime_239_5Cycles; // set the ADC sampling time register
-  ADC1->SMPR = tmpreg; // configure the ADC sample time register
-	
-	ADC_StartOfConversion(ADC1);
-}
 
 /* Zie het kopje LM35 Temperatuursensor --> Proces in technisch ontwerp */
 // timer to measure temperature every minute 
@@ -58,8 +32,7 @@ void TIM14_init(void) {
 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM14, ENABLE);
   
   TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up; 
-	TIM_TimeBaseStructure.TIM_Period      = DEBUGTIME;
-//TIM_TimeBaseStructure.TIM_Period      = 60000 - 1; // minute
+	TIM_TimeBaseStructure.TIM_Period      = MINUTE; 
   TIM_TimeBaseStructure.TIM_Prescaler   = (uint16_t)((SystemCoreClock / 1000) - 1);
 	
 	NVIC_InitStructure.NVIC_IRQChannel         = TIM14_IRQn;
@@ -84,7 +57,7 @@ void TIM2_init(void) {
 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2, ENABLE);
 	
 	TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up; 
-	TIM_TimeBaseStructure.TIM_Period      = 300 - 1; // generate 300 ms blink
+	TIM_TimeBaseStructure.TIM_Period      = THREE_HUNDRED_MS; // generate 300 ms blink
   TIM_TimeBaseStructure.TIM_Prescaler   = (uint16_t)((SystemCoreClock / 1000) - 1);
 	
 	NVIC_InitStructure.NVIC_IRQChannel         = TIM2_IRQn;
@@ -98,5 +71,3 @@ void TIM2_init(void) {
 	
 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2, DISABLE); 
 }
-
-

@@ -103,7 +103,7 @@ void TIM14_IRQHandler(void) {
 			send = true; // if send = true --> send data (LoRa)
 			counter = 0;
 		}
-		select_channel(CHANNEL_10); // select ADC-channel 10 for temperature measurements
+		ADC_select_channel(CHANNEL_10); // select ADC-channel 10 for temperature measurements
   }
 }
 
@@ -131,7 +131,7 @@ void ADC1_COMP_IRQHandler(void) {
 		}
 		if (adc_battery_meas) { // do battery measurement --> select ADC-channel 11
 			GPIOC->BRR = GPIO_Pin_6; //enable transistor
-			select_channel(CHANNEL_11);
+			ADC_select_channel(CHANNEL_11);
 		}
 	}
 }

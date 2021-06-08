@@ -1,3 +1,4 @@
+/* zie kopje "Uitleg individuele componenten>ESP32 (gateway)>EEPROM" in technisch ontwerp */
 #ifndef REMEMBER_SETTINGS_H
 #define REMEMBER_SETTINGS_H
 #include <stdbool.h>
@@ -6,6 +7,7 @@
 #define CONFIG_SIGNATURE (0xAB)
 
 // type defintions
+/* zie kopje "Uitleg individuele componenten>ESP32 (gateway)>EEPROM>Beschrijving datatype “settings_t”" in technisch ontwerp */
 typedef struct { // needs to by under 512 bytes
     // !!! The variable signature needs to be te first element of the struct !!!
     uint8_t signature = CONFIG_SIGNATURE; // signature that tells that EEPROM has valid config data(1) = 1 byte
@@ -18,6 +20,7 @@ typedef struct { // needs to by under 512 bytes
 } settings_t; // size of settings 268 bytes
 
 // function definitions
+/* zie kopje "Uitleg individuele componenten>ESP32 (gateway)>EEPROM>Gebruik" in technisch ontwerp */
 void settings_reset(settings_t *settings);
 void settings_load(settings_t *settings);
 void settings_save(settings_t *settings);
