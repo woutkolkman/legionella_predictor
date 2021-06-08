@@ -3,18 +3,16 @@
 
 #include "stdint.h"
 #include "stdbool.h"
+#include "adc.h"
 
 // defines
 #define MINUTE 					 (60000 - 1)
 #define THREE_HUNDRED_MS (300 - 1)
-#define CHANNEL_10 			 10
-#define CHANNEL_11 			 11
 
 // function prototypes
 uint8_t measure_temperature(void);
 void TIM14_init(void);
 void TIM2_init(void);
-void select_channel(uint8_t pin);
 
 // global variables
 extern bool send;

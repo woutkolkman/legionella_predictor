@@ -8,7 +8,3 @@
 
 // defines 
 #define BYTE_MAX_NUMBER 256
-
-// function prototypes
-void ADC_init(void);
-void ADC_interrupt_init(void);
