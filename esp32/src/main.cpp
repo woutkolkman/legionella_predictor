@@ -147,7 +147,6 @@ bool send_to_cloud(char* payload) {
     String response = http.getString(); //Get the response to the request
   
     Serial.println(httpResponseCode);   //Print return code
-    Serial.println(response);           //Print request answer
     retval = true;
   } else {
     Serial.print("Error on sending POST: ");
