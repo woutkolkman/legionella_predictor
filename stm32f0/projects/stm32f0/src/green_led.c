@@ -30,23 +30,24 @@ void Green_led_init(void) {
   GPIOC->OTYPER &= ~GPIO_OTYPER_OT_9;
   
 	// Maximum speed setting (even though it is unnecessary)
-  GPIOC->OSPEEDR |= GPIO_OSPEEDER_OSPEEDR9;
+	GPIOC->OSPEEDR &= ~GPIO_OSPEEDER_OSPEEDR9;
 	
   // Pull-up and pull-down resistors disabled
   GPIOC->PUPDR &= ~GPIO_PUPDR_PUPDR9;
 }
 
-void Green_led_on(void) { // turn green led on
-	// set green led high
-	GPIOC->BSRR = GPIO_BSRR_BS_9;
+void Green_led_set(bool led_on) { // turn green led on
+	if(led_on) {
+		// set green led high
+		GPIOC->BSRR = GPIO_BSRR_BS_9;
+	}
+	else {
+		// set green led low
+		GPIOC->BSRR = GPIO_BSRR_BR_9;
+	}
 }
 
-void Green_led_off(void) { // turn green led off
-	// set green led low
-	GPIOC->BSRR = GPIO_BSRR_BR_9;
-}
-
- // calcualte te difference of two numbers
+// calcualte te difference of two numbers
 float difference(uint8_t a, uint8_t b) {
 	if(a < b) {
 		return b-a;
@@ -82,7 +83,6 @@ void Green_led_update_rinse(uint8_t temp) {
 
 // determine if temperature has been measured
 void Green_led_update_measure(bool led_on) { 
-	
 	if (led_on) {
 		green_led_status.measure_indication = true;
 	} else {
@@ -92,14 +92,5 @@ void Green_led_update_measure(bool led_on) {
 
 // update green led --> update led when temprature dropped / update led when measurement has taken place
 void Green_led_update() { 
-
-	if(green_led_status.rinse_indication && green_led_status.measure_indication) { // if temperature has been measured and temperature has dropped
-		Green_led_off();
-	} else if(!green_led_status.rinse_indication && green_led_status.measure_indication) { // if temperature has been measured but temperature has not dropped
-		Green_led_on();
-	} else if(green_led_status.rinse_indication && !green_led_status.measure_indication) { // if temperature has not been measured and temperature has been dropped
-		Green_led_on();
-	} else { // in any other case 
-		Green_led_off();
-	}
+	Green_led_set( green_led_status.rinse_indication^green_led_status.measure_indication );
 }

@@ -37,7 +37,8 @@ test_t test_U3_Green_led(void) {
  test_t test_result = PASSED;
 	// init 
 	Green_led_init();
-  Green_led_update(values[0]);
+  Green_led_update_rinse(values[0]);
+	Green_led_update();
  
   // execute test
 	for(case_number=0; case_number < array_size; case_number++) {
@@ -51,7 +52,8 @@ test_t test_U3_Green_led(void) {
 		USART_putstr(" ");
 		
 		// execute green_led_update()
-		Green_led_update(values[case_number]);	
+		Green_led_update_rinse(values[case_number]);	
+		Green_led_update();
 		
 		// read the green led
 		led_state = (GPIOC->ODR & GPIO_ODR_9) ? 1 : 0;
