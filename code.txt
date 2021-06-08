@@ -1,0 +1,30 @@
+[stm32f0]
+# niet alle bestanden in stm32f0/projects/stm32f0/src zelf gemaakt maar alleen:
+stm32f0/projects/stm32f0/src/battery.c 
+stm32f0/projects/stm32f0/src/green_led.c
+stm32f0/projects/stm32f0/src/lm35.c 
+stm32f0/projects/stm32f0/src/main.c 
+stm32f0/projects/stm32f0/src/stm32f0xx_it.c 
+stm32f0/projects/stm32f0/src/transmission_led.c 
+stm32f0/projects/stm32f0/src/transmitter_id.c 
+stm32f0/projects/stm32f0/src/unit_test_main.c 
+stm32f0/projects/stm32f0/src/se24lc512.c alleen void SE24LC512_Clear(void)
+stm32f0/projects/stm32f0/src/usart.c alleen void USART_enable(void), USART_disable(void), GPIOA_enable(void), GPIOA_disable(void)
+stm32f0/projects/stm32f0/src/EBYTE.c alleen void init_LoRa_GPIO(), void init_USART(), init_USART_GPIO(), void init_DMA_write(),
+											void init_buffer(), void init_Timer_Delay(), void send_byte(uint8_t the_byte), uin8_t get_byte(),
+											void send_struct(const void* the_structure, uint16_t size), void get_struct(const void* the_structure, uint16_t size), 
+											void set_mode(uint8_t mode), void timer_delay(unsigned long delay_time), void read_bytes(uint8_t* buffer, uint8_t size) 
+											void clear_buffer() en void Reset()
+[esp32]
+# niet alle bestanden in esp32/src/ zelf gemaakt maar alleen:
+esp32/src/main.cpp
+esp32/src/remember_settings.cpp 
+esp32/src/website.cpp 
+esp32/config_wifi.cpp 
+
+[cad] 
+# alle bestanden in cad zelf gemaakt 
+
+[cloud] 
+# alle bestanden in cloud/node-red zelf gemaakt 
+
