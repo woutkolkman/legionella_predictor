@@ -1,0 +1,51 @@
+[stm32f0]
+De sensorsysteem software kan op een PC met Windows 10 gebuild worden.
+
+Installeer voor het builden van de software de volgende tool:
+- Keil’s ARM MDK Microcontroller Development Kit versie 5.27 of hoger (te downloaden van ww2.keil.com)
+
+De code kan gecompileerd worden via de compile knop in de uVision IDE, en geüploaded via de upload knop. 
+
+
+
+[esp32]
+De gateway software kan op een PC met Windows 10 gebuild worden. 
+
+Installeer voor het builden van de software de volgende tool:
+- Visual Studio Code
+	Extensies: C/C++, Espressif IDF, PlatformIO IDE
+
+Om de code te compileren gebruik je de sneltoets CTRL-SHIFT-P, typ "build" en enter, wanneer gebuild, 
+typ "upload" en enter. 
+
+De IDE zou automatisch de goede COM poort moeten vinden. Zo niet, ontkoppel dan de overige devices, 
+zoals FTDI adapters, tijdelijk van je PC. 
+
+
+
+[cad]
+De .stl files kunnen op een Windows 10 PC geopend worden met het voorgeïnstalleerde programma 
+"3D-viewer". De .f3d bestanden kunnen in Fusion360 geopend worden. Deze bestanden bevatten alleen 3D 
+objecten. 
+
+
+
+[cloud]
+Als cloud OS is Ubuntu 20.04.2 LTS gebruikt. 
+Download en compileer NodeRED versie V1.3.2 (mag in documents folder). Documentatie te vinden op de 
+officiële NodeRED website nodered.org. 
+Het executable bestand staat nu in "/Documents/node-red/packages/node_modules/node-red/bin/node-red-pi", 
+run deze via de terminal. 
+Het NodeRED dashboard is beschikbaar via "127.0.0.1:1880", open dit in de browser en importeer de flow
+uit het project via het setting menu > import. 
+De JavaScript code is in de node "file naar JSON" te vinden. 
+
+Installeer InfluxDB versie 2.0.4 vanaf influxdata.com. 
+Surf naar het dashboard op localhost:8086. Er komt een tutorial in beeld. Volg deze. 
+Maak een organisation "Organisation", een bucket "sensors" en een token aan, sla deze op in de 
+InfluxDB node (meest rechtse) in NodeRED, zodat deze data in de database kan opslaan. 
+
+Het is nodig om een firewall vóór je Ubuntu machine te installeren. Deze route de poort 80 vanaf het 
+internet naar poort 1880 in de machine, zodat NodeRED HTTP packets kan ontvangen. Volg de stappen in 
+de Skylab documentatie voor het instellen van de firewall. Zorg ook dat NodeRED password protected is, 
+omdat deze nu vanaf het internet beschikbaar is (zie NodeRED documentatie). 

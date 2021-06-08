@@ -1,0 +1,44 @@
+//#!/usr/bin/env node
+
+/* Zie het kopje Cloud --> Node-RED in technisch ontwerp */
+
+/*
+ * The first line in the file contains the transmitter ID. Right 
+ * now, it must be greater or equal to 8 charakters. 
+ */
+const min_length_id = 8;
+const meas_interval_ms = 60000;
+
+var returnmsg = [];
+var lines = msg.payload.split('\n');
+msg.payload = [];
+var now = new Date()-1;
+var transmitter_id = lines[0];
+var j = 0;
+
+for (var i=lines.length-1; i>=1; i--) {
+    //skip every line that doesn't contain a number
+    if (String(lines[i]).trim() == "" || !isFinite(String(lines[i]))) {
+        node.warn("ongeldige waarde: " + lines[i]);
+        continue;
+    }
+    
+    //add every line, containing values, with timestamps to the JSON array. 
+    returnmsg.push(
+    {
+        measurement: transmitter_id,
+        fields:{
+            temp: Number(lines[i])
+        },
+        timestamp: now-(j*meas_interval_ms)
+    });
+    j++;
+}
+
+if (transmitter_id.length >= min_length_id) {
+    msg.payload = returnmsg;
+} else {
+    node.warn("ongeldig ID: " + transmitter_id);
+}
+
+return msg;
