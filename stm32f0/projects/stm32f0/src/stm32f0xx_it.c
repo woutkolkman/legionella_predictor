@@ -9,13 +9,10 @@
 #include "green_led.h"
 #include "usart.h"
 
-#define RX_BUFFER_SIZE 100
-#define NEXT_RX_WRITE_LOCATION ((Rx_write_location + 1) % RX_BUFFER_SIZE)
-
+// global variables
 extern volatile unsigned long time_passed;
 volatile uint8_t* Rx_buffer;
 volatile uint16_t Rx_write_location;
-extern uint16_t Rx_read_location;
 bool is_full;
 uint8_t counter = 0;
 bool send = false;
